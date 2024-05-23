@@ -3,10 +3,6 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Link, Tabs } from 'expo-router';
 import { Pressable } from 'react-native';
 
-import Colors from '@/constants/Colors';
-import { useColorScheme } from '@/components/useColorScheme';
-import { useClientOnlyValue } from '@/components/useClientOnlyValue';
-
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>['name'];
@@ -16,42 +12,54 @@ function TabBarIcon(props: {
 }
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
 
   return (
     <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        // Disable the static render of the header on web
-        // to prevent a hydration error in React Navigation v6.
-        headerShown: useClientOnlyValue(false, true),
-      }}>
+      screenOptions={{ tabBarShowLabel: false }}
+    >
       <Tabs.Screen
-        name="index"
+        name="home"
         options={{
-          title: 'Tab One',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          title: 'Home',
+          headerShown: false,
+          tabBarIcon: ({ focused }) => <TabBarIcon name="home" color={focused ? 'black' : 'gray'} />,
           headerRight: () => (
-            <Link href="/modal" asChild>
+            <Link href="/add-transaction" asChild>
               <Pressable>
                 {({ pressed }) => (
                   <FontAwesome
-                    name="info-circle"
+                    name="plus"
                     size={25}
-                    color={Colors[colorScheme ?? 'light'].text}
                     style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
                   />
                 )}
               </Pressable>
             </Link>
-          ),
+          )
         }}
       />
       <Tabs.Screen
-        name="two"
+        name='transactions'
         options={{
-          title: 'Tab Two',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          title: 'Transactions',
+          headerShown: false,
+          tabBarIcon: ({ focused }) => <TabBarIcon name="arrows" color={focused ? 'black' : 'gray'} />,
+        }}
+      />
+      <Tabs.Screen
+        name="notes"
+        options={{
+          title: 'Notes',
+          headerShown: false,
+          tabBarIcon: ({ focused }) => <TabBarIcon name="sticky-note" color={focused ? 'black' : 'gray'} />,
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: 'Profile',
+          headerShown: false,
+          tabBarIcon: ({ focused }) => <TabBarIcon name="user" color={focused ? 'black' : 'gray'} />,
         }}
       />
     </Tabs>
