@@ -11,7 +11,7 @@ export default function Welcome() {
   return (
     <SafeAreaView className='h-full'>
       <View className='flex-1 items-center justify-center'>
-        <Text className="text-3xl font-bold">fundfolio</Text>
+        <Text className="text-3xl font-bold">fundfolio.</Text>
         <Link href="/home" className="underline">Go to Home</Link>
       </View>
       <StatusBar style="inverted" />

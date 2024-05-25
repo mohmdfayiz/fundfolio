@@ -1,20 +1,20 @@
 import { Text, View, ScrollView } from 'react-native';
 import { SafeAreaView } from "react-native-safe-area-context";
+import PieChart from 'react-native-pie-chart';
 import { Link } from 'expo-router';
 import Transaction from '@/components/Transaction';
+import TabTitle from '@/components/TabTitle';
 
 export default function HomeScreen() {
   return (
     <SafeAreaView>
       <View className='flex flex-col gap-4 p-4' >
         <View>
-          <Text className='text-2xl font-pbold'>Hello Fayis👋</Text>
-          <Text className='font-pregular text-sm'>Good Morning!</Text>
+          <TabTitle title='Hello Fayis' icon='👋' subTitle='Good Morning!' />
         </View>
 
         <View className='flex flex-row items-center p-5 mt-5 bg-gray-200 rounded-2xl border border-gray-300'>
           <View>
-
             <View >
               <View className=' flex flex-row items-baseline'>
                 <View className="w-2 h-4 bg-green rounded-full mr-1"></View>
@@ -28,18 +28,22 @@ export default function HomeScreen() {
                 <View className="w-2 h-4 bg-red rounded-full mr-1"></View>
                 <Text className='text-lg font-plight'>Expense</Text>
               </View>
-              <Text className='text-xl font-psemibold'>₹ 0.0</Text>
+              <Text className='text-xl font-psemibold'>₹ 1000</Text>
             </View>
           </View>
 
-          <View className='ml-auto'>
-            <View className={`bg-green rounded-full h-32 w-32 items-center justify-center`} >
-              <View className='bg-gray-200 rounded-full h-20 w-20 items-center justify-center'>
-                <Text className='text-lg font-psemibold'>May</Text>
-              </View>
+          <View className='ml-auto relative'>
+            <View className='absolute z-10 top-14 left-12'>
+              <Text className='text-base font-psemibold'>May</Text>
             </View>
+            <PieChart
+              widthAndHeight={130}
+              series={[10000, 1000]}
+              sliceColor={['#A1C398', '#FA7070']}
+              coverRadius={0.6}
+              coverFill={'#e5e7eb'}
+            />
           </View>
-
         </View>
 
         <View className='flex flex-row items-center justify-between'>
