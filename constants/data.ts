@@ -234,33 +234,41 @@ const CATEGORIES = [
     {
         id: 1,
         name: 'Food',
+        icon: '🍟',
+        bgColor: '#fef08a',
     },
     {
         id: 2,
         name: 'Travel',
+        icon: '🛺',
+        bgColor: '#c7d2fe'
     },
     {
         id: 3,
         name: 'Shopping',
+        icon: '🛒',
+        bgColor: '#bbf7d0'
     },
     {
         id: 4,
         name: 'Entertainment',
-    },
-    {
-        id: 5,
-        name: 'Others',
+        icon: '🎭',
+        bgColor: '#fed7aa'
     },
 ]
 
 const PAYMENT_METHODS = [
     {
+        id: 0,
+        name: 'Bank a/c',
+    },
+    {
         id: 1,
-        name: 'Cash',
+        name: 'Card',
     },
     {
         id: 2,
-        name: 'Card',
+        name: 'Cash',
     },
     {
         id: 3,
@@ -268,9 +276,21 @@ const PAYMENT_METHODS = [
     },
 ]
 
+const TRANSACTION_CATEGORY_COLOR_MAP = [
+    '#fecaca',
+    '#fed7aa',
+    '#fef08a',
+    '#bbf7d0',
+    '#c7d2fe',
+]
+
+const SAMPLE_CATEGORY_LABELS = ['🍟', '🛺', '🛒']
+
 export {
     TRANSACTIONS,
     NOTES,
     CATEGORIES,
-    PAYMENT_METHODS
+    PAYMENT_METHODS,
+    TRANSACTION_CATEGORY_COLOR_MAP,
+    SAMPLE_CATEGORY_LABELS
 }

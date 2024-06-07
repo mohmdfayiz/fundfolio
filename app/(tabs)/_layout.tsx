@@ -22,20 +22,7 @@ export default function TabLayout() {
         options={{
           title: 'Home',
           headerShown: false,
-          tabBarIcon: ({ focused }) => <TabBarIcon name="home" color={focused ? '#A1C398' : 'black'} />,
-          headerRight: () => (
-            <Link href="/add-transaction" asChild>
-              <Pressable>
-                {({ pressed }) => (
-                  <FontAwesome
-                    name="plus"
-                    size={25}
-                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
-              </Pressable>
-            </Link>
-          )
+          tabBarIcon: ({ focused }) => <TabBarIcon name="home" color={focused ? '#A1C398' : '#4b5563'} />,
         }}
       />
       <Tabs.Screen
@@ -43,7 +30,7 @@ export default function TabLayout() {
         options={{
           title: 'Transactions',
           headerShown: false,
-          tabBarIcon: ({ focused }) => <TabBarIcon name="arrows" color={focused ? '#A1C398' : 'black'} />,
+          tabBarIcon: ({ focused }) => <TabBarIcon name="arrows" color={focused ? '#A1C398' : '#4b5563'} />,
         }}
       />
       <Tabs.Screen
@@ -51,7 +38,7 @@ export default function TabLayout() {
         options={{
           title: 'Notes',
           headerShown: false,
-          tabBarIcon: ({ focused }) => <TabBarIcon name="sticky-note" color={focused ? '#A1C398' : 'black'} />,
+          tabBarIcon: ({ focused }) => <TabBarIcon name="sticky-note" color={focused ? '#A1C398' : '#4b5563'} />,
         }}
       />
       <Tabs.Screen
@@ -59,7 +46,7 @@ export default function TabLayout() {
         options={{
           title: 'Profile',
           headerShown: false,
-          tabBarIcon: ({ focused }) => <TabBarIcon name="user" color={focused ? '#A1C398' : 'black'} />,
+          tabBarIcon: ({ focused }) => <TabBarIcon name="user" color={focused ? '#A1C398' : '#4b5563'} />,
         }}
       />
     </Tabs>

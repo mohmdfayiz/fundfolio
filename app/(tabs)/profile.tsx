@@ -1,10 +1,21 @@
-import { Image, Text, View } from 'react-native';
+import { useContext } from 'react';
+import { Image, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import TabTitle from '@/components/TabTitle';
+import { Link, router } from 'expo-router';
+import { GlobalContext } from '@/context/GlobalContext';
 
 const profileImage = require('@/assets/images/profile.png');
 
 export default function ProfileScreen() {
+
+  const { setIsLogged } = useContext(GlobalContext);
+
+  function handleLogout() {
+    setIsLogged(false);
+    router.push('/');
+  }
+
   return (
     <SafeAreaView>
       <View className='flex flex-col gap-4 p-4'>
@@ -29,13 +40,18 @@ export default function ProfileScreen() {
         </View>
 
         <View className='flex flex-col gap-y-4'>
+
           <View className='flex flex-row items-center justify-between p-2'>
-            <Text className='text-base font-psemibold'>Transaction Statistics</Text>
+            <Link href={'/transactionStatistics'} className='flex-1'>
+              <Text className='text-base font-psemibold'>Transaction Statistics</Text>
+            </Link>
             <Text className='text-base font-psemibold'>{'>'}</Text>
           </View>
 
           <View className='flex flex-row items-center justify-between p-2'>
-            <Text className='text-base font-psemibold'>Transaction Category</Text>
+            <Link href={'/transactionCategory'} className='flex-1'>
+              <Text className='text-base font-psemibold'>Transaction Category</Text>
+            </Link>
             <Text className='text-base font-psemibold'>{'>'}</Text>
           </View>
 
@@ -50,12 +66,19 @@ export default function ProfileScreen() {
           </View>
 
           <View className='flex flex-row items-center justify-between p-2'>
+            <Text className='text-base font-psemibold'>About Us</Text>
+            <Text className='text-base font-psemibold'>{'>'}</Text>
+          </View>
+
+          <View className='flex flex-row items-center justify-between p-2'>
             <Text className='text-base font-psemibold text-red'>Delete Account</Text>
             <Text className='text-base font-psemibold text-red'>{'>'}</Text>
           </View>
 
           <View className='flex flex-row items-center justify-between p-2'>
-            <Text className='text-base font-psemibold text-red'>Logout</Text>
+            <Pressable onPress={handleLogout} className='flex-1'>
+              <Text className='text-base font-psemibold text-red'>Logout</Text>
+            </Pressable>
             <Text className='text-base font-psemibold text-red'>{'>'}</Text>
           </View>
         </View>

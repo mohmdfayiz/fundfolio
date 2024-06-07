@@ -1,14 +1,14 @@
 import { useContext } from 'react';
+import { Redirect, router } from 'expo-router'
 import { View, Text, Pressable, TextInput } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Redirect, router } from 'expo-router'
 import { GlobalContext } from '@/context/GlobalContext';
 
-export default function SingIn() {
+export default function SignUp() {
 
   const { isLogged, setIsLogged } = useContext(GlobalContext);
 
-  function handleSignIn() {
+  function handlePassword() {
     setIsLogged(true);
     router.push('/home');
   }
@@ -25,17 +25,17 @@ export default function SingIn() {
       </View>
       <View className='h-1/2 items-center justify-end px-8 gap-4'>
         <TextInput
-          placeholder='Email'
-          keyboardType='email-address'
+          placeholder='Password'
+          keyboardType='default'
           className='w-full border border-slate-400 p-4 rounded-xl font-pregular '
         />
         <TextInput
-          placeholder='Password'
           secureTextEntry
-          className='w-full border border-slate-400 p-4 rounded-xl font-pregular'
+          placeholder='Confirm Password'
+          className='w-full border border-slate-400 p-4 rounded-xl font-pregular '
         />
-        <Pressable onPress={handleSignIn} className='w-full border border-green bg-green/50 p-4 rounded-xl'>
-          <Text className='text-center font-psemibold text-base'>Sing In</Text>
+        <Pressable onPress={() => router.push('/home')} className='w-full border border-green bg-green/50 p-4 rounded-xl'>
+          <Text className='text-center font-psemibold text-base'>Save Password</Text>
         </Pressable>
       </View>
     </SafeAreaView>

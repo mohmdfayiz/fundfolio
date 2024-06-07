@@ -8,7 +8,7 @@ import TabTitle from '@/components/TabTitle';
 export default function HomeScreen() {
   return (
     <SafeAreaView>
-      <View className='flex flex-col gap-4 p-4' >
+      <View className='flex gap-4 p-4' >
         <View>
           <TabTitle title='Hello Fayis' icon='👋' subTitle='Good Morning!' />
         </View>
@@ -38,8 +38,8 @@ export default function HomeScreen() {
             </View>
             <PieChart
               widthAndHeight={130}
-              series={[10000, 1000]}
-              sliceColor={['#A1C398', '#FA7070']}
+              series={[1000, 10000]}
+              sliceColor={['#FA7070', '#A1C398']}
               coverRadius={0.6}
               coverFill={'#e5e7eb'}
             />

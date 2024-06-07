@@ -1,8 +1,9 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { useEffect, useState } from 'react';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
+import { StatusBar } from 'expo-status-bar';
+import { GlobalContext } from '@/context/GlobalContext';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -13,6 +14,8 @@ export {
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+
+  const [isLogged, setIsLogged] = useState(false);
 
   const [loaded, error] = useFonts({
     "Poppins-Black": require("../assets/fonts/Poppins-Black.ttf"),
@@ -41,10 +44,14 @@ export default function RootLayout() {
   }
 
   return (
-    <Stack>
-      <Stack.Screen name="index" options={{ headerShown: false }} />
-      <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-    </Stack>
+    <GlobalContext.Provider value={{ isLogged, setIsLogged }}>
+      <Stack>
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="(screens)" options={{ headerShown: false }} />
+      </Stack>
+      <StatusBar style="inverted" />
+    </GlobalContext.Provider>
   )
 }
