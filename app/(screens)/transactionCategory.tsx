@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
-import { View, Text, Pressable, ScrollView } from "react-native";
+import { View, Text, Image, Pressable, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import dateFormat from "dateformat";
+import Toast from "react-native-toast-message";
 import TabTitle from "@/components/TabTitle";
 import CategoryModal from "@/components/CategoryModal";
 import { addTransactionCategory, getTransactionCategories, deleteTransactionCategory } from "@/services/transaction";
+import icons from "@/constants/icons";
 
 type Category = {
     _id?: string;
@@ -32,8 +34,15 @@ export default function TransactionCategory() {
 
     const deleteCategory = async (id: string | undefined) => {
         if (!id) return
-        await deleteTransactionCategory(id).catch(err => console.log(err))
-        getCategories();
+        try {
+            await deleteTransactionCategory(id)
+            getCategories();
+        } catch (error) {
+            Toast.show({
+                type: 'error',
+                text1: 'Category could not be deleted',
+            })
+        }
     }
 
     useEffect(() => {
@@ -61,7 +70,7 @@ export default function TransactionCategory() {
                                     <Text className='text-2xl'>📝</Text>
                                 </Pressable> */}
                                 <Pressable onPress={() => deleteCategory(category?._id)} className='items-end'>
-                                    <Text className='text-xl'>🗑️</Text>
+                                    <Image source={icons.trash} style={{ width: 24, height: 24 }} />
                                 </Pressable>
                             </View>
                         </View>

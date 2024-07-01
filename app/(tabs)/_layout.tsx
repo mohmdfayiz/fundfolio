@@ -1,7 +1,9 @@
 import React from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { Image } from 'react-native';
 import { Redirect, Tabs } from 'expo-router';
 import { useGlobalContext } from '@/context/GlobalContext';
+import icons from '../../constants/icons';
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
@@ -25,7 +27,7 @@ export default function TabLayout() {
         options={{
           title: 'Home',
           headerShown: false,
-          tabBarIcon: ({ focused }) => <TabBarIcon name="home" color={focused ? '#A1C398' : '#4b5563'} />,
+          tabBarIcon: ({ focused }) => <Image source={focused ? icons.homeActive : icons.home} style={{ width: 24, height: 24, }} />,
         }}
       />
       <Tabs.Screen
@@ -33,7 +35,7 @@ export default function TabLayout() {
         options={{
           title: 'Transactions',
           headerShown: false,
-          tabBarIcon: ({ focused }) => <TabBarIcon name="arrows" color={focused ? '#A1C398' : '#4b5563'} />,
+          tabBarIcon: ({ focused }) => <Image source={focused ? icons.transactionActive : icons.transaction} style={{ width: 28, height: 28, }} />,
         }}
       />
       <Tabs.Screen
@@ -41,7 +43,7 @@ export default function TabLayout() {
         options={{
           title: 'Notes',
           headerShown: false,
-          tabBarIcon: ({ focused }) => <TabBarIcon name="sticky-note" color={focused ? '#A1C398' : '#4b5563'} />,
+          tabBarIcon: ({ focused }) => <Image source={focused ? icons.notebookActive : icons.notebook} style={{ width: 25, height: 25, }} />,
         }}
       />
       <Tabs.Screen
@@ -49,7 +51,7 @@ export default function TabLayout() {
         options={{
           title: 'Profile',
           headerShown: false,
-          tabBarIcon: ({ focused }) => <TabBarIcon name="user" color={focused ? '#A1C398' : '#4b5563'} />,
+          tabBarIcon: ({ focused }) => <Image source={focused ? icons.userActive : icons.user} style={{ width: 25, height: 25, }} />,
         }}
       />
     </Tabs>

@@ -2,23 +2,28 @@ import { useContext, useEffect, useState } from 'react';
 import { Image, Pressable, Text, View } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import TabTitle from '@/components/TabTitle';
 import { Link, router } from 'expo-router';
+import TabTitle from '@/components/TabTitle';
+import EditProfileModal from '@/components/EditProfileModal';
 import { GlobalContext } from '@/context/GlobalContext';
 import { getAccountBalance } from '@/services/transaction';
-
-const profileImage = require('@/assets/images/profile.png');
+import profileImages from '../../constants/images';
 
 export default function ProfileScreen() {
 
   const { user, setIsLogged, removeToken } = useContext(GlobalContext);
   const [accountBalance, setAccountBalance] = useState(0.00);
+  const [isOpen, setIsOpen] = useState(false);
 
   const isFocused = useIsFocused();
 
   const fetchBalance = async () => {
     const { data } = await getAccountBalance();
     setAccountBalance(data.balance || 0.00);
+  }
+
+  const handleEditProfileModal = () => {
+    setIsOpen((prev) => !prev);
   }
 
   async function handleLogout() {
@@ -40,8 +45,10 @@ export default function ProfileScreen() {
 
         <View className='flex flex-row items-center justify-start'>
           <View className='relative'>
-            <Image source={profileImage} className='w-16 h-16 rounded-full' />
-            <Text className='absolute bottom-0 right-0 bg-black/50 rounded-full p-1 text-xs'>🖊️</Text>
+            <Pressable onPress={handleEditProfileModal}>
+              <Image source={user?.profilePic === 'woman' ? profileImages.woman : profileImages.man} className='w-16 h-16 rounded-full' />
+              <Text className='absolute bottom-0 right-0 bg-black/50 rounded-full p-1 text-xs'>🖊️</Text>
+            </Pressable>
           </View>
           <View className='ml-4'>
             <Text className='text-base font-psemibold'>{user?.username}</Text>
@@ -99,8 +106,9 @@ export default function ProfileScreen() {
             <Text className='text-base font-psemibold text-red'>{'>'}</Text>
           </View>
         </View>
-
       </View>
+
+      <EditProfileModal isOpen={isOpen} onClose={handleEditProfileModal} />
     </SafeAreaView>
   );
 }
