@@ -1,9 +1,28 @@
-import { createContext } from "react";
+import { createContext, useContext } from "react";
 
-let isLogged: boolean = false;
-let setIsLogged: React.Dispatch<React.SetStateAction<boolean>> = () => {};
+type User = {
+  _id: string;
+  username: string;
+  email: string;
+  profilePic: string;
+}
 
-export const GlobalContext = createContext({
-  isLogged,
-  setIsLogged,
+interface GlobalContextProps {
+  user: User | null;
+  setUser: React.Dispatch<React.SetStateAction<User | null>>;
+  isLogged: boolean;
+  setIsLogged: React.Dispatch<React.SetStateAction<boolean>>;
+  setToken: (token: string) => Promise<void>;
+  removeToken: () => Promise<void>;
+}
+
+export const GlobalContext = createContext<GlobalContextProps>({
+  user: null,
+  setUser: () => { },
+  isLogged: false,
+  setIsLogged: () => { },
+  setToken: async () => { },
+  removeToken: async () => { },
 });
+
+export const useGlobalContext = () => useContext(GlobalContext)

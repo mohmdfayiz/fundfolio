@@ -1,13 +1,44 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { View, Text, Pressable, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import dateFormat from "dateformat";
 import TabTitle from "@/components/TabTitle";
 import CategoryModal from "@/components/CategoryModal";
-import { CATEGORIES } from "@/constants/data";
+import { addTransactionCategory, getTransactionCategories, deleteTransactionCategory } from "@/services/transaction";
+
+type Category = {
+    _id?: string;
+    name: string;
+    icon: string;
+    bgColour: string;
+    createdAt?: Date;
+}
 
 export default function TransactionCategory() {
 
     const [show, setShow] = useState(false);
+    const [categories, setCategories] = useState<Category[]>([]);
+
+    const getCategories = async () => {
+        const { data }: { data: Category[] } = await getTransactionCategories();
+        setCategories(data);
+    }
+
+    const addCategory = async (category: Category) => {
+        await addTransactionCategory(category).catch(err => console.log(err))
+        getCategories();
+        setShow(false);
+    }
+
+    const deleteCategory = async (id: string | undefined) => {
+        if (!id) return
+        await deleteTransactionCategory(id).catch(err => console.log(err))
+        getCategories();
+    }
+
+    useEffect(() => {
+        getCategories();
+    }, []);
 
     return (
         <SafeAreaView>
@@ -16,17 +47,22 @@ export default function TransactionCategory() {
                     <TabTitle title='Category' icon='♻️' subTitle='Manage Categories!' />
                 </View>
                 <ScrollView className='my-4' showsVerticalScrollIndicator={false}>
-                    {CATEGORIES.map((category) => (
-                        <View key={category.id} className='flex flex-row gap-2 items-center justify-between mb-2'>
-                            <View style={{ backgroundColor: category.bgColor }} className={`h-14 w-14 items-center justify-center rounded-xl`}>
+                    {categories.map((category) => (
+                        <View key={category._id} className='flex flex-row gap-2 items-center justify-between mb-3'>
+                            <View style={{ backgroundColor: category.bgColour }} className={`h-14 w-14 items-center justify-center rounded-xl`}>
                                 <Text className='text-2xl'>{category.icon}</Text>
                             </View>
                             <View className='flex-1'>
                                 <Text className='text-base font-psemibold'>{category.name}</Text>
-                                <Text className='text-base font-pregular'>12, 05, 2024</Text>
+                                <Text className='text-base font-pregular'>{'Added on: ' + dateFormat(category?.createdAt, "mediumDate")}</Text>
                             </View>
-                            <View className='items-end py-4'>
-                                <Text className='text-2xl'>🗑️</Text>
+                            <View className="flex flex-row">
+                                {/* <Pressable className='items-end py-4'>
+                                    <Text className='text-2xl'>📝</Text>
+                                </Pressable> */}
+                                <Pressable onPress={() => deleteCategory(category?._id)} className='items-end'>
+                                    <Text className='text-xl'>🗑️</Text>
+                                </Pressable>
                             </View>
                         </View>
                     ))}
@@ -41,7 +77,7 @@ export default function TransactionCategory() {
                 </View>
             </View>
 
-            <CategoryModal isOpen={show} onClose={() => setShow(false)} />
+            <CategoryModal isOpen={show} onClose={() => setShow(false)} addCategory={addCategory} />
         </SafeAreaView>
     );
 }

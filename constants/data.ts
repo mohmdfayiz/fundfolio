@@ -286,11 +286,27 @@ const TRANSACTION_CATEGORY_COLOR_MAP = [
 
 const SAMPLE_CATEGORY_LABELS = ['🍟', '🛺', '🛒']
 
+const MONTHS = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+]
+
 export {
     TRANSACTIONS,
     NOTES,
     CATEGORIES,
     PAYMENT_METHODS,
     TRANSACTION_CATEGORY_COLOR_MAP,
-    SAMPLE_CATEGORY_LABELS
+    SAMPLE_CATEGORY_LABELS,
+    MONTHS
 }

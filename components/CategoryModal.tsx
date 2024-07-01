@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Modal, View, Text, Pressable, TextInput, StyleSheet } from "react-native";
 import { TRANSACTION_CATEGORY_COLOR_MAP, SAMPLE_CATEGORY_LABELS } from "@/constants/data";
 
-const CategoryModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) => {
+const CategoryModal = ({ isOpen, onClose, addCategory }: { isOpen: boolean, onClose: () => void, addCategory: ({ name, bgColour, icon }: { name: string, bgColour: string, icon: string }) => void }) => {
 
     function getRandomInt(max: number) {
         return Math.floor(Math.random() * max);
@@ -10,23 +10,24 @@ const CategoryModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => vo
 
     const [category, setCategory] = useState({
         name: "",
-        bgColor: TRANSACTION_CATEGORY_COLOR_MAP[getRandomInt(TRANSACTION_CATEGORY_COLOR_MAP.length)],
-        label: SAMPLE_CATEGORY_LABELS[getRandomInt(SAMPLE_CATEGORY_LABELS.length)],
+        bgColour: TRANSACTION_CATEGORY_COLOR_MAP[getRandomInt(TRANSACTION_CATEGORY_COLOR_MAP.length)],
+        icon: SAMPLE_CATEGORY_LABELS[getRandomInt(SAMPLE_CATEGORY_LABELS.length)],
     })
 
     const handleClorPick = (color: string) => {
         setCategory(prev => ({
             ...prev,
-            bgColor: color
+            bgColour: color
         }))
     }
 
-    const handleIconPick = (label: string) => {
+    const handleIconPick = (icon: string) => {
         setCategory(prev => ({
             ...prev,
-            label: label
+            icon: icon
         }))
     }
+
     return (
         <Modal
             visible={isOpen}
@@ -38,37 +39,37 @@ const CategoryModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => vo
                 <View style={styles.container}>
                     <View className="flex items-center">
                         <TextInput
-                            value={category.label}
+                            value={category.icon}
                             maxLength={2}
-                            onChangeText={(label) => handleIconPick(label)}
-                            style={[styles.common, styles.textInput, { backgroundColor: category.bgColor }]}
+                            onChangeText={(icon) => handleIconPick(icon)}
+                            style={[styles.common, styles.textInput, { backgroundColor: category.bgColour }]}
                         />
                     </View>
                     <View className="flex flex-row justify-center gap-x-4">
                         {
-                            TRANSACTION_CATEGORY_COLOR_MAP.map((bgColor, index) => (
+                            TRANSACTION_CATEGORY_COLOR_MAP.map((bgColour, index) => (
                                 <Pressable
                                     key={index}
-                                    onPress={() => handleClorPick(bgColor)}
+                                    onPress={() => handleClorPick(bgColour)}
                                     style={[
                                         styles.colorPicker,
                                         styles.common,
-                                        { backgroundColor: bgColor },
-                                        category.bgColor === bgColor && { borderColor: '#94a3b8', borderWidth: 2 }
+                                        { backgroundColor: bgColour },
+                                        category.bgColour === bgColour && { borderColor: '#94a3b8', borderWidth: 2 }
                                     ]}
                                 />
                             ))
                         }
                     </View>
                     <View>
-                        <TextInput className="border border-slate-400 p-4 rounded-xl font-pregular text-base" placeholder="Category Name" maxLength={25} />
+                        <TextInput onChangeText={(name) => setCategory(prev => ({ ...prev, name }))} className="border border-slate-400 p-4 rounded-xl font-pregular text-base" placeholder="Category Name" maxLength={25} />
                     </View>
                     <View>
                         <View className='flex flex-row justify-between items-center gap-4'>
                             <Pressable onPress={onClose} className='border flex-1 border-slate-400 p-4 rounded-xl' >
                                 <Text className='text-center text-base font-psemibold'>Cancel</Text>
                             </Pressable>
-                            <Pressable className='border border-green flex-1 bg-green/50 p-4 rounded-xl' >
+                            <Pressable onPress={() => addCategory(category)} className='border border-green flex-1 bg-green/50 p-4 rounded-xl' >
                                 <Text className='text-center text-base font-psemibold'>Add</Text>
                             </Pressable>
                         </View>
