@@ -1,8 +1,9 @@
 import axios from "axios";
 
-// const development = "http://192.168.1.19:3000";
-const production = "https://fundfolio-server-oap7.onrender.com";
+const env = process.env.EXPO_PUBLIC_NODE_ENV;
+const development = process.env.EXPO_PUBLIC_DEV_URL
+const production = process.env.EXPO_PUBLIC_PROD_URL
 
 export default axios.create({
-    baseURL: production,
+    baseURL: env === "development" ? development : production,
 })
