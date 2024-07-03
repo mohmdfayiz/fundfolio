@@ -13,3 +13,9 @@ export const getHeaders = async () => {
 
 export const getUser = async () =>
     axios.get("/user", await getHeaders())
+
+export const updateUser = async (data: any) =>
+    axios.patch("/user", data, await getHeaders())
+
+export const deleteUser = async () =>
+    axios.delete("/user", await getHeaders())

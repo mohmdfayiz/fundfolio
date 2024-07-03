@@ -40,27 +40,26 @@ export default function RootLayout() {
     "Poppins-Thin": require("../assets/fonts/Poppins-Thin.ttf"),
   });
 
+  const checkToken = async () => {
+    const token = await getToken();
+    if (token) {
+      const { data } = await getUser();
+      setUser(data);
+      setIsLogged(true);
+    }
+  };
+
   useEffect(() => {
     if (error) throw error;
   }, [error]);
 
   useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
-
-  useEffect(() => {
-    const checkToken = async () => {
-      const token = await getToken();
-      if (token) {
-        const { data } = await getUser();
-        setUser(data);
-        setIsLogged(true);
+    checkToken().then(() => {
+      if (loaded) {
+        SplashScreen.hideAsync();
       }
-    };
-    checkToken();
-  }, []);
+    });
+  }, [loaded]);
 
   if (!loaded && !error) {
     return null;

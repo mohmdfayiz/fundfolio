@@ -27,7 +27,6 @@ export default function SingIn() {
       setIsLogged(true);
       router.replace('/home');
     } catch (error) {
-      console.log(error)
       Toast.show({
         type: 'error',
         text1: 'Invalid credentials',

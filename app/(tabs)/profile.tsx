@@ -1,13 +1,17 @@
 import { useContext, useEffect, useState } from 'react';
-import { Image, Pressable, Text, View } from 'react-native';
+import { Alert, Image, Pressable, Text, View, Share } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Link, router } from 'expo-router';
+import Toast from 'react-native-toast-message';
+
+import { GlobalContext } from '@/context/GlobalContext';
 import TabTitle from '@/components/TabTitle';
 import EditProfileModal from '@/components/EditProfileModal';
-import { GlobalContext } from '@/context/GlobalContext';
+import profileImages from '@/constants/images';
+import { APP_LINK } from '@/constants/data';
 import { getAccountBalance } from '@/services/transaction';
-import profileImages from '../../constants/images';
+import { deleteUser } from '@/services/user';
 
 export default function ProfileScreen() {
 
@@ -26,10 +30,61 @@ export default function ProfileScreen() {
     setIsOpen((prev) => !prev);
   }
 
+  const handleShareApp = async () => {
+    try {
+      await Share.share({ message: APP_LINK });
+    } catch (error: any) {
+      Toast.show({
+        type: 'error',
+        text1: 'Oops! Something went wrong. Please try again.',
+        position: 'top',
+      })
+    }
+  }
+
   async function handleLogout() {
-    await removeToken();
-    setIsLogged(false);
-    router.push('/');
+    Alert.alert('Are you sure you want to log out?', '', [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'OK', onPress: async () => {
+          await removeToken();
+          setIsLogged(false);
+          router.replace('/');
+        }
+      },
+    ]);
+  }
+
+  async function handleDeleteAccount() {
+    try {
+      Alert.alert('Are you sure you want to delete your account?',
+        'This action cannot be undone.',
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+          },
+          {
+            text: 'OK',
+            onPress: async () => {
+              await deleteUser();
+              setIsLogged(false);
+              router.replace('/');
+            }
+          },
+        ]
+      );
+    } catch (error) {
+      console.error(error);
+      Toast.show({
+        type: 'error',
+        text1: 'Oops! Something went wrong. Please try again.',
+        position: 'top',
+      })
+    }
   }
 
   useEffect(() => {
@@ -85,17 +140,23 @@ export default function ProfileScreen() {
           </View>
 
           <View className='flex flex-row items-center justify-between p-2'>
-            <Text className='text-base font-psemibold'>Privacy Policy</Text>
+            <Link href={'/privacypolicy'} className='flex-1'>
+              <Text className='text-base font-psemibold'>Privacy Policy</Text>
+            </Link>
             <Text className='text-base font-psemibold'>{'>'}</Text>
           </View>
 
           <View className='flex flex-row items-center justify-between p-2'>
-            <Text className='text-base font-psemibold'>About Us</Text>
+            <Pressable onPress={handleShareApp} className='flex-1'>
+              <Text className='text-base font-psemibold'>Share App</Text>
+            </Pressable>
             <Text className='text-base font-psemibold'>{'>'}</Text>
           </View>
 
           <View className='flex flex-row items-center justify-between p-2'>
-            <Text className='text-base font-psemibold text-red'>Delete Account</Text>
+            <Pressable onPress={handleDeleteAccount} className='flex-1'>
+              <Text className='text-base font-psemibold text-red'>Delete Account</Text>
+            </Pressable>
             <Text className='text-base font-psemibold text-red'>{'>'}</Text>
           </View>
 

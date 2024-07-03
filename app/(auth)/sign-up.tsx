@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { router } from 'expo-router'
 import { View, Text, Pressable, TextInput } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import Toast from 'react-native-toast-message';
 import { useGlobalContext } from '@/context/GlobalContext';
 import { signup } from '@/services/auth'
 
@@ -11,13 +12,24 @@ export default function SignUp() {
   const { setUser, setToken } = useGlobalContext();
 
   const handleSignUp = async () => {
+    if (!userData.username || !userData.email || !userData.email.includes('@')) {
+      return Toast.show({
+        type: 'error',
+        text1: 'Please enter a valid username and email',
+        position: 'top',
+      })
+    }
     try {
       const { data } = await signup(userData.username, userData.email)
       await setToken(data.token)
       setUser(data.user)
       router.push('/password')
     } catch (error) {
-      console.log(error)
+      Toast.show({
+        type: 'error',
+        text1: 'Oops! Something went wrong. Please try again.',
+        position: 'top',
+      })
     }
   }
 

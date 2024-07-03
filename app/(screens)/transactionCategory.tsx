@@ -7,14 +7,8 @@ import TabTitle from "@/components/TabTitle";
 import CategoryModal from "@/components/CategoryModal";
 import { addTransactionCategory, getTransactionCategories, deleteTransactionCategory } from "@/services/transaction";
 import icons from "@/constants/icons";
-
-type Category = {
-    _id?: string;
-    name: string;
-    icon: string;
-    bgColour: string;
-    createdAt?: Date;
-}
+import images from "@/constants/images";
+import { Category } from "@/types";
 
 export default function TransactionCategory() {
 
@@ -27,9 +21,17 @@ export default function TransactionCategory() {
     }
 
     const addCategory = async (category: Category) => {
-        await addTransactionCategory(category).catch(err => console.log(err))
-        getCategories();
-        setShow(false);
+        try {
+            await addTransactionCategory(category)
+            getCategories();
+            setShow(false);
+        } catch (error) {
+            Toast.show({
+                type: 'error',
+                text1: 'Category could not be added',
+                position: 'top'
+            })
+        }
     }
 
     const deleteCategory = async (id: string | undefined) => {
@@ -55,27 +57,31 @@ export default function TransactionCategory() {
                 <View>
                     <TabTitle title='Category' icon='♻️' subTitle='Manage Categories!' />
                 </View>
-                <ScrollView className='my-4' showsVerticalScrollIndicator={false}>
-                    {categories.map((category) => (
-                        <View key={category._id} className='flex flex-row gap-2 items-center justify-between mb-3'>
-                            <View style={{ backgroundColor: category.bgColour }} className={`h-14 w-14 items-center justify-center rounded-xl`}>
-                                <Text className='text-2xl'>{category.icon}</Text>
-                            </View>
-                            <View className='flex-1'>
-                                <Text className='text-base font-psemibold'>{category.name}</Text>
-                                <Text className='text-base font-pregular'>{'Added on: ' + dateFormat(category?.createdAt, "mediumDate")}</Text>
-                            </View>
-                            <View className="flex flex-row">
-                                {/* <Pressable className='items-end py-4'>
-                                    <Text className='text-2xl'>📝</Text>
-                                </Pressable> */}
-                                <Pressable onPress={() => deleteCategory(category?._id)} className='items-end'>
-                                    <Image source={icons.trash} style={{ width: 24, height: 24 }} />
-                                </Pressable>
-                            </View>
+                {
+                    categories?.length ?
+                        <ScrollView className='my-4' showsVerticalScrollIndicator={false}>
+                            {categories.map((category) => (
+                                <View key={category._id} className='flex flex-row gap-2 items-center justify-between mb-3'>
+                                    <View style={{ backgroundColor: category.bgColour }} className={`h-14 w-14 items-center justify-center rounded-xl`}>
+                                        <Text className='text-2xl'>{category.icon}</Text>
+                                    </View>
+                                    <View className='flex-1'>
+                                        <Text className='text-base font-psemibold'>{category.name}</Text>
+                                        <Text className='text-base font-pregular'>{'Added on: ' + dateFormat(category?.createdAt, "mediumDate")}</Text>
+                                    </View>
+                                    <View className="flex flex-row">
+                                        <Pressable onPress={() => deleteCategory(category?._id)} className='items-end'>
+                                            <Image source={icons.trash} style={{ width: 24, height: 24 }} />
+                                        </Pressable>
+                                    </View>
+                                </View>
+                            ))}
+                        </ScrollView>
+                        :
+                        <View className='flex flex-1 items-center justify-center'>
+                            <Image source={images.noData} className='w-40 h-40' />
                         </View>
-                    ))}
-                </ScrollView>
+                }
                 <View>
                     <Pressable
                         className="border border-green bg-green/50 p-4 rounded-xl"

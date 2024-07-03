@@ -1,10 +1,5 @@
-import { View, Text } from 'react-native'
-
-type TabTitleProps = {
-    title: string
-    icon: string
-    subTitle: string
-}
+import { View, Text } from 'react-native';
+import { TabTitleProps } from '@/types';
 
 const TabTitle = ({title, icon, subTitle}: TabTitleProps) => {
     return (

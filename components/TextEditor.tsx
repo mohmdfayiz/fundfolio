@@ -1,19 +1,9 @@
 import { useState, useEffect } from 'react'
 import { View, Text, Modal, TextInput, Pressable } from 'react-native'
-import Toast from 'react-native-toast-message';
 import dateFormat from 'dateformat'
-import { deleteNote } from '@/services/note'
+import { Note } from '@/types'
 
-type Note = {
-    _id?: string;
-    title: string;
-    content: string;
-    pinned: boolean;
-    createdAt: Date;
-    updatedAt: Date;
-}
-
-const TextEditor = ({ note, isOpen, onClose }: { note: Note, isOpen: boolean, onClose: (newNote: Note) => void }) => {
+const TextEditor = ({ note, isOpen, mode, onClose }: { note: Note, isOpen: boolean, mode: string, onClose: (newNote: Note, mode: string) => void }) => {
 
     const [tempNote, setTempNote] = useState(note)
 
@@ -22,9 +12,8 @@ const TextEditor = ({ note, isOpen, onClose }: { note: Note, isOpen: boolean, on
     }
 
     const handleDelete = async (noteId: string | undefined) => {
-        if (!noteId) return
-        await deleteNote(noteId)
-        onClose({ ...tempNote, title: '', content: '' })
+        if (!noteId) return onClose(tempNote, '');
+        onClose({ ...tempNote, title: '', content: '' }, 'delete')
     }
 
     useEffect(() => {
@@ -34,7 +23,7 @@ const TextEditor = ({ note, isOpen, onClose }: { note: Note, isOpen: boolean, on
     return (
         <Modal
             visible={isOpen}
-            onRequestClose={() => onClose(tempNote)}
+            onRequestClose={() => onClose(tempNote, mode)}
             animationType="slide"
             presentationStyle="pageSheet"
         >
@@ -65,12 +54,12 @@ const TextEditor = ({ note, isOpen, onClose }: { note: Note, isOpen: boolean, on
                     onChangeText={(text) => handleUpdate('content', text)}
                 />
             </View>
-            <View className='flex flex-row items-center border-t border-slate-200 p-4'>
+            <View className='flex flex-row items-center border-t border-slate-200 px-4'>
                 <Text>Edited {dateFormat(tempNote.updatedAt, "h:MM tt, mmm dd")}</Text>
-                <Pressable className={`ml-auto ${tempNote.pinned && 'opacity-50'}`} onPress={() => handleUpdate('pinned', !tempNote.pinned)}>
+                <Pressable className={`ml-auto p-3 ${tempNote.pinned && 'opacity-50'}`} onPress={() => handleUpdate('pinned', !tempNote.pinned)}>
                     <Text className='text-center font-psemibold text-base'>📌</Text>
                 </Pressable>
-                <Pressable className='ml-6' onPress={() => handleDelete(tempNote?._id)}>
+                <Pressable className='ml-1 p-3' onPress={() => handleDelete(tempNote?._id)}>
                     <Text className='text-center font-psemibold text-base'>🗑️</Text>
                 </Pressable>
             </View>

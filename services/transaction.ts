@@ -26,6 +26,12 @@ export const getAccountBalance = async () =>
 export const addTransaction = async (transaction: any) =>
     axios.post("/transaction", transaction, await getHeaders());
 
+export const getTransactionsByDate = async (month: number, year: number) =>
+    axios.get(`/transaction/date/${month}/${year}`, await getHeaders());
+
+export const deleteTransactions = async (ids: string[]) =>
+    axios.post(`/transaction/delete`, { ids }, await getHeaders());
+
 export const getTransactionCategories = async () =>
     axios.get("/transaction/category", await getHeaders())
 

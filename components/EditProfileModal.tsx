@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { Modal, View, Pressable, Text, StyleSheet, Image, TextInput } from "react-native";
+
 import { useGlobalContext } from "@/context/GlobalContext";
 import profilePics from '@/constants/images';
+import { updateUser } from "@/services/user";
 
 const EditProfileModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) => {
 
@@ -18,8 +20,10 @@ const EditProfileModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () =>
         tempUser && setTempUser({ ...tempUser, profilePic });
     }
 
-    const handleSave = () => {
-        user && setUser({ ...user, ...tempUser });
+    const handleSave = async () => {
+        if (!user) return;
+        setUser({ ...user, ...tempUser });
+        await updateUser({ username: tempUser?.username, profilePic: tempUser?.profilePic });
         onClose();
     }
 

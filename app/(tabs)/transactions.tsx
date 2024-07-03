@@ -1,82 +1,145 @@
 import { useEffect, useState } from 'react';
-import { View, Text, SectionList, Pressable } from 'react-native';
+import { View, Text, SectionList, Pressable, TouchableOpacity, Image } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
 import { SafeAreaView } from "react-native-safe-area-context";
+import Toast from 'react-native-toast-message';
+import * as Haptics from 'expo-haptics';
+
 import Transaction from '@/components/Transaction';
 import TabTitle from '@/components/TabTitle';
 import TransactionModal from '@/components/TransactionModal';
 import { MONTHS } from '@/constants/data';
-import { getTransactions, addTransaction } from '@/services/transaction';
-
-type Transaction = {
-    _id: string;
-    amount: number;
-    category: {
-        name: string;
-        icon: string;
-        bgColour: string;
-    };
-    paymentMethod: string;
-    transactionType: string;
-    createdAt: Date;
-};
-
-type TransactionGroup = {
-    _id: { month: number, year: number };
-    totalAmount: number;
-    data: Transaction[];
-};
+import images from '@/constants/images';
+import { getTransactions, addTransaction, deleteTransactions } from '@/services/transaction';
+import { TransactionGroup } from '@/types';
 
 export default function TransactionScreen() {
     const [showModal, setShowModal] = useState(false);
     const [transactions, setTransactions] = useState<TransactionGroup[]>([]);
+    const [multipleSelection, setMultipleSelection] = useState(false);
+    const [selectedItems, setSelectedItems] = useState<string[]>([]);
 
     const isFocused = useIsFocused();
 
+    const enableMultipleSelection = (id: string) => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+        setMultipleSelection(true);
+        setSelectedItems([...selectedItems, id]);
+    };
+
+    const handleSelectItem = (id: string) => {
+        if (!multipleSelection) {
+            return;
+        } else if (selectedItems.includes(id) && selectedItems.length > 1) {
+            setSelectedItems((prev) => prev.filter((item) => item !== id));
+        } else if (selectedItems.includes(id) && selectedItems.length === 1) {
+            setMultipleSelection(false);
+            setSelectedItems([]);
+        } else {
+            setSelectedItems([...selectedItems, id]);
+        }
+    };
+
     const fetchTransactions = async () => {
-        const { data }: { data: TransactionGroup[] } = await getTransactions();
-        setTransactions(data);
+        try {
+            const { data }: { data: TransactionGroup[] } = await getTransactions();
+            setTransactions(data);
+        } catch (error) {
+            Toast.show({
+                type: 'error',
+                text1: 'Oops! Could not fetch transactions. Please try again.',
+            })
+        }
+    };
+
+    const handleDeleteTransactions = async () => {
+        try {
+            await deleteTransactions(selectedItems);
+
+            Toast.show({
+                type: 'success',
+                text1: 'Transactions deleted successfully.',
+            })
+
+            await fetchTransactions();
+            setMultipleSelection(false);
+            setSelectedItems([]);
+        } catch (error) {
+            Toast.show({
+                type: 'error',
+                text1: 'Transactions could not be deleted, please try again.',
+            })
+        }
     };
 
     const saveTransaction = async (transaction: any) => {
-        await addTransaction({ ...transaction, createdAt: new Date(transaction.createdAt).setTime(new Date().getTime()) });
-        await fetchTransactions();
-        setShowModal(false);
+        try {
+            await addTransaction({ ...transaction, createdAt: new Date(transaction.createdAt).setTime(new Date().getTime()) });
+            await fetchTransactions();
+        } catch (error) {
+            Toast.show({
+                type: 'error',
+                text1: 'Transaction could not be saved, please try again.',
+            })
+        } finally {
+            setShowModal(false);
+        }
     };
 
     useEffect(() => {
         isFocused && fetchTransactions();
+        setMultipleSelection(false);
+        setSelectedItems([]);
     }, [isFocused]);
 
     return (
         <SafeAreaView>
             <View className='flex h-full'>
-                <View className='p-4'>
+                <View className='px-4 pt-4 pb-3'>
                     <TabTitle title='Transactions' icon='💵' subTitle='Track your money!' />
                 </View>
                 <View className='flex-1'>
-                    <SectionList
-                        showsVerticalScrollIndicator={false}
-                        sections={transactions}
-                        renderSectionHeader={({ section: { _id, totalAmount } }) => (
-                            <View className='flex flex-row justify-between bg-gray-200 px-4 py-1 mb-3'>
-                                <Text className='text-lg font-pregular'>{MONTHS.at(_id.month - 1)} {_id.year}</Text>
-                                <Text className={`text-lg font-psemibold`}>₹ {totalAmount}</Text>
+                    {
+                        transactions.length ?
+                            <SectionList
+                                showsVerticalScrollIndicator={false}
+                                sections={transactions}
+                                renderSectionHeader={({ section: { _id, totalAmount } }) => (
+                                    <View className='flex flex-row justify-between bg-gray-200 px-4 py-1 my-1'>
+                                        <Text className='text-lg font-pregular'>{MONTHS.at(_id.month - 1)} {_id.year}</Text>
+                                        <Text className={`text-lg font-psemibold`}>₹ {totalAmount}</Text>
+                                    </View>
+                                )}
+                                renderItem={({ item }) => (
+                                    <TouchableOpacity
+                                        key={item._id}
+                                        className={`px-4 ${selectedItems.includes(item._id) ? 'bg-green/20' : ''}`}
+                                        onPress={() => handleSelectItem(item._id)}
+                                        onLongPress={() => enableMultipleSelection(item._id)}
+                                    >
+                                        <Transaction {...item} />
+                                    </TouchableOpacity>
+                                )}
+                            /> :
+                            <View className='flex flex-1 items-center justify-center'>
+                                <Image source={images.noData} className='w-40 h-40' />
                             </View>
-                        )}
-                        renderItem={({ item }) => (
-                            <View className='px-4'>
-                                <Transaction {...item} />
-                            </View>
-                        )}
-                    />
+                    }
                 </View>
-                <Pressable
-                    onPress={() => setShowModal(true)}
-                    className='absolute bottom-4 right-4 p-4 rounded-xl border border-slate-400 bg-black/30'
-                >
-                    <Text>➕</Text>
-                </Pressable>
+                {
+                    multipleSelection ?
+                        <Pressable
+                            onPress={() => handleDeleteTransactions()}
+                            className='absolute bottom-4 right-4 p-4 rounded-xl border border-slate-400 bg-black/60'
+                        >
+                            <Text>🗑️</Text>
+                        </Pressable> :
+                        <Pressable
+                            onPress={() => setShowModal(true)}
+                            className='absolute bottom-4 right-4 p-4 rounded-xl border border-slate-400 bg-black/30'
+                        >
+                            <Text>➕</Text>
+                        </Pressable>}
             </View>
             <TransactionModal isOpen={showModal} onClose={() => setShowModal(false)} onSave={saveTransaction} />
         </SafeAreaView>

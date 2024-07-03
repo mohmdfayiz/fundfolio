@@ -1,16 +1,8 @@
 import { View, Text } from 'react-native'
 import dateFormat from 'dateformat'
+import { Note as NoteType } from '@/types'
 
-type Note = {
-    _id?: string;
-    title: string;
-    content: string;
-    pinned: boolean;
-    createdAt: Date;
-    updatedAt: Date;
-}
-
-const Note = ({ title, pinned, createdAt }: Note) => {
+const Note = ({ title, pinned, createdAt }: NoteType) => {
     return (
         <View className={`p-4 border border-slate-400 mb-3 rounded-xl`}>
             <Text className='text-sm font-psemibold'>{title}</Text>

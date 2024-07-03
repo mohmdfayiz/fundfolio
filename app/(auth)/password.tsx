@@ -46,8 +46,8 @@ export default function SignUp() {
       </View>
       <View className='h-1/2 items-center justify-end px-8 gap-4'>
         <TextInput
+          secureTextEntry
           placeholder='Password'
-          keyboardType='default'
           className='w-full border border-slate-400 p-4 rounded-xl font-pregular '
           onChangeText={(text) => setEntry({ ...entry, password: text })}
         />

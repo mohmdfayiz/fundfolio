@@ -1,11 +1,5 @@
 import { createContext, useContext } from "react";
-
-type User = {
-  _id: string;
-  username: string;
-  email: string;
-  profilePic: string;
-}
+import { User } from "../types";
 
 interface GlobalContextProps {
   user: User | null;

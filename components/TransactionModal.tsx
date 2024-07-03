@@ -1,19 +1,14 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'expo-router';
 import { Text, View, Modal, Pressable, TextInput } from "react-native";
 import { Dropdown } from 'react-native-element-dropdown';
 import { DateTimePickerAndroid, DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import dateFormat from 'dateformat';
+
 import RadioButton from './RadioButton';
 import { PAYMENT_METHODS } from '@/constants/data';
 import { getTransactionCategories } from '@/services/transaction';
-
-type Category = {
-    _id: string;
-    name: string;
-    icon: string;
-    bgColour: string;
-    createdAt?: Date;
-}
+import { Category } from '@/types';
 
 const TransactionModal = ({ isOpen, onClose, onSave }: { isOpen: boolean, onClose: () => void, onSave: ({ amount, category, paymentMethod, transactionType, createdAt }: { amount: number, category: string, paymentMethod: string, transactionType: string, createdAt: Date }) => void }) => {
 
@@ -27,8 +22,12 @@ const TransactionModal = ({ isOpen, onClose, onSave }: { isOpen: boolean, onClos
     })
 
     const fetchTransactionCategories = async () => {
-        const { data } = await getTransactionCategories();
-        setTransactionCategories(data);
+        try {
+            const { data } = await getTransactionCategories();
+            setTransactionCategories(data);
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     const setTransactionType = (value: string) => {
@@ -77,7 +76,9 @@ const TransactionModal = ({ isOpen, onClose, onSave }: { isOpen: boolean, onClos
                             />
                         </View>
                         <View>
-                            <Text className='text-base font-pmedium mb-1'>Category</Text>
+                            <View className='flex flex-row items-center relative'>
+                                <Text className='text-base font-pmedium mb-1'>Category</Text>
+                            </View>
                             <Dropdown
                                 data={transactionCategories}
                                 style={{ borderColor: '#94a3b8', borderWidth: 1, borderRadius: 12, padding: 12 }}
@@ -86,10 +87,17 @@ const TransactionModal = ({ isOpen, onClose, onSave }: { isOpen: boolean, onClos
                                 inputSearchStyle={{ fontFamily: 'Poppins-Regular', fontSize: 16 }}
                                 maxHeight={300}
                                 placeholder={'Select Category'}
-                                onChange={item => { setTransaction({ ...transaction, category: item._id }) }}
+                                onChange={item => { setTransaction({ ...transaction, category: item._id! }) }}
                                 labelField={'name'}
                                 valueField={'name'}
                             />
+                            {
+                                transactionCategories.length === 0 && (
+                                    <View className='ml-1'>
+                                        <Link href={'/transactionCategory'} className='text-xs font-pregular text-red-400'>Add transaction categories on your account {'>>'}</Link>
+                                    </View>
+                                )
+                            }
                         </View>
                         <View>
                             <Text className='text-base font-pmedium mb-1'>Payment Method</Text>
