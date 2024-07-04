@@ -63,6 +63,9 @@ export default function TransactionCategory() {
                     <View className='flex flex-row items-center'>
                         <GestureHandlerRootView>
                             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                                <Pressable className={`border border-gray-400 rounded-xl mr-4 px-4 py-2`}>
+                                    <Text className='text-sm font-pregular text-center'>{date.year}</Text>
+                                </Pressable>
                                 {
                                     MONTHS.map((month, index) => (
                                         <Pressable

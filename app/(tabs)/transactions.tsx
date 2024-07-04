@@ -74,7 +74,16 @@ export default function TransactionScreen() {
 
     const saveTransaction = async (transaction: any) => {
         try {
-            await addTransaction({ ...transaction, createdAt: new Date(transaction.createdAt).setTime(new Date().getTime()) });
+            const now = new Date();
+            const originalDate = new Date(transaction.createdAt);
+            
+            // Reset the time while keeping the original date
+            originalDate.setHours(now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds());
+            
+            // Convert back to ISO string
+            const newCreatedAt = originalDate.toISOString();
+    
+            await addTransaction({ ...transaction, createdAt: newCreatedAt });
             await fetchTransactions();
         } catch (error) {
             Toast.show({
