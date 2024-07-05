@@ -17,7 +17,6 @@ export default function SignUp() {
       return Toast.show({
         type: 'error',
         text1: entry.password.length < 6 ? 'Password too short' : 'Passwords do not match',
-        position: 'top',
       })
     };
 
@@ -33,7 +32,6 @@ export default function SignUp() {
       Toast.show({
         type: 'error',
         text1: 'Oops, Something went wrong!',
-        position: 'top',
       })
     }
   }

@@ -4,9 +4,11 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import Toast from 'react-native-toast-message';
+
 import { GlobalContext } from '@/context/GlobalContext';
 import { getToken, setToken, removeToken } from '@/utils/token';
 import { getUser } from '@/services/user';
+import { User } from '@/types';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -15,13 +17,6 @@ export {
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
-
-type User = {
-  _id: string;
-  username: string;
-  email: string;
-  profilePic: string;
-}
 
 export default function RootLayout() {
 
@@ -43,9 +38,13 @@ export default function RootLayout() {
   const checkToken = async () => {
     const token = await getToken();
     if (token) {
-      const { data } = await getUser();
-      setUser(data);
-      setIsLogged(true);
+      try {
+        const { data } = await getUser();
+        setUser(data);
+        setIsLogged(true);
+      } catch (error) {
+        await removeToken();
+      }
     }
   };
 
@@ -73,8 +72,8 @@ export default function RootLayout() {
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="(screens)" options={{ headerShown: false }} />
       </Stack >
-      <StatusBar style="inverted" />
       <Toast />
+      <StatusBar style="inverted" />
     </GlobalContext.Provider >
   )
 }

@@ -6,6 +6,14 @@ type User = {
 }
 
 // ===== Transaction Types =====
+type Transaction = {
+    amount: number;
+    category: string;
+    paymentMethod: string;
+    transactionType: string;
+    createdAt: Date;
+}
+
 type TransactionDetails = {
     _id: string;
     amount: number;
@@ -56,4 +64,4 @@ type TabTitleProps = {
 }
 
 
-export { User, TransactionDetails, TransactionGroup, Stats, Category, Note, TabTitleProps }
+export { User, Transaction, TransactionDetails, TransactionGroup, Stats, Category, Note, TabTitleProps }

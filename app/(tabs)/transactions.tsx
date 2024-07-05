@@ -11,7 +11,7 @@ import TransactionModal from '@/components/TransactionModal';
 import { MONTHS } from '@/constants/data';
 import images from '@/constants/images';
 import { getTransactions, addTransaction, deleteTransactions } from '@/services/transaction';
-import { TransactionGroup } from '@/types';
+import { Transaction as TransactioProps, TransactionGroup } from '@/types';
 
 export default function TransactionScreen() {
     const [showModal, setShowModal] = useState(false);
@@ -20,6 +20,18 @@ export default function TransactionScreen() {
     const [selectedItems, setSelectedItems] = useState<string[]>([]);
 
     const isFocused = useIsFocused();
+
+    const fetchTransactions = async () => {
+        try {
+            const { data } = await getTransactions();
+            setTransactions(data);
+        } catch (error) {
+            Toast.show({
+                type: 'error',
+                text1: 'Oops! Could not fetch transactions. Please try again.',
+            })
+        }
+    };
 
     const enableMultipleSelection = (id: string) => {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
@@ -37,18 +49,6 @@ export default function TransactionScreen() {
             setSelectedItems([]);
         } else {
             setSelectedItems([...selectedItems, id]);
-        }
-    };
-
-    const fetchTransactions = async () => {
-        try {
-            const { data }: { data: TransactionGroup[] } = await getTransactions();
-            setTransactions(data);
-        } catch (error) {
-            Toast.show({
-                type: 'error',
-                text1: 'Oops! Could not fetch transactions. Please try again.',
-            })
         }
     };
 
@@ -72,17 +72,25 @@ export default function TransactionScreen() {
         }
     };
 
-    const saveTransaction = async (transaction: any) => {
+    const saveTransaction = async (transaction: TransactioProps) => {
+        if (!transaction.category || !transaction.paymentMethod || !transaction.transactionType) {
+            setShowModal(false);
+            return Toast.show({
+                type: 'error',
+                text1: 'Please fill all the fields.',
+                text2: !transaction.category ? "Add categories from your account menu, if you haven't already" : '',
+            })
+        }
         try {
             const now = new Date();
             const originalDate = new Date(transaction.createdAt);
-            
+
             // Reset the time while keeping the original date
             originalDate.setHours(now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds());
-            
+
             // Convert back to ISO string
             const newCreatedAt = originalDate.toISOString();
-    
+
             await addTransaction({ ...transaction, createdAt: newCreatedAt });
             await fetchTransactions();
         } catch (error) {

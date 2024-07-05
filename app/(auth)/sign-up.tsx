@@ -16,7 +16,6 @@ export default function SignUp() {
       return Toast.show({
         type: 'error',
         text1: 'Please enter a valid username and email',
-        position: 'top',
       })
     }
     try {
@@ -28,7 +27,6 @@ export default function SignUp() {
       Toast.show({
         type: 'error',
         text1: 'Oops! Something went wrong. Please try again.',
-        position: 'top',
       })
     }
   }

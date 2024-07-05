@@ -21,6 +21,12 @@ const TransactionModal = ({ isOpen, onClose, onSave }: { isOpen: boolean, onClos
         createdAt: new Date(),
     })
 
+    const handleSave = () => {
+        onSave(transaction);
+        setTransaction({ ...transaction, amount: 0, category: '', paymentMethod: '', transactionType: '' });
+        onClose();
+    }
+
     const fetchTransactionCategories = async () => {
         try {
             const { data } = await getTransactionCategories();
@@ -141,7 +147,7 @@ const TransactionModal = ({ isOpen, onClose, onSave }: { isOpen: boolean, onClos
                         <Pressable onPress={onClose} className='border flex-1 border-slate-400 p-4 rounded-xl' >
                             <Text className='text-center text-base font-psemibold'>Cancel</Text>
                         </Pressable>
-                        <Pressable onPress={() => onSave(transaction)} className='border border-green flex-1 bg-green/50 p-4 rounded-xl' >
+                        <Pressable onPress={handleSave} className='border border-green flex-1 bg-green/50 p-4 rounded-xl' >
                             <Text className='text-center text-base font-psemibold'>Add</Text>
                         </Pressable>
                     </View>

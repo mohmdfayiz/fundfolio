@@ -16,7 +16,6 @@ export default function SingIn() {
       return Toast.show({
         type: 'error',
         text1: 'Invalid credentials',
-        position: 'top',
       })
     }
 
@@ -30,7 +29,6 @@ export default function SingIn() {
       Toast.show({
         type: 'error',
         text1: 'Invalid credentials',
-        position: 'top',
       })
     }
   }

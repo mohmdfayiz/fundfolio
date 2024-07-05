@@ -37,7 +37,6 @@ export default function ProfileScreen() {
       Toast.show({
         type: 'error',
         text1: 'Oops! Something went wrong. Please try again.',
-        position: 'top',
       })
     }
   }
@@ -71,6 +70,7 @@ export default function ProfileScreen() {
             text: 'OK',
             onPress: async () => {
               await deleteUser();
+              await removeToken();
               setIsLogged(false);
               router.replace('/');
             }
@@ -82,7 +82,6 @@ export default function ProfileScreen() {
       Toast.show({
         type: 'error',
         text1: 'Oops! Something went wrong. Please try again.',
-        position: 'top',
       })
     }
   }

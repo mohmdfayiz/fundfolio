@@ -29,7 +29,6 @@ export default function TransactionCategory() {
             Toast.show({
                 type: 'error',
                 text1: 'Category could not be added',
-                position: 'top'
             })
         }
     }
