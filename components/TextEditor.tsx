@@ -54,7 +54,7 @@ const TextEditor = ({ note, isOpen, mode, onClose }: { note: Note, isOpen: boole
                     onChangeText={(text) => handleUpdate('content', text)}
                 />
             </View>
-            <View className='flex flex-row items-center border-t border-slate-200 px-4'>
+            <View className='flex flex-row items-center border-t bg-white border-slate-200 px-4'>
                 <Text>Edited {dateFormat(tempNote.updatedAt, "h:MM tt, mmm dd")}</Text>
                 <Pressable className={`ml-auto p-3 ${tempNote.pinned && 'opacity-50'}`} onPress={() => handleUpdate('pinned', !tempNote.pinned)}>
                     <Text className='text-center font-psemibold text-base'>📌</Text>
