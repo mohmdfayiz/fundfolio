@@ -10,7 +10,7 @@ import Transaction from '@/components/Transaction';
 import TabTitle from '@/components/TabTitle';
 import TransactionPieChart from '@/components/PieChart';
 import { MONTHS } from '@/constants/data';
-import images from '@/constants/images';
+import { noData } from '@/constants/images';
 import { getRecentTransactions, getTransactionStats } from '@/services/transaction';
 import { Stats } from '@/types';
 
@@ -27,15 +27,15 @@ const homeSubTitle = (today: Date) => {
 export default function HomeScreen() {
 
   const { user } = useGlobalContext();
-  const [stats, setStats] = useState<Stats>({ totalAmount: 0, income: 0.01, expense: -0.01 });
+  const [stats, setStats] = useState<Stats>({ totalAmount: 0, income: 0, expense: 0 });
   const [transactions, setTransactions] = useState([]);
   const isFocused = useIsFocused();
   const today = new Date();
 
   const fetchStats = async () => {
     const { data } = await getTransactionStats(today.getMonth() + 1, today.getFullYear());
-    setStats(data || stats);
-  }
+    setStats(data || { totalAmount: 0, income: 0, expense: 0 });
+  } 
 
   const fetchTransactions = async () => {
     const { data } = await getRecentTransactions();
@@ -79,7 +79,7 @@ export default function HomeScreen() {
               </GestureHandlerRootView>
               :
               <View className='flex flex-1 items-center justify-center'>
-                <Image source={images.noData} className='w-40 h-40' />
+                <Image source={noData} className='w-40 h-40' />
               </View>
           }
         </View>

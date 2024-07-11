@@ -9,7 +9,7 @@ import Transaction from '@/components/Transaction';
 import TabTitle from '@/components/TabTitle';
 import TransactionModal from '@/components/TransactionModal';
 import { MONTHS } from '@/constants/data';
-import images from '@/constants/images';
+import { noData } from '@/constants/images';
 import { getTransactions, addTransaction, deleteTransactions } from '@/services/transaction';
 import { Transaction as TransactioProps, TransactionGroup } from '@/types';
 
@@ -139,14 +139,14 @@ export default function TransactionScreen() {
                                 )}
                             /> :
                             <View className='flex flex-1 items-center justify-center'>
-                                <Image source={images.noData} className='w-40 h-40' />
+                                <Image source={noData} className='w-40 h-40' />
                             </View>
                     }
                 </View>
                 {
                     multipleSelection ?
                         <Pressable
-                            onPress={() => handleDeleteTransactions()}
+                            onPress={handleDeleteTransactions}
                             className='absolute bottom-4 right-4 p-4 rounded-xl border border-slate-400 bg-black/60'
                         >
                             <Text>🗑️</Text>

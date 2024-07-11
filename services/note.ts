@@ -23,5 +23,5 @@ export const updateNote = async (note: any) =>
 export const pinNote = async (id: string, action: string) =>
     axios.patch(`/note/${id}/${action}`, {}, await getHeaders())
 
-export const deleteNote = async (id: string) =>
-    axios.delete(`/note/${id}`, await getHeaders())
+export const deleteNote = async (ids: string[]) =>
+    axios.post(`/note/delete`, { ids }, await getHeaders())

@@ -38,5 +38,8 @@ export const getTransactionCategories = async () =>
 export const addTransactionCategory = async (category: any) =>
     axios.post("/transaction/category", category, await getHeaders());
 
+export const updateTransactionCategory = async (category: any) =>
+    axios.put(`/transaction/category/${category._id}`, category, await getHeaders());
+
 export const deleteTransactionCategory = async (id: string) =>
     axios.delete(`/transaction/category/${id}`, await getHeaders())

@@ -1,5 +1,5 @@
 
-const APP_LINK = 'https://drive.google.com/drive/folders/1lJAYbwqof9kNgeKTugp0xDV6Fwlzq6GH?usp=sharing';
+const APP_LINK = 'https://fundfolio.vercel.app/ \n\nHello👋, check out fundfolio!';
 
 const PAYMENT_METHODS = [
     {
@@ -28,7 +28,24 @@ const TRANSACTION_CATEGORY_COLOR_MAP = [
     '#c7d2fe',
 ]
 
-const SAMPLE_CATEGORY_LABELS = ['🍟', '🛺', '🛒']
+
+const SAMPLE_CATEGORIES = [
+    {
+        name: 'Food',
+        icon: '🍟',
+        bgColour: '#bbf7d0',
+    },
+    {
+        name: 'Transport',
+        icon: '🛺',
+        bgColour: '#fef08a',
+    },
+    {
+        name: 'Shopping',
+        icon: '🛒',
+        bgColour: '#c7d2fe',
+    },
+]
 
 const MONTHS = [
     'Jan',
@@ -49,6 +66,6 @@ export {
     APP_LINK,
     PAYMENT_METHODS,
     TRANSACTION_CATEGORY_COLOR_MAP,
-    SAMPLE_CATEGORY_LABELS,
+    SAMPLE_CATEGORIES,
     MONTHS
 }

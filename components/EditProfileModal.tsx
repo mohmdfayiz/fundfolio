@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Modal, View, Pressable, Text, StyleSheet, Image, TextInput } from "react-native";
 
 import { useGlobalContext } from "@/context/GlobalContext";
-import profilePics from '@/constants/images';
+import { man, woman } from '@/constants/images';
 import { updateUser } from "@/services/user";
 
 const EditProfileModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) => {
@@ -38,10 +38,10 @@ const EditProfileModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () =>
                 <View style={styles.container}>
                     <View className="flex flex-row gap-x-4 justify-center items-center">
                         <Pressable onPress={() => handleProfilePic('man')}>
-                            <Image source={profilePics.man} style={style(tempUser?.profilePic === 'man')} />
+                            <Image source={man} style={style(tempUser?.profilePic === 'man')} />
                         </Pressable>
                         <Pressable onPress={() => handleProfilePic('woman')}>
-                            <Image source={profilePics.woman} style={style(tempUser?.profilePic === 'woman')} />
+                            <Image source={woman} style={style(tempUser?.profilePic === 'woman')} />
                         </Pressable>
                     </View>
                     <View>

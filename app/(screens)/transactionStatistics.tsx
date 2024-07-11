@@ -9,7 +9,7 @@ import TransactionPieChart from "@/components/PieChart";
 import TabTitle from "@/components/TabTitle";
 import Transaction from "@/components/Transaction";
 import { MONTHS } from "@/constants/data";
-import images from "@/constants/images";
+import { noData } from "@/constants/images";
 import { getTransactionStats, getTransactionsByDate } from "@/services/transaction";
 import { TransactionDetails, Stats } from "@/types";
 
@@ -18,15 +18,15 @@ export default function TransactionCategory() {
     const isFocused = useIsFocused();
 
     const [date, setDate] = useState({ month: today.getMonth(), year: today.getFullYear() });
-    const [stats, setStats] = useState<Stats>({ totalAmount: 0, income: 0.01, expense: -0.01 });
+    const [stats, setStats] = useState<Stats>({ totalAmount: 0, income: 0, expense: 0 });
     const [transactions, setTransactions] = useState<TransactionDetails[]>([]);
 
     const fetchStats = async () => {
         try {
             const { data } = await getTransactionStats(date.month + 1, date.year);
-            setStats(data?.totalAmount ? data : { totalAmount: 0, income: 0.01, expense: -0.01 });
+            setStats(data?.totalAmount ? data : { totalAmount: 0, income: 0, expense: 0 });
         } catch (error) {
-            console.error(error);
+            // console.error(error);
         }
     }
 
@@ -35,7 +35,7 @@ export default function TransactionCategory() {
             const { data } = await getTransactionsByDate(date.month + 1, date.year);
             setTransactions(data?.transactions || []);
         } catch (error) {
-            console.error(error);
+            // console.error(error);
         }
     }
 
@@ -90,7 +90,7 @@ export default function TransactionCategory() {
                                 </ScrollView>
                                 :
                                 <View className='flex flex-1 items-center justify-center'>
-                                    <Image source={images.noData} className='w-40 h-40' />
+                                    <Image source={noData} className='w-40 h-40' />
                                 </View>
                         }
                     </GestureHandlerRootView>

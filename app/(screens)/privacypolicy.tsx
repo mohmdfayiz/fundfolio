@@ -27,7 +27,7 @@ export default function PrivacyPolicy() {
 
                             <Text className='text-base font-psemibold'>How We Use Your Information</Text>
                             <Text className='text-sm font-regular'>
-                                We use the information we collect to provide, maintain, and improve our services, to process your transactions, and to communicate with you.
+                                We use the information we collect to provide, maintain, and improve our services, and to communicate with you.
                             </Text>
 
                             <Text className='text-base font-psemibold'>Data Storage and Security</Text>

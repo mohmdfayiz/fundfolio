@@ -8,7 +8,7 @@ import Toast from 'react-native-toast-message';
 import { GlobalContext } from '@/context/GlobalContext';
 import TabTitle from '@/components/TabTitle';
 import EditProfileModal from '@/components/EditProfileModal';
-import profileImages from '@/constants/images';
+import { man, woman } from '@/constants/images';
 import { APP_LINK } from '@/constants/data';
 import { getAccountBalance } from '@/services/transaction';
 import { deleteUser } from '@/services/user';
@@ -78,7 +78,7 @@ export default function ProfileScreen() {
         ]
       );
     } catch (error) {
-      console.error(error);
+      // console.error(error);
       Toast.show({
         type: 'error',
         text1: 'Oops! Something went wrong. Please try again.',
@@ -100,7 +100,7 @@ export default function ProfileScreen() {
         <View className='flex flex-row items-center justify-start'>
           <View className='relative'>
             <Pressable onPress={handleEditProfileModal}>
-              <Image source={user?.profilePic === 'woman' ? profileImages.woman : profileImages.man} className='w-16 h-16 rounded-full' />
+              <Image source={user?.profilePic === 'woman' ? woman : man} className='w-16 h-16 rounded-full' />
               <Text className='absolute bottom-0 right-0 bg-black/50 rounded-full p-1 text-xs'>🖊️</Text>
             </Pressable>
           </View>

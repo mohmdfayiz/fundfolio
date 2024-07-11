@@ -3,6 +3,11 @@ import PieChart from 'react-native-pie-chart';
 import { Stats } from "@/types";
 
 const TransactionPieChart = ({ stats, month }: { stats: Stats, month: string }) => {
+
+    const pieChartData = (stats: Stats) => {
+        return stats.income === 0 && stats.expense === 0 ? [0.01, 0.01] : [stats.expense * -1, stats.income]
+    }
+
     return (
         <View className='flex flex-row items-center px-4 p-5 bg-gray-200 rounded-2xl border border-gray-300'>
             <View>
@@ -19,7 +24,7 @@ const TransactionPieChart = ({ stats, month }: { stats: Stats, month: string }) 
                         <View className="w-2 h-4 bg-red rounded-full mr-1"></View>
                         <Text className='text-lg font-plight'>Expense</Text>
                     </View>
-                    <Text className='text-xl font-psemibold'>₹{stats.expense * -1}</Text>
+                    <Text className='text-xl font-psemibold'>₹ {stats.expense * -1}</Text>
                 </View>
             </View>
 
@@ -29,7 +34,7 @@ const TransactionPieChart = ({ stats, month }: { stats: Stats, month: string }) 
                 </View>
                 <PieChart
                     widthAndHeight={130}
-                    series={[stats.expense * -1, stats.income]}
+                    series={pieChartData(stats)}
                     sliceColor={['#FA7070', '#A1C398']}
                     coverRadius={0.6}
                     coverFill={'transparent'}
