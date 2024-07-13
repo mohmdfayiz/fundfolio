@@ -21,7 +21,7 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.fundfolio",
-      "versionCode": 2
+      "versionCode": 3
     },
     "plugins": [
       "expo-router"

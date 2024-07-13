@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, Pressable, TextInput } from 'react-native'
+import { View, Text, TextInput, TouchableOpacity } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Redirect, router } from 'expo-router'
 import Toast from 'react-native-toast-message';
@@ -56,9 +56,10 @@ export default function SingIn() {
           className='w-full border border-slate-400 p-4 rounded-xl font-pregular'
           onChangeText={(text) => setCredentials({ ...credentials, password: text })}
         />
-        <Pressable onPress={handleSignIn} className='w-full border border-green bg-green/50 p-4 rounded-xl'>
-          <Text className='text-center font-psemibold text-base'>Sing In</Text>
-        </Pressable>
+        <TouchableOpacity onPress={handleSignIn} className='w-full border border-green bg-green/50 p-4 rounded-xl'>
+          <Text className='text-center font-psemibold text-base'>Sign In</Text>
+        </TouchableOpacity>
+        {/* <Text className='text-right font-pregular text-sm'>Forgot Password ?</Text> */}
       </View>
     </SafeAreaView>
   )

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { router } from 'expo-router'
-import { View, Text, Pressable, TextInput } from 'react-native'
+import { View, Text, TouchableOpacity, TextInput } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Toast from 'react-native-toast-message';
 import { useGlobalContext } from '@/context/GlobalContext';
@@ -50,9 +50,9 @@ export default function SignUp() {
           className='w-full border border-slate-400 p-4 rounded-xl font-pregular '
           onChangeText={(text) => setUserData({ ...userData, email: text })}
         />
-        <Pressable onPress={handleSignUp} className='w-full border border-green bg-green/50 p-4 rounded-xl'>
-          <Text className='text-center font-psemibold text-base'>Sing Up</Text>
-        </Pressable>
+        <TouchableOpacity onPress={handleSignUp} className='w-full border border-green bg-green/50 p-4 rounded-xl'>
+          <Text className='text-center font-psemibold text-base'>Sign Up</Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   )

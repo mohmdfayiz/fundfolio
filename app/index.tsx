@@ -17,10 +17,10 @@ export default function Welcome() {
       </View>
       <View className='h-1/2 items-center justify-end px-8 gap-4'>
         <Pressable onPress={() => router.push('/sign-in')} className='w-full border border-slate-400 p-4 rounded-xl'>
-          <Text className='text-center font-psemibold text-base'>Sing In</Text>
+          <Text className='text-center font-psemibold text-base'>Sign In</Text>
         </Pressable>
         <Pressable onPress={() => router.push('/sign-up')} className='w-full border border-green bg-green/50 p-4 rounded-xl'>
-          <Text className='text-center font-psemibold text-base'>Sing Up</Text>
+          <Text className='text-center font-psemibold text-base'>Sign Up</Text>
         </Pressable>
       </View>
     </SafeAreaView>

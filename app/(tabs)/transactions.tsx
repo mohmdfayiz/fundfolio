@@ -105,6 +105,7 @@ export default function TransactionScreen() {
 
     useEffect(() => {
         isFocused && fetchTransactions();
+        showModal && setShowModal(false);
         setMultipleSelection(false);
         setSelectedItems([]);
     }, [isFocused]);

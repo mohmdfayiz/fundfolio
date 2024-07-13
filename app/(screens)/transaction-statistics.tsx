@@ -13,7 +13,7 @@ import { noData } from "@/constants/images";
 import { getTransactionStats, getTransactionsByDate } from "@/services/transaction";
 import { TransactionDetails, Stats } from "@/types";
 
-export default function TransactionCategory() {
+export default function TransactionStatistics() {
     const today = new Date();
     const isFocused = useIsFocused();
 

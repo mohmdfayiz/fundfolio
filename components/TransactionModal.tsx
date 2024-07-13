@@ -100,7 +100,7 @@ const TransactionModal = ({ isOpen, onClose, onSave }: { isOpen: boolean, onClos
                             {
                                 transactionCategories.length === 0 && (
                                     <View className='ml-1'>
-                                        <Link href={'/transactionCategory'} className='text-xs font-pregular text-red-400'>Add transaction categories on your account {'>>'}</Link>
+                                        <Link href={'/transaction-category'} className='text-xs font-pregular text-red-400'>Add transaction categories on your account {'>>'}</Link>
                                     </View>
                                 )
                             }

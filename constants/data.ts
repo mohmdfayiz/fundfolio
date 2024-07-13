@@ -1,5 +1,5 @@
 
-const APP_LINK = 'https://fundfolio.vercel.app/ \n\nHello👋, check out fundfolio!';
+const APP_LINK = 'https://fundfolio.vercel.app/ \n\nCheck out fundfolio. \nManage your transactions and notes effortlessly!';
 
 const PAYMENT_METHODS = [
     {

@@ -4,13 +4,13 @@ const ScreenLayout = () => {
   return (
     <Stack>
       <Stack.Screen
-        name="transactionStatistics"
+        name="transaction-statistics"
         options={{
           headerShown: false,
         }}
       />
       <Stack.Screen
-        name="transactionCategory"
+        name="transaction-category"
         options={{
           headerShown: false,
         }}

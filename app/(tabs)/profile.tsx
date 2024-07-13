@@ -118,14 +118,14 @@ export default function ProfileScreen() {
         <View className='flex flex-col gap-y-4'>
 
           <View className='flex flex-row items-center justify-between p-2'>
-            <Link href={'/transactionStatistics'} className='flex-1'>
+            <Link href={'/transaction-statistics'} className='flex-1'>
               <Text className='text-base font-psemibold'>Transaction Statistics</Text>
             </Link>
             <Text className='text-base font-psemibold'>{'>'}</Text>
           </View>
 
           <View className='flex flex-row items-center justify-between p-2'>
-            <Link href={'/transactionCategory'} className='flex-1'>
+            <Link href={'/transaction-category'} className='flex-1'>
               <Text className='text-base font-psemibold'>Transaction Category</Text>
             </Link>
             <Text className='text-base font-psemibold'>{'>'}</Text>
