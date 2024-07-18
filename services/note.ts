@@ -1,27 +1,16 @@
 import axios from "./axios";
-import { getToken } from "@/utils/token";
-
-export const getHeaders = async () => {
-    const token = await getToken();
-    return {
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-        },
-    };
-};
 
 export const getNotes = async () =>
-    axios.get("/note", await getHeaders());
+    axios.get("/note");
 
 export const addNote = async (note: any) =>
-    axios.post("/note", note, await getHeaders())
+    axios.post("/note", note)
 
 export const updateNote = async (note: any) =>
-    axios.put(`/note/${note._id}`, note, await getHeaders())
+    axios.put(`/note/${note._id}`, note)
 
 export const pinNote = async (id: string, action: string) =>
-    axios.patch(`/note/${id}/${action}`, {}, await getHeaders())
+    axios.patch(`/note/${id}/${action}`, {})
 
 export const deleteNote = async (ids: string[]) =>
-    axios.post(`/note/delete`, { ids }, await getHeaders())
+    axios.post(`/note/delete`, { ids })

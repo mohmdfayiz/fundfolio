@@ -73,7 +73,7 @@ export default function TransactionScreen() {
     };
 
     const saveTransaction = async (transaction: TransactioProps) => {
-        if (!transaction.category || !transaction.paymentMethod || !transaction.transactionType) {
+        if ( !transaction.amount || !transaction.category || !transaction.paymentMethod || !transaction.transactionType) {
             setShowModal(false);
             return Toast.show({
                 type: 'error',

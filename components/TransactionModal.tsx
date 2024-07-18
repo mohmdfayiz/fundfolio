@@ -51,6 +51,7 @@ const TransactionModal = ({ isOpen, onClose, onSave }: { isOpen: boolean, onClos
             value: transaction.createdAt,
             onChange,
             mode: 'date',
+            maximumDate: new Date(2030, 11, 31),
         });
     };
 
@@ -99,8 +100,8 @@ const TransactionModal = ({ isOpen, onClose, onSave }: { isOpen: boolean, onClos
                             />
                             {
                                 transactionCategories.length === 0 && (
-                                    <View className='ml-1'>
-                                        <Link href={'/transaction-category'} className='text-xs font-pregular text-red-400'>Add transaction categories on your account {'>>'}</Link>
+                                    <View>
+                                        <Link href={'/transaction-category'} className='p-1 text-xs font-pregular text-orange-400 underline'>Add transaction categories on your account {'>>'}</Link>
                                     </View>
                                 )
                             }

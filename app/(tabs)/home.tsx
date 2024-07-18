@@ -17,7 +17,7 @@ import { Stats } from '@/types';
 const homeSubTitle = (today: Date) => {
   if (today.getHours() < 12) {
     return 'Good Morning!';
-  } else if (today.getHours() < 16) {
+  } else if (today.getHours() < 18) {
     return 'Good Afternoon!';
   } else {
     return 'Good Evening!';

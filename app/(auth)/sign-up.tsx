@@ -20,13 +20,15 @@ export default function SignUp() {
     }
     try {
       const { data } = await signup(userData.username, userData.email)
-      await setToken(data.token)
+      await setToken('accessToken', data.accessToken)
+      await setToken('refreshToken', data.refreshToken)
       setUser(data.user)
       router.push('/password')
-    } catch (error) {
+    } catch (error: any) {
       Toast.show({
         type: 'error',
-        text1: 'Oops! Something went wrong. Please try again.',
+        text1: 'Oops! Something went wrong!',
+        text2: 'Make sure you havent already signed up with this email.',
       })
     }
   }

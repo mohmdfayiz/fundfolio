@@ -5,8 +5,10 @@ import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import Toast from 'react-native-toast-message';
 
+import AppLock from '@/components/AppLock';
 import { GlobalContext } from '@/context/GlobalContext';
 import { getToken, setToken, removeToken } from '@/utils/token';
+import { getAppLockPreference, setAppLockPreference } from '@/utils/helpers';
 import { getUser } from '@/services/user';
 import { User } from '@/types';
 
@@ -22,6 +24,7 @@ export default function RootLayout() {
 
   const [isLogged, setIsLogged] = useState(false);
   const [user, setUser] = useState<User | null>(null);
+  const [useAppLock, setUseAppLock] = useState(false);
 
   const [loaded, error] = useFonts({
     "Poppins-Black": require("../assets/fonts/Poppins-Black.ttf"),
@@ -35,15 +38,17 @@ export default function RootLayout() {
     "Poppins-Thin": require("../assets/fonts/Poppins-Thin.ttf"),
   });
 
-  const checkToken = async () => {
-    const token = await getToken();
+  const checkAuth = async () => {
+    const token = await getToken('refreshToken');
     if (token) {
       try {
         const { data } = await getUser();
         setUser(data);
         setIsLogged(true);
+        const appLockPreference = await getAppLockPreference();
+        setUseAppLock(appLockPreference);
       } catch (error) {
-        await removeToken();
+        await setAppLockPreference(false);
       }
     }
   };
@@ -53,7 +58,7 @@ export default function RootLayout() {
   }, [error]);
 
   useEffect(() => {
-    checkToken().then(() => {
+    checkAuth().then(() => {
       if (loaded) {
         SplashScreen.hideAsync();
       }
@@ -65,13 +70,15 @@ export default function RootLayout() {
   }
 
   return (
-    <GlobalContext.Provider value={{ user, setUser, isLogged, setIsLogged, setToken, removeToken }}>
-      <Stack>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="(screens)" options={{ headerShown: false }} />
-      </Stack >
+    <GlobalContext.Provider value={{ user, setUser, isLogged, setIsLogged, setToken, removeToken, useAppLock, setUseAppLock }}>
+      <AppLock>
+        <Stack>
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="(screens)" options={{ headerShown: false }} />
+        </Stack >
+      </AppLock>
       <Toast />
       <StatusBar style="inverted" />
     </GlobalContext.Provider >

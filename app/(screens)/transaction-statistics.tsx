@@ -4,11 +4,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { ScrollView } from "react-native-gesture-handler";
 import { useIsFocused } from "@react-navigation/native";
+import YearPicker from "@/components/YearPicker";
 
 import TransactionPieChart from "@/components/PieChart";
 import TabTitle from "@/components/TabTitle";
 import Transaction from "@/components/Transaction";
-import { MONTHS } from "@/constants/data";
+import { MONTHS, YEARS } from "@/constants/data";
 import { noData } from "@/constants/images";
 import { getTransactionStats, getTransactionsByDate } from "@/services/transaction";
 import { TransactionDetails, Stats } from "@/types";
@@ -20,6 +21,7 @@ export default function TransactionStatistics() {
     const [date, setDate] = useState({ month: today.getMonth(), year: today.getFullYear() });
     const [stats, setStats] = useState<Stats>({ totalAmount: 0, income: 0, expense: 0 });
     const [transactions, setTransactions] = useState<TransactionDetails[]>([]);
+    const [isYearPickerVisible, setIsYearPickerVisible] = useState(false);
 
     const fetchStats = async () => {
         try {
@@ -63,9 +65,15 @@ export default function TransactionStatistics() {
                     <View className='flex flex-row items-center'>
                         <GestureHandlerRootView>
                             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                                <Pressable className={`border border-gray-400 rounded-xl mr-4 px-4 py-2`}>
+                                <Pressable onPress={() => setIsYearPickerVisible(true)} className={`border border-gray-400 rounded-xl mr-4 px-4 py-2`}>
                                     <Text className='text-sm font-pregular text-center'>{date.year}</Text>
                                 </Pressable>
+                                <YearPicker
+                                    years={YEARS}
+                                    isVisible={isYearPickerVisible}
+                                    onSelectYear={(year) => setDate({ month: date.month, year })}
+                                    onClose={() => { setIsYearPickerVisible(false) }}
+                                />
                                 {
                                     MONTHS.map((month, index) => (
                                         <Pressable

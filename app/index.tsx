@@ -1,12 +1,10 @@
-import { useContext } from 'react';
 import { View, Text, Pressable } from 'react-native'
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Redirect, router } from 'expo-router';
-import { GlobalContext } from '@/context/GlobalContext';
+import { useGlobalContext } from '@/context/GlobalContext';
 
 export default function Welcome() {
-
-  const { isLogged } = useContext(GlobalContext);
+  const { isLogged } = useGlobalContext();
   if (isLogged) return <Redirect href="/home" />;
 
   return (

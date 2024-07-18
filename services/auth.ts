@@ -1,21 +1,13 @@
 import axios from "./axios";
-import { getToken } from "@/utils/token";
-
-export const getHeaders = async () => {
-    const token = await getToken();
-    return {
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-        },
-    };
-};
 
 export const signin = async (email: string, password: string) =>
-    axios.post("/auth/signin", { email, password }, await getHeaders());
+    axios.post("/auth/signin", { email, password });
 
 export const signup = async (username: string, email: string) =>
-    axios.post("/auth/signup", { username, email }, await getHeaders());
+    axios.post("/auth/signup", { username, email });
 
 export const setPassword = async (password: string) =>
-    axios.post("/auth/password", { password }, await getHeaders())
+    axios.post("/auth/password", { password })
+
+export const logout = async (data: any) =>
+    axios.post("/auth/logout", data)

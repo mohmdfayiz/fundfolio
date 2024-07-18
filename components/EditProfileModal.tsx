@@ -81,21 +81,4 @@ const styles = StyleSheet.create({
         padding: 20,
         gap: 20
     },
-    common: {
-        borderRadius: 16,
-        borderWidth: 1,
-        borderColor: '#cbd5e1',
-        alignItems: 'center',
-        justifyContent: 'center',
-        textAlign: 'center',
-    },
-    textInput: {
-        height: 80,
-        width: 80,
-        fontSize: 28,
-    },
-    colorPicker: {
-        height: 48,
-        width: 48,
-    },
 });

@@ -62,10 +62,50 @@ const MONTHS = [
     'Dec',
 ]
 
+const YEARS = [2020, 2021, 2022, 2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030]
+
+const CURRENCIES = [
+    {
+        id: 0,
+        name: 'INR',
+        symbol: '₹',
+    },
+    {
+        id: 1,
+        name: 'USD',
+        symbol: '$',
+    },
+    {
+        id: 2,
+        name: 'EUR',
+        symbol: '€',
+    },
+    {
+        id: 3,
+        name: 'GBP',
+        symbol: '£',
+    },
+    {
+        id: 4,
+        name: 'JPY',
+        symbol: '¥',
+    },
+]
+
+const APP_LOCK_ENUM = {
+    NOT_ENROLLED: 'NOT_ENROLLED',
+    NOT_AVAILABLE: 'NOT_AVAILABLE',
+    NOT_AUTHENTICATED: 'NOT_AUTHENTICATED',
+    AUTHENTICATED: 'AUTHENTICATED',
+}
+
 export {
     APP_LINK,
     PAYMENT_METHODS,
     TRANSACTION_CATEGORY_COLOR_MAP,
     SAMPLE_CATEGORIES,
-    MONTHS
+    MONTHS,
+    YEARS,
+    CURRENCIES,
+    APP_LOCK_ENUM,
 }

@@ -9,7 +9,7 @@ import { signin } from '@/services/auth';
 export default function SingIn() {
 
   const [credentials, setCredentials] = useState({ email: '', password: '' });
-  const { setUser, isLogged, setIsLogged, setToken } = useGlobalContext();
+  const { setUser, setIsLogged, setToken } = useGlobalContext();
 
   async function handleSignIn() {
     if (!credentials.email || credentials.password.length < 6) {
@@ -20,9 +20,10 @@ export default function SingIn() {
     }
 
     try {
-      const response = await signin(credentials.email, credentials.password)
-      await setToken(response?.data.token);
-      setUser(response?.data.user);
+      const { data } = await signin(credentials.email, credentials.password)
+      await setToken('accessToken', data.accessToken)
+      await setToken('refreshToken', data.refreshToken)
+      setUser(data.user);
       setIsLogged(true);
       router.replace('/home');
     } catch (error) {
@@ -31,10 +32,6 @@ export default function SingIn() {
         text1: 'Invalid credentials',
       })
     }
-  }
-
-  if (isLogged) {
-    return <Redirect href='/home' />
   }
 
   return (
