@@ -8,7 +8,8 @@ import Toast from 'react-native-toast-message';
 import AppLock from '@/components/AppLock';
 import { GlobalContext } from '@/context/GlobalContext';
 import { getToken, setToken, removeToken } from '@/utils/token';
-import { getAppLockPreference, setAppLockPreference } from '@/utils/helpers';
+import { authenticateAppLock, getAppLockPreference, setAppLockPreference } from '@/utils/helpers';
+import { APP_LOCK_ENUM } from '@/constants/data';
 import { getUser } from '@/services/user';
 import { User } from '@/types';
 
@@ -25,6 +26,7 @@ export default function RootLayout() {
   const [isLogged, setIsLogged] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [useAppLock, setUseAppLock] = useState(false);
+  const [isAppLockAuthenticated, setIsAppLockAuthenticated] = useState(false);
 
   const [loaded, error] = useFonts({
     "Poppins-Black": require("../assets/fonts/Poppins-Black.ttf"),
@@ -40,16 +42,25 @@ export default function RootLayout() {
 
   const checkAuth = async () => {
     const token = await getToken('refreshToken');
-    if (token) {
+    if (!isLogged && token) {
       try {
         const { data } = await getUser();
         setUser(data);
         setIsLogged(true);
-        const appLockPreference = await getAppLockPreference();
-        setUseAppLock(appLockPreference);
       } catch (error) {
         await setAppLockPreference(false);
       }
+    }
+  };
+
+  const checkAppLock = async () => {
+    const appLockPreference = await getAppLockPreference();
+    setUseAppLock(appLockPreference);
+    if (appLockPreference) {
+      const result = await authenticateAppLock();
+      setIsAppLockAuthenticated(result === APP_LOCK_ENUM.AUTHENTICATED);
+    } else {
+      setIsAppLockAuthenticated(true);
     }
   };
 
@@ -58,27 +69,35 @@ export default function RootLayout() {
   }, [error]);
 
   useEffect(() => {
-    checkAuth().then(() => {
+    const initialize = async () => {
+      await checkAuth();
+      await checkAppLock();
       if (loaded) {
         SplashScreen.hideAsync();
       }
-    });
+    };
+
+    initialize();
   }, [loaded]);
 
   if (!loaded && !error) {
     return null;
   }
 
+  if (useAppLock && !isAppLockAuthenticated) {
+    return (
+      <AppLock onAuthenticate={() => setIsAppLockAuthenticated(true)} />
+    );
+  }
+
   return (
     <GlobalContext.Provider value={{ user, setUser, isLogged, setIsLogged, setToken, removeToken, useAppLock, setUseAppLock }}>
-      <AppLock>
-        <Stack>
-          <Stack.Screen name="index" options={{ headerShown: false }} />
-          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="(screens)" options={{ headerShown: false }} />
-        </Stack >
-      </AppLock>
+      <Stack>
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="(screens)" options={{ headerShown: false }} />
+      </Stack >
       <Toast />
       <StatusBar style="inverted" />
     </GlobalContext.Provider >
