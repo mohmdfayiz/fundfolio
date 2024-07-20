@@ -1,6 +1,6 @@
 import axios from "axios";
-import { getToken, removeToken, setToken } from "@/utils/token";
-import { globalLogout } from "@/components/AppLock";
+import { getToken, setToken } from "@/utils/token";
+import { globalLogout } from "@/utils/authUtils";
 
 const env = process.env.EXPO_PUBLIC_NODE_ENV
 const development = process.env.EXPO_PUBLIC_DEV_URL
@@ -30,7 +30,7 @@ axiosInstance.interceptors.response.use(
       return Promise.reject(error);
     }
 
-     // Handle 401 errors and retry with refreshed token
+    // Handle 401 errors and retry with refreshed token
     if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
@@ -42,7 +42,7 @@ axiosInstance.interceptors.response.use(
 
         const { data } = await axios.post(`${env === "development" ? development : production}/auth/refresh-token`, { refreshToken });
         const newAccessToken = data.accessToken;
-        
+
         await setToken('accessToken', newAccessToken);
         if (data.refreshToken) {
           await setToken('refreshToken', data.refreshToken);
@@ -61,9 +61,7 @@ axiosInstance.interceptors.response.use(
         } catch (logoutError) {
           console.error('Logout failed:', logoutError);
         } finally {
-          await removeToken('accessToken');
-          await removeToken('refreshToken');
-          globalLogout();
+          await globalLogout();
         }
       }
     }

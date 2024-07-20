@@ -8,7 +8,8 @@ import Toast from 'react-native-toast-message';
 import AppLock from '@/components/AppLock';
 import { GlobalContext } from '@/context/GlobalContext';
 import { getToken, setToken, removeToken } from '@/utils/token';
-import { authenticateAppLock, getAppLockPreference, setAppLockPreference } from '@/utils/helpers';
+import { authenticateAppLock, getAppLockPreference } from '@/utils/helpers';
+import { initializeGlobalAuthFunctions } from '@/utils/authUtils';
 import { APP_LOCK_ENUM } from '@/constants/data';
 import { getUser } from '@/services/user';
 import { User } from '@/types';
@@ -48,7 +49,7 @@ export default function RootLayout() {
         setUser(data);
         setIsLogged(true);
       } catch (error) {
-        await setAppLockPreference(false);
+        // console.log('failed to get user', error);
       }
     }
   };
@@ -56,7 +57,7 @@ export default function RootLayout() {
   const checkAppLock = async () => {
     const appLockPreference = await getAppLockPreference();
     setUseAppLock(appLockPreference);
-    if (appLockPreference) {
+    if (appLockPreference && isLogged) {
       const result = await authenticateAppLock();
       setIsAppLockAuthenticated(result === APP_LOCK_ENUM.AUTHENTICATED);
     } else {
@@ -67,6 +68,10 @@ export default function RootLayout() {
   useEffect(() => {
     if (error) throw error;
   }, [error]);
+
+  useEffect(() => {
+    initializeGlobalAuthFunctions(setIsLogged, setUseAppLock);
+  }, []);
 
   useEffect(() => {
     const initialize = async () => {

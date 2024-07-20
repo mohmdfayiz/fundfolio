@@ -1,9 +1,6 @@
 import { View, Text, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Toast from 'react-native-toast-message';
-import { router } from 'expo-router';
 
-import { useGlobalContext } from '@/context/GlobalContext';
 import { authenticateAppLock } from '@/utils/helpers';
 import { APP_LOCK_ENUM } from '@/constants/data';
 
@@ -11,11 +8,7 @@ interface AppLockProps {
   onAuthenticate: () => void;
 }
 
-let globalLogout: () => void = () => { };
-
 export default function AppLock({ onAuthenticate }: AppLockProps) {
-
-  const { setIsLogged, setUseAppLock } = useGlobalContext();
 
   const handleRetry = async () => {
     const result = await authenticateAppLock();
@@ -23,18 +16,6 @@ export default function AppLock({ onAuthenticate }: AppLockProps) {
       onAuthenticate();
     }
   };
-
-  const logout = () => {
-    setUseAppLock(false);
-    setIsLogged(false);
-    router.replace('/sign-in');
-    Toast.show({
-      type: 'info',
-      text1: 'Session Expired, Please Login Again.',
-    })
-  };
-
-  globalLogout = logout;
 
   return (
     <SafeAreaView className='h-full'>
@@ -50,5 +31,3 @@ export default function AppLock({ onAuthenticate }: AppLockProps) {
     </SafeAreaView>
   );
 }
-
-export { globalLogout };

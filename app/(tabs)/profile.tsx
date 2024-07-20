@@ -2,8 +2,8 @@ import { useContext, useEffect, useState } from 'react';
 import { Alert, Image, Pressable, Text, View, Share } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Link, router } from 'expo-router';
 import Toast from 'react-native-toast-message';
+import { Link } from 'expo-router';
 
 import { GlobalContext } from '@/context/GlobalContext';
 import TabTitle from '@/components/TabTitle';
@@ -11,6 +11,7 @@ import EditProfileModal from '@/components/EditProfileModal';
 import { man, woman } from '@/constants/images';
 import { APP_LINK, APP_LOCK_ENUM } from '@/constants/data';
 import { getToken } from '@/utils/token';
+import { globalLogout } from '@/utils/authUtils';
 import { authenticateAppLock, setAppLockPreference } from '@/utils/helpers';
 import { getAccountBalance } from '@/services/transaction';
 import { deleteUser } from '@/services/user';
@@ -18,7 +19,7 @@ import { logout } from '@/services/auth';
 
 export default function ProfileScreen() {
 
-  const { user, setIsLogged, removeToken, useAppLock, setUseAppLock } = useContext(GlobalContext);
+  const { user, useAppLock, setUseAppLock } = useContext(GlobalContext);
   const [accountBalance, setAccountBalance] = useState(0.00);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -72,7 +73,7 @@ export default function ProfileScreen() {
           },
           {
             text: 'OK', onPress: async () => {
-              const result = await authenticateAppLock();
+              const result = await authenticateAppLock(true);
               if (result === APP_LOCK_ENUM.AUTHENTICATED) {
                 await setAppLockPreference(true);
                 setUseAppLock(true);
@@ -80,17 +81,6 @@ export default function ProfileScreen() {
                   type: 'success',
                   text1: 'App Lock Activated.',
                   text2: 'Your fundfolio app is now protected by App Lock.',
-                })
-              } else if (result === APP_LOCK_ENUM.NOT_AVAILABLE) {
-                Toast.show({
-                  type: 'error',
-                  text1: 'App Lock is not available on this device.',
-                })
-              } else if (result === APP_LOCK_ENUM.NOT_ENROLLED) {
-                Toast.show({
-                  type: 'error',
-                  text1: "App Lock hasn't been enrolled on this device.",
-                  text2: 'Please set up biometric authentication on your device.',
                 })
               }
             }
@@ -106,11 +96,7 @@ export default function ProfileScreen() {
     } catch (error) {
       console.error(error);
     } finally {
-      await removeToken('accessToken');
-      await removeToken('refreshToken');
-      await setAppLockPreference(false);
-      setIsLogged(false);
-      router.replace('/');
+      await globalLogout('MANUAL_LOGOUT');
     }
   }
 
@@ -131,7 +117,7 @@ export default function ProfileScreen() {
   async function handleDeleteAccount() {
     try {
       Alert.alert('Are you sure you want to delete your account?',
-        'This action cannot be undone.',
+        'All data will be permanently deleted and cannot be reversed.',
         [
           {
             text: 'Cancel',
