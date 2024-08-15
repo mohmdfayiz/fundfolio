@@ -43,7 +43,7 @@ export default function RootLayout() {
 
   const checkAuth = async () => {
     const token = await getToken('refreshToken');
-    if (!isLogged && token) {
+    if (!loaded && !isLogged && token) {
       try {
         const { data } = await getUser();
         setUser(data);
@@ -57,7 +57,7 @@ export default function RootLayout() {
   const checkAppLock = async () => {
     const appLockPreference = await getAppLockPreference();
     setUseAppLock(appLockPreference);
-    if (appLockPreference && isLogged) {
+    if (appLockPreference) {
       const result = await authenticateAppLock();
       setIsAppLockAuthenticated(result === APP_LOCK_ENUM.AUTHENTICATED);
     } else {
@@ -78,7 +78,7 @@ export default function RootLayout() {
       await checkAuth();
       await checkAppLock();
       if (loaded) {
-        SplashScreen.hideAsync();
+        setTimeout(() => SplashScreen.hideAsync(), 1500);
       }
     };
 
