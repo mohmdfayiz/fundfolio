@@ -103,6 +103,7 @@ const NotesScreen = () => {
                             <FlatList
                                 data={notes}
                                 showsVerticalScrollIndicator={false}
+                                ListFooterComponent={() => (<View className='h-16' />)}
                                 renderItem={({ item }) => (
                                     <TouchableOpacity
                                         onPress={() => handleClick('edit', item)}

@@ -7,10 +7,12 @@ type User = {
 
 // ===== Transaction Types =====
 type Transaction = {
+    _id?: string;
     amount: number;
     category: string;
     paymentMethod: string;
     transactionType: string;
+    description?: string;
     createdAt: Date;
 }
 
@@ -18,12 +20,14 @@ type TransactionDetails = {
     _id: string;
     amount: number;
     category: {
+        _id: string;
         name: string;
         icon: string;
         bgColour: string;
     };
     paymentMethod: string;
     transactionType: string;
+    description?: string;
     createdAt: Date;
 }
 type TransactionGroup = {

@@ -15,6 +15,9 @@ export const getAccountBalance = async () =>
 export const addTransaction = async (transaction: any) =>
     axios.post("/transaction", transaction);
 
+export const updateTransaction = async (transaction: any) =>
+    axios.put(`/transaction/${transaction._id}`, transaction);
+
 export const getTransactionsByDate = async (month: number, year: number) =>
     axios.get(`/transaction/date/${month}/${year}`);
 

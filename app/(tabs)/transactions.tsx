@@ -10,12 +10,13 @@ import TabTitle from '@/components/TabTitle';
 import TransactionModal from '@/components/TransactionModal';
 import { MONTHS } from '@/constants/data';
 import { noData } from '@/constants/images';
-import { getTransactions, addTransaction, deleteTransactions } from '@/services/transaction';
+import { getTransactions, addTransaction, deleteTransactions, updateTransaction } from '@/services/transaction';
 import { Transaction as TransactioProps, TransactionGroup } from '@/types';
 
 export default function TransactionScreen() {
     const [showModal, setShowModal] = useState(false);
     const [transactions, setTransactions] = useState<TransactionGroup[]>([]);
+    const [transaction, setTransaction] = useState({ amount: 0, category: '', paymentMethod: '', description: '', transactionType: '', createdAt: new Date() });
     const [multipleSelection, setMultipleSelection] = useState(false);
     const [selectedItems, setSelectedItems] = useState<string[]>([]);
 
@@ -39,16 +40,17 @@ export default function TransactionScreen() {
         setSelectedItems([...selectedItems, id]);
     };
 
-    const handleSelectItem = (id: string) => {
+    const handleSelectItem = (transaction: TransactioProps) => {
         if (!multipleSelection) {
-            return;
-        } else if (selectedItems.includes(id) && selectedItems.length > 1) {
-            setSelectedItems((prev) => prev.filter((item) => item !== id));
-        } else if (selectedItems.includes(id) && selectedItems.length === 1) {
+            setTransaction({ description: '', ...transaction });
+            setShowModal(true);
+        } else if (selectedItems.includes(transaction._id!) && selectedItems.length > 1) {
+            setSelectedItems((prev) => prev.filter((item) => item !== transaction._id));
+        } else if (selectedItems.includes(transaction._id!) && selectedItems.length === 1) {
             setMultipleSelection(false);
             setSelectedItems([]);
         } else {
-            setSelectedItems([...selectedItems, id]);
+            setSelectedItems([...selectedItems, transaction._id!]);
         }
     };
 
@@ -73,7 +75,7 @@ export default function TransactionScreen() {
     };
 
     const saveTransaction = async (transaction: TransactioProps) => {
-        if ( !transaction.amount || !transaction.category || !transaction.paymentMethod || !transaction.transactionType) {
+        if (!transaction.amount || !transaction.category || !transaction.paymentMethod || !transaction.transactionType) {
             setShowModal(false);
             return Toast.show({
                 type: 'error',
@@ -82,16 +84,20 @@ export default function TransactionScreen() {
             })
         }
         try {
+            
             const now = new Date();
             const originalDate = new Date(transaction.createdAt);
-
             // Reset the time while keeping the original date
             originalDate.setHours(now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds());
-
             // Convert back to ISO string
             const newCreatedAt = originalDate.toISOString();
+            
+            const isEditing = transaction._id !== undefined;
 
-            await addTransaction({ ...transaction, createdAt: newCreatedAt });
+            isEditing
+                ? await updateTransaction({ ...transaction, createdAt: newCreatedAt })
+                : await addTransaction({ ...transaction, createdAt: newCreatedAt });
+
             await fetchTransactions();
         } catch (error) {
             Toast.show({
@@ -100,7 +106,13 @@ export default function TransactionScreen() {
             })
         } finally {
             setShowModal(false);
+            setTransaction({ amount: 0, category: '', paymentMethod: '', description: '', transactionType: '', createdAt: new Date() });
         }
+    };
+
+    const handleCloseModal = () => {
+        setShowModal(false);
+        setTransaction({ amount: 0, category: '', paymentMethod: '', description: '', transactionType: '', createdAt: new Date() });
     };
 
     useEffect(() => {
@@ -128,11 +140,12 @@ export default function TransactionScreen() {
                                         <Text className={`text-lg font-psemibold`}>₹ {totalAmount}</Text>
                                     </View>
                                 )}
+                                ListFooterComponent={() => (<View className='h-16' />)}
                                 renderItem={({ item }) => (
                                     <TouchableOpacity
                                         key={item._id}
                                         className={`px-4 ${selectedItems.includes(item._id) ? 'bg-green/20' : ''}`}
-                                        onPress={() => handleSelectItem(item._id)}
+                                        onPress={() => handleSelectItem({ ...item, category: item.category.name, amount: item.transactionType === 'Expense' ? item.amount * -1 : item.amount })}
                                         onLongPress={() => enableMultipleSelection(item._id)}
                                     >
                                         <Transaction {...item} />
@@ -159,7 +172,7 @@ export default function TransactionScreen() {
                             <Text>➕</Text>
                         </Pressable>}
             </View>
-            <TransactionModal isOpen={showModal} onClose={() => setShowModal(false)} onSave={saveTransaction} />
+            <TransactionModal initialState={transaction} isOpen={showModal} onClose={handleCloseModal} onSave={saveTransaction} />
         </SafeAreaView>
     );
 }

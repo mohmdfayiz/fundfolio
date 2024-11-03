@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { View, Text, Pressable, Image } from "react-native";
+import { View, Text, Pressable, Image, TouchableOpacity, FlatList } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { ScrollView } from "react-native-gesture-handler";
@@ -9,6 +9,7 @@ import YearPicker from "@/components/YearPicker";
 import TransactionPieChart from "@/components/PieChart";
 import TabTitle from "@/components/TabTitle";
 import Transaction from "@/components/Transaction";
+import TransactionDetail from "@/components/TransactionDetails";
 import { MONTHS, YEARS } from "@/constants/data";
 import { noData } from "@/constants/images";
 import { getTransactionStats, getTransactionsByDate } from "@/services/transaction";
@@ -22,6 +23,8 @@ export default function TransactionStatistics() {
     const [stats, setStats] = useState<Stats>({ totalAmount: 0, income: 0, expense: 0 });
     const [transactions, setTransactions] = useState<TransactionDetails[]>([]);
     const [isYearPickerVisible, setIsYearPickerVisible] = useState(false);
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [selectedTransaction, setSelectedTransaction] = useState<TransactionDetails | null>(null);
 
     const fetchStats = async () => {
         try {
@@ -43,6 +46,16 @@ export default function TransactionStatistics() {
 
     const handleDateChange = (month: number) => {
         setDate({ month, year: date.year });
+    }
+
+    const handleClick = (transaction: TransactionDetails) => {
+        setIsModalVisible(true);
+        setSelectedTransaction(transaction);
+    }
+
+    const handleCloseModal = () => {
+        setIsModalVisible(false);
+        setSelectedTransaction(null);
     }
 
     useEffect(() => {
@@ -93,9 +106,16 @@ export default function TransactionStatistics() {
                     <GestureHandlerRootView>
                         {
                             transactions.length ?
-                                <ScrollView showsVerticalScrollIndicator={false}>
-                                    {transactions.map((transaction) => <Transaction key={transaction._id} {...transaction} />)}
-                                </ScrollView>
+                                <FlatList
+                                    showsVerticalScrollIndicator={false}
+                                    data={transactions}
+                                    renderItem={({ item }) => (
+                                        <TouchableOpacity onPress={() => handleClick(item)}>
+                                            <Transaction {...item} />
+                                        </TouchableOpacity>
+                                    )}
+                                    keyExtractor={(item) => item._id}
+                                />
                                 :
                                 <View className='flex flex-1 items-center justify-center'>
                                     <Image source={noData} className='w-40 h-40' />
@@ -104,6 +124,10 @@ export default function TransactionStatistics() {
                     </GestureHandlerRootView>
                 </View>
             </View>
+
+            {/* Transaction Details Modal */}
+            <TransactionDetail transaction={selectedTransaction!} isOpen={isModalVisible} onClose={handleCloseModal} />
+
         </SafeAreaView >
     );
 }

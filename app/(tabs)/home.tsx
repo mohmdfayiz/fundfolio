@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Text, View, ScrollView, Image } from 'react-native';
+import { Text, View, ScrollView, Image, TouchableOpacity } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -9,10 +9,11 @@ import { useGlobalContext } from '@/context/GlobalContext';
 import Transaction from '@/components/Transaction';
 import TabTitle from '@/components/TabTitle';
 import TransactionPieChart from '@/components/PieChart';
+import TransactionDetail from '@/components/TransactionDetails';
 import { MONTHS } from '@/constants/data';
 import { noData } from '@/constants/images';
 import { getRecentTransactions, getTransactionStats } from '@/services/transaction';
-import { Stats } from '@/types';
+import { Stats, TransactionDetails } from '@/types';
 
 const homeSubTitle = (today: Date) => {
   if (today.getHours() < 12) {
@@ -29,17 +30,30 @@ export default function HomeScreen() {
   const { user } = useGlobalContext();
   const [stats, setStats] = useState<Stats>({ totalAmount: 0, income: 0, expense: 0 });
   const [transactions, setTransactions] = useState([]);
+  const [selectedTransaction, setSelectedTransaction] = useState<TransactionDetails | null>(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
   const isFocused = useIsFocused();
   const today = new Date();
 
   const fetchStats = async () => {
     const { data } = await getTransactionStats(today.getMonth() + 1, today.getFullYear());
     setStats(data || { totalAmount: 0, income: 0, expense: 0 });
-  } 
+  }
 
   const fetchTransactions = async () => {
     const { data } = await getRecentTransactions();
     setTransactions(data);
+  }
+
+  const handleClick = (transaction: TransactionDetails) => {
+    setIsModalVisible(true);
+    setSelectedTransaction(transaction);
+  }
+
+  const handleCloseModal = () => {
+    setIsModalVisible(false);
+    setSelectedTransaction(null);
   }
 
   useEffect(() => {
@@ -74,7 +88,11 @@ export default function HomeScreen() {
             transactions.length ?
               <GestureHandlerRootView>
                 <ScrollView showsVerticalScrollIndicator={false}>
-                  {transactions.map((transaction: any) => <Transaction key={transaction._id} {...transaction} />)}
+                  {transactions.map((transaction: any) => (
+                    <TouchableOpacity key={transaction._id} onPress={() => handleClick(transaction)}>
+                      <Transaction {...transaction} />
+                    </TouchableOpacity>
+                  ))}
                 </ScrollView>
               </GestureHandlerRootView>
               :
@@ -85,6 +103,9 @@ export default function HomeScreen() {
         </View>
 
       </View>
+
+      {/* Transaction Details Modal */}
+      <TransactionDetail transaction={selectedTransaction!} isOpen={isModalVisible} onClose={handleCloseModal} />
     </SafeAreaView >
   )
 }

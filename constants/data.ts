@@ -1,5 +1,5 @@
 
-const APP_LINK = 'https://fundfolio.vercel.app/ \n\nCheck out fundfolio. \nManage your transactions and notes effortlessly!';
+const APP_LINK = 'https://play.google.com/store/apps/details?id=com.fundfolio \n\nCheck out fundfolio. \nManage your transactions and notes effortlessly!';
 
 const PAYMENT_METHODS = [
     {
@@ -19,6 +19,23 @@ const PAYMENT_METHODS = [
         name: 'UPI',
     },
 ]
+
+const TRANSACTION_NOTE_EXAMPLES = [
+    "Lunch with colleagues",
+    "Monthly rent payment",
+    "Shopping at Amazon",
+    "Birthday gift for mom",
+    "Grocery shopping at Walmart",
+    "Uber ride to work",
+    "Coffee meeting with client",
+    "Movie tickets with friends",
+    "Internet bill payment",
+    "Gym membership fee",
+    "Medical appointment",
+    "Car maintenance",
+    "Home utilities",
+    "Hotel reservation",
+];
 
 const TRANSACTION_CATEGORY_COLOR_MAP = [
     '#fecaca',
@@ -42,7 +59,7 @@ const SAMPLE_CATEGORIES = [
     },
     {
         name: 'Shopping',
-        icon: '🛒',
+        icon: '🛍️',
         bgColour: '#c7d2fe',
     },
 ]
@@ -102,6 +119,7 @@ const APP_LOCK_ENUM = {
 export {
     APP_LINK,
     PAYMENT_METHODS,
+    TRANSACTION_NOTE_EXAMPLES,
     TRANSACTION_CATEGORY_COLOR_MAP,
     SAMPLE_CATEGORIES,
     MONTHS,

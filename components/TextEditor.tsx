@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { View, Text, Modal, TextInput, Pressable } from 'react-native'
+import { View, Text, Modal, TextInput, Pressable, ScrollView, KeyboardAvoidingView, Platform } from 'react-native'
 import dateFormat from 'dateformat'
 import { Note } from '@/types'
 
@@ -28,32 +28,41 @@ const TextEditor = ({ note, isOpen, mode, onClose }: { note: Note, isOpen: boole
             presentationStyle="pageSheet"
         >
             <View className='p-4'>
-                <Text className='text-2xl font-pbold'>Add Note</Text>
+                <Text className='text-2xl font-pbold'>{mode === 'edit' ? 'Note' : 'Add Note'}</Text>
             </View>
-            <View className='flex-1 p-4'>
-                <TextInput
-                    placeholder='Title'
-                    multiline
-                    maxLength={60}
-                    numberOfLines={3}
-                    cursorColor={'black'}
-                    style={{ textAlignVertical: 'top' }}
-                    className='font-psemibold text-lg'
-                    value={tempNote.title}
-                    onChangeText={(text) => handleUpdate('title', text)}
-                />
-                <TextInput
-                    placeholder='Note'
-                    multiline
-                    maxLength={500}
-                    numberOfLines={30}
-                    cursorColor={'black'}
-                    style={{ textAlignVertical: 'top' }}
-                    className='font-pregular text-base'
-                    value={tempNote.content}
-                    onChangeText={(text) => handleUpdate('content', text)}
-                />
-            </View>
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                className='flex-1'
+            >
+                <ScrollView
+                    className='flex-1 p-4'
+                    keyboardShouldPersistTaps="handled"
+                    showsVerticalScrollIndicator={false}
+                >
+                    <TextInput
+                        placeholder='Title'
+                        multiline
+                        maxLength={60}
+                        numberOfLines={2}
+                        cursorColor={'black'}
+                        style={{ textAlignVertical: 'top' }}
+                        className='font-psemibold text-lg'
+                        value={tempNote.title}
+                        onChangeText={(text) => handleUpdate('title', text)}
+                    />
+                    <TextInput
+                        placeholder='Note'
+                        multiline
+                        maxLength={1000}
+                        numberOfLines={30}
+                        cursorColor={'black'}
+                        style={{ textAlignVertical: 'top' }}
+                        className='font-pregular text-base'
+                        value={tempNote.content}
+                        onChangeText={(text) => handleUpdate('content', text)}
+                    />
+                </ScrollView>
+            </KeyboardAvoidingView>
             <View className='flex flex-row items-center border-t bg-white border-slate-200 px-4'>
                 <Text>Edited {dateFormat(tempNote.updatedAt, "h:MM tt, mmm dd")}</Text>
                 <Pressable className={`ml-auto p-3 ${tempNote.pinned && 'opacity-50'}`} onPress={() => handleUpdate('pinned', !tempNote.pinned)}>
