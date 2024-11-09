@@ -3,7 +3,7 @@
     "name": "fundfolio",
     "slug": "fundfolio",
     "scheme": "fundfolio",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "userInterfaceStyle": "automatic",
@@ -21,7 +21,7 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.fundfolio",
-      "versionCode": 10
+      "versionCode": 13
     },
     "plugins": [
       "expo-router"

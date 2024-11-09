@@ -23,15 +23,8 @@ export default function TransactionScreen() {
     const isFocused = useIsFocused();
 
     const fetchTransactions = async () => {
-        try {
-            const { data } = await getTransactions();
-            setTransactions(data);
-        } catch (error) {
-            Toast.show({
-                type: 'error',
-                text1: 'Oops! Could not fetch transactions. Please try again.',
-            })
-        }
+        const { data } = await getTransactions();
+        setTransactions(data);
     };
 
     const enableMultipleSelection = (id: string) => {
@@ -74,29 +67,20 @@ export default function TransactionScreen() {
         }
     };
 
-    const saveTransaction = async (transaction: TransactioProps) => {
-        if (!transaction.amount || !transaction.category || !transaction.paymentMethod || !transaction.transactionType) {
-            setShowModal(false);
-            return Toast.show({
-                type: 'error',
-                text1: 'Please fill all the fields.',
-                text2: !transaction.category ? "Add categories from your account menu, if you haven't already" : '',
-            })
-        }
+    const saveTransaction = async (data: TransactioProps) => {
         try {
-            
             const now = new Date();
-            const originalDate = new Date(transaction.createdAt);
+            const originalDate = new Date(data.createdAt);
             // Reset the time while keeping the original date
             originalDate.setHours(now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds());
             // Convert back to ISO string
             const newCreatedAt = originalDate.toISOString();
-            
-            const isEditing = transaction._id !== undefined;
+
+            const isEditing = data._id !== undefined;
 
             isEditing
-                ? await updateTransaction({ ...transaction, createdAt: newCreatedAt })
-                : await addTransaction({ ...transaction, createdAt: newCreatedAt });
+                ? await updateTransaction({ ...data, createdAt: data.createdAt == transaction.createdAt ? data.createdAt : newCreatedAt })
+                : await addTransaction({ ...data, createdAt: newCreatedAt });
 
             await fetchTransactions();
         } catch (error) {
@@ -104,9 +88,6 @@ export default function TransactionScreen() {
                 type: 'error',
                 text1: 'Transaction could not be saved, please try again.',
             })
-        } finally {
-            setShowModal(false);
-            setTransaction({ amount: 0, category: '', paymentMethod: '', description: '', transactionType: '', createdAt: new Date() });
         }
     };
 

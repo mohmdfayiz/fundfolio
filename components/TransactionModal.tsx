@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'expo-router';
-import { Text, View, Modal, Pressable, TextInput, KeyboardAvoidingView, ScrollView, Platform } from "react-native";
+import { Text, View, Modal, Pressable, TextInput, KeyboardAvoidingView, ScrollView, Platform, ToastAndroid } from "react-native";
 import { Dropdown } from 'react-native-element-dropdown';
 import { DateTimePickerAndroid, DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import dateFormat from 'dateformat';
@@ -23,6 +23,9 @@ const TransactionModal = ({ initialState, isOpen, onClose, onSave }: { initialSt
     }, [isOpen]);
 
     const handleSave = () => {
+        if (!transaction.amount || !transaction.category || !transaction.paymentMethod || !transaction.transactionType) {
+           return ToastAndroid.show('Please fill all the required fields', ToastAndroid.LONG);
+        }
         onSave({ ...transaction, category: findCategoryId(transaction.category)! });
         setTransaction({ ...transaction, amount: 0, category: '', description: '', paymentMethod: '', transactionType: '' });
         onClose();

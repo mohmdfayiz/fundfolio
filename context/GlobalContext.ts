@@ -5,7 +5,7 @@ interface GlobalContextProps {
   user: User | null;
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
   useAppLock: boolean;
-  setUseAppLock: React.Dispatch<React.SetStateAction<boolean>>;
+  setUseAppLock: (value: boolean) => void;
   isLogged: boolean;
   setIsLogged: React.Dispatch<React.SetStateAction<boolean>>;
   setToken: (name: string, token: string) => Promise<void>;

@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
+import { Stack, SplashScreen } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import Toast from 'react-native-toast-message';
 
@@ -14,22 +13,22 @@ import { APP_LOCK_ENUM } from '@/constants/data';
 import { getUser } from '@/services/user';
 import { User } from '@/types';
 
-export {
-  // Catch any errors thrown by the Layout component.
-  ErrorBoundary,
-} from 'expo-router';
+export { ErrorBoundary } from 'expo-router';
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
 
+  const [initialized, setInitialized] = useState(false);
   const [isLogged, setIsLogged] = useState(false);
   const [user, setUser] = useState<User | null>(null);
-  const [useAppLock, setUseAppLock] = useState(false);
-  const [isAppLockAuthenticated, setIsAppLockAuthenticated] = useState(false);
+  const [appLockState, setAppLockState] = useState({
+    useAppLock: false,
+    isAuthenticated: false,
+  });
 
-  const [loaded, error] = useFonts({
+  // Load fonts
+  const [fontsLoaded, fontError] = useFonts({
     "Poppins-Black": require("../assets/fonts/Poppins-Black.ttf"),
     "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
     "Poppins-ExtraBold": require("../assets/fonts/Poppins-ExtraBold.ttf"),
@@ -41,70 +40,121 @@ export default function RootLayout() {
     "Poppins-Thin": require("../assets/fonts/Poppins-Thin.ttf"),
   });
 
-  const checkAuth = async () => {
-    const token = await getToken('refreshToken');
-    if (!loaded && !isLogged && token) {
-      try {
+  // Check authentication status and fetch user data
+  const checkAuth = useCallback(async () => {
+    try {
+      const token = await getToken('refreshToken');
+      if (token) {
         const { data } = await getUser();
         setUser(data);
         setIsLogged(true);
-      } catch (error) {
-        // console.log('failed to get user', error);
+        return true;
       }
+      return false;
+    } catch (error) {
+      console.error('Authentication check failed:', error);
+      return false;
     }
-  };
-
-  const checkAppLock = async () => {
-    const appLockPreference = await getAppLockPreference();
-    setUseAppLock(appLockPreference);
-    if (appLockPreference) {
-      const result = await authenticateAppLock();
-      setIsAppLockAuthenticated(result === APP_LOCK_ENUM.AUTHENTICATED);
-    } else {
-      setIsAppLockAuthenticated(true);
-    }
-  };
-
-  useEffect(() => {
-    if (error) throw error;
-  }, [error]);
-
-  useEffect(() => {
-    initializeGlobalAuthFunctions(setIsLogged, setUseAppLock);
   }, []);
 
-  useEffect(() => {
-    const initialize = async () => {
-      await checkAuth();
-      await checkAppLock();
-      if (loaded) {
-        setTimeout(() => SplashScreen.hideAsync(), 1500);
+  // Check app lock status
+  const checkAppLock = useCallback(async () => {
+    try {
+      const appLockPreference = await getAppLockPreference();
+      setAppLockState(prev => ({ ...prev, useAppLock: appLockPreference }));
+      
+      if (appLockPreference) {
+        const result = await authenticateAppLock();
+        const isAuthenticated = result === APP_LOCK_ENUM.AUTHENTICATED;
+        setAppLockState(prev => ({ ...prev, isAuthenticated }));
+        return isAuthenticated;
       }
-    };
+      
+      setAppLockState(prev => ({ ...prev, isAuthenticated: true }));
+      return true;
+    } catch (error) {
+      console.error('App lock check failed:', error);
+      return false;
+    }
+  }, []);
 
-    initialize();
-  }, [loaded]);
+  // Initialize the app
+  const initializeApp = useCallback(async () => {
+    try {
+      // Wait for fonts to load
+      if (!fontsLoaded) return;
 
-  if (!loaded && !error) {
+      // Check authentication and fetch user data
+      const isAuthenticated = await checkAuth();
+      
+      // Check app lock
+      const isAppLockAuthenticated = await checkAppLock();
+
+      // Initialize global auth functions
+      initializeGlobalAuthFunctions(
+        setIsLogged,
+        (useAppLock) => setAppLockState(prev => ({ ...prev, useAppLock }))
+      );
+
+      setInitialized(true);
+      await SplashScreen.hideAsync();
+    } catch (error) {
+      console.error('App initialization failed:', error);
+      setInitialized(true);
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded, checkAuth, checkAppLock]);
+
+  // Handle font loading error
+  useEffect(() => {
+    if (fontError) throw fontError;
+  }, [fontError]);
+
+  // Initialize app when fonts are loaded
+  useEffect(() => {
+    initializeApp();
+  }, [initializeApp]);
+
+  // Show nothing while loading
+  if (!initialized || !fontsLoaded) {
     return null;
   }
 
-  if (useAppLock && !isAppLockAuthenticated) {
+  // Show app lock screen if needed
+  if (appLockState.useAppLock && !appLockState.isAuthenticated) {
     return (
-      <AppLock onAuthenticate={() => setIsAppLockAuthenticated(true)} />
+      <AppLock 
+        onAuthenticate={() => 
+          setAppLockState(prev => ({ ...prev, isAuthenticated: true }))
+        } 
+      />
     );
   }
 
+  // Global context value
+  const globalContextValue = {
+    user,
+    setUser,
+    isLogged,
+    setIsLogged,
+    setToken,
+    removeToken,
+    useAppLock: appLockState.useAppLock,
+    setUseAppLock: (value: boolean) => {
+      setAppLockState(prev => ({ ...prev, useAppLock: value }));
+    }
+  };
+
   return (
-    <GlobalContext.Provider value={{ user, setUser, isLogged, setIsLogged, setToken, removeToken, useAppLock, setUseAppLock }}>
+    <GlobalContext.Provider value={globalContextValue}>
       <Stack>
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="(screens)" options={{ headerShown: false }} />
-      </Stack >
+      </Stack>
       <Toast />
       <StatusBar style="inverted" />
-    </GlobalContext.Provider >
-  )
+    </GlobalContext.Provider>
+  );
 }
