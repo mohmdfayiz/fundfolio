@@ -39,7 +39,7 @@ export default function SignUp() {
         <Text className="text-4xl font-pbold text-green">fundfolio<Text className='text-red'>.</Text></Text>
         <Text className='text-sm font-pregular text-slate-400'>Money Matters !</Text>
       </View>
-      <View className='h-1/2 items-center justify-end px-8 gap-4'>
+      <View className='h-1/2 items-center justify-end px-8 py-4 gap-4'>
         <TextInput
           placeholder='Username'
           keyboardType='default'

@@ -18,7 +18,7 @@ export default function TabLayout() {
         options={{
           title: 'Home',
           headerShown: false,
-          tabBarIcon: ({ focused }) => <Image source={focused ? icons.homeActive : icons.home} style={{ width: 24, height: 24, }} />,
+          tabBarIcon: ({ focused }) => <Image source={focused ? icons.homeActive : icons.home} style={{ width: 24, height: 24 }} />,
         }}
       />
       <Tabs.Screen

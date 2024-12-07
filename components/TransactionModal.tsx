@@ -13,7 +13,7 @@ import { Category, Transaction } from '@/types';
 const TransactionModal = ({ initialState, isOpen, onClose, onSave }: { initialState: Transaction, isOpen: boolean, onClose: () => void, onSave: (transaction: Transaction) => void }) => {
 
     const [transactionCategories, setTransactionCategories] = useState<Category[]>([]);
-    const [transaction, setTransaction] = useState(initialState)
+    const [transaction, setTransaction] = useState({ ...initialState, amount: initialState.amount.toString() });
 
     const isEditing = initialState._id !== undefined;
 
@@ -24,10 +24,10 @@ const TransactionModal = ({ initialState, isOpen, onClose, onSave }: { initialSt
 
     const handleSave = () => {
         if (!transaction.amount || !transaction.category || !transaction.paymentMethod || !transaction.transactionType) {
-           return ToastAndroid.show('Please fill all the required fields', ToastAndroid.LONG);
+            return ToastAndroid.show('Please fill all the required fields', ToastAndroid.LONG);
         }
-        onSave({ ...transaction, category: findCategoryId(transaction.category)! });
-        setTransaction({ ...transaction, amount: 0, category: '', description: '', paymentMethod: '', transactionType: '' });
+        onSave({ ...transaction, amount: Number(transaction.amount), category: findCategoryId(transaction.category)! });
+        setTransaction({ ...transaction, amount: '0', category: '', description: '', paymentMethod: '', transactionType: '' });
         onClose();
     }
 
@@ -66,7 +66,7 @@ const TransactionModal = ({ initialState, isOpen, onClose, onSave }: { initialSt
 
     useEffect(() => {
         isOpen && fetchTransactionCategories();
-        isOpen && setTransaction(initialState);
+        isOpen && setTransaction({ ...initialState, amount: initialState.amount.toString() });
     }, [isOpen]);
 
     return (
@@ -95,7 +95,7 @@ const TransactionModal = ({ initialState, isOpen, onClose, onSave }: { initialSt
                                     placeholder='₹ 100'
                                     value={!transaction.amount ? '' : transaction.amount.toString()}
                                     className='border border-slate-400 p-4 rounded-xl font-pregular text-base'
-                                    onChangeText={(text) => setTransaction({ ...transaction, amount: parseFloat(text) })}
+                                    onChangeText={(text) => setTransaction({ ...transaction, amount: text })}
                                 />
                             </View>
                             <View>
