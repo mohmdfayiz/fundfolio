@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useFonts } from 'expo-font';
-import { Stack, SplashScreen } from 'expo-router';
+import { Slot, SplashScreen } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import Toast from 'react-native-toast-message';
 
@@ -20,7 +20,7 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
 
   const [initialized, setInitialized] = useState(false);
-  const [isLogged, setIsLogged] = useState(false);
+  const [isLogged, setIsLogged] = useState(true);
   const [user, setUser] = useState<User | null>(null);
   const [appLockState, setAppLockState] = useState({
     useAppLock: false,
@@ -62,14 +62,14 @@ export default function RootLayout() {
     try {
       const appLockPreference = await getAppLockPreference();
       setAppLockState(prev => ({ ...prev, useAppLock: appLockPreference }));
-      
+
       if (appLockPreference) {
         const result = await authenticateAppLock();
         const isAuthenticated = result === APP_LOCK_ENUM.AUTHENTICATED;
         setAppLockState(prev => ({ ...prev, isAuthenticated }));
         return isAuthenticated;
       }
-      
+
       setAppLockState(prev => ({ ...prev, isAuthenticated: true }));
       return true;
     } catch (error) {
@@ -86,7 +86,7 @@ export default function RootLayout() {
 
       // Check authentication and fetch user data
       const isAuthenticated = await checkAuth();
-      
+
       // Check app lock
       const isAppLockAuthenticated = await checkAppLock();
 
@@ -123,10 +123,10 @@ export default function RootLayout() {
   // Show app lock screen if needed
   if (appLockState.useAppLock && !appLockState.isAuthenticated) {
     return (
-      <AppLock 
-        onAuthenticate={() => 
+      <AppLock
+        onAuthenticate={() =>
           setAppLockState(prev => ({ ...prev, isAuthenticated: true }))
-        } 
+        }
       />
     );
   }
@@ -147,14 +147,9 @@ export default function RootLayout() {
 
   return (
     <GlobalContext.Provider value={globalContextValue}>
-      <Stack>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="(screens)" options={{ headerShown: false }} />
-      </Stack>
-      <Toast />
+      <Slot />
       <StatusBar style="inverted" />
+      <Toast />
     </GlobalContext.Provider>
   );
 }
