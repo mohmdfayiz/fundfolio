@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useFonts } from 'expo-font';
-import { Slot, SplashScreen } from 'expo-router';
+import { SplashScreen, Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import Toast from 'react-native-toast-message';
 
@@ -147,9 +147,14 @@ export default function RootLayout() {
 
   return (
     <GlobalContext.Provider value={globalContextValue}>
-      <Slot />
-      <StatusBar style="inverted" />
+      <Stack>
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="(screens)" options={{ headerShown: false }} />
+      </Stack>
       <Toast />
+      <StatusBar style="inverted" />
     </GlobalContext.Provider>
   );
 }

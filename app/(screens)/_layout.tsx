@@ -4,20 +4,30 @@ const ScreenLayout = () => {
   return (
     <Stack>
       <Stack.Screen
-        name="transaction-statistics"
+        name="transactionstatistics"
         options={{
+          title: 'Statistics',
           headerShown: false,
         }}
       />
       <Stack.Screen
-        name="transaction-category"
+        name="transactioncategory"
         options={{
+          title: 'Categories',
           headerShown: false,
         }}
       />
+      {/* <Stack.Screen
+        name="spendinglimits"
+        options={{
+          title: 'Spending Limits',
+          headerShown: false,
+        }}
+      /> */}
       <Stack.Screen
         name="privacypolicy"
         options={{
+          title: 'Privacy Policy',
           headerShown: false,
         }}
       />

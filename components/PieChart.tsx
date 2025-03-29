@@ -1,11 +1,13 @@
 import { View, Text, StyleSheet } from "react-native"
-import PieChart from 'react-native-pie-chart';
+import PieChart, { Slice } from 'react-native-pie-chart';
 import { Stats } from "@/types";
 
 const TransactionPieChart = ({ stats, month }: { stats: Stats, month: string }) => {
 
     const pieChartData = (stats: Stats) => {
-        return stats.income === 0 && stats.expense === 0 ? [0.01, 0.01] : [stats.expense * -1, stats.income]
+        return stats.income === 0 && stats.expense === 0
+            ? [{ value: 0.01, color: '#FA7070' }, { value: 0.01, color: '#A1C398' }]
+            : [{ value: stats.expense * -1, color: '#FA7070' }, { value: stats.income, color: '#A1C398' }]
     }
 
     return (
@@ -35,9 +37,7 @@ const TransactionPieChart = ({ stats, month }: { stats: Stats, month: string }) 
                 <PieChart
                     widthAndHeight={130}
                     series={pieChartData(stats)}
-                    sliceColor={['#FA7070', '#A1C398']}
-                    coverRadius={0.6}
-                    coverFill={'transparent'}
+                    cover={{ radius: 0.6, color: 'transparent' }}
                 />
             </View>
         </View>

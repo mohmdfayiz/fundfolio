@@ -2,12 +2,17 @@
   "expo": {
     "name": "fundfolio",
     "slug": "fundfolio",
-    "scheme": "fundfolio",
-    "version": "1.0.1",
-    "newArchEnabled": true,
+    "version": "1.1.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
+    "scheme": "fundfolio",
     "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/images/fundfolio.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
     "ios": {
       "supportsTablet": true
     },
@@ -20,14 +25,12 @@
       "versionCode": 13
     },
     "plugins": [
-      "expo-router",
-      "expo-font",
       [
         "expo-splash-screen",
         {
           "image": "./assets/images/fundfolio.png",
-          "backgroundColor": "#ffffff",
-          "imageWidth": 200
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff"
         }
       ]
     ],
