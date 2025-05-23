@@ -59,17 +59,17 @@ const CategoryModal = ({ isOpen, onClose, mode, category, setCategory, handleSav
                             maxLength={25}
                             value={category.name}
                             placeholder={"Category Name"}
-                            className="border border-slate-400 p-4 rounded-xl font-pregular text-base"
+                            className="border border-slate-400 p-4 rounded-xl font-pregular text-lg"
                             onChangeText={(name) => handleChange('name', name)}
                         />
                     </View>
                     <View>
                         <View className='flex flex-row justify-between items-center gap-4'>
                             <Pressable onPress={onClose} className='border flex-1 border-slate-400 p-4 rounded-xl' >
-                                <Text className='text-center text-base font-psemibold'>Cancel</Text>
+                                <Text className='text-center text-lg font-psemibold'>Cancel</Text>
                             </Pressable>
                             <Pressable onPress={handleSave} className='border border-green flex-1 bg-green/50 p-4 rounded-xl' >
-                                <Text className='text-center text-base font-psemibold'>{mode === 'edit' ? 'Save' : 'Add'}</Text>
+                                <Text className='text-center text-lg font-psemibold'>{mode === 'edit' ? 'Save' : 'Add'}</Text>
                             </Pressable>
                         </View>
                     </View>

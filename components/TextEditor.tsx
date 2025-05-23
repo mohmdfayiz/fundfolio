@@ -47,7 +47,7 @@ const TextEditor = ({ note, isOpen, mode, onClose }: { note: Note, isOpen: boole
                             numberOfLines={2}
                             cursorColor={'black'}
                             style={{ textAlignVertical: 'top' }}
-                            className='font-psemibold text-lg'
+                            className='font-psemibold text-xl'
                             value={tempNote.title}
                             onChangeText={(text) => handleUpdate('title', text)}
                         />
@@ -58,19 +58,19 @@ const TextEditor = ({ note, isOpen, mode, onClose }: { note: Note, isOpen: boole
                             numberOfLines={30}
                             cursorColor={'black'}
                             style={{ textAlignVertical: 'top' }}
-                            className='font-pregular text-base'
+                            className='font-pregular text-lg'
                             value={tempNote.content}
                             onChangeText={(text) => handleUpdate('content', text)}
                         />
                     </ScrollView>
                 </KeyboardAvoidingView>
                 <View className='flex flex-row items-center border-t bg-white border-slate-200 px-4'>
-                    <Text>Edited {dateFormat(tempNote.updatedAt, "h:MM tt, mmm dd")}</Text>
+                    <Text className='text-base font-pregular'>Edited {dateFormat(tempNote.updatedAt, "h:MM tt, mmm dd")}</Text>
                     <Pressable className={`ml-auto p-3 ${tempNote.pinned && 'opacity-50'}`} onPress={() => handleUpdate('pinned', !tempNote.pinned)}>
-                        <Text className='text-center font-psemibold text-base'>📌</Text>
+                        <Text className='text-center font-psemibold text-lg'>📌</Text>
                     </Pressable>
                     <Pressable className='ml-1 p-3' onPress={() => handleDelete(tempNote?._id)}>
-                        <Text className='text-center font-psemibold text-base'>🗑️</Text>
+                        <Text className='text-center font-psemibold text-lg'>🗑️</Text>
                     </Pressable>
                 </View>
             </View>

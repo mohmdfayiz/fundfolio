@@ -64,7 +64,7 @@ export default function HomeScreen() {
   }, [isFocused])
 
   return (
-    <SafeAreaView>
+    <SafeAreaView className='bg-gray-50'>
       <View className='flex h-full' >
         <View className='p-4'>
           <TabTitle title={`Hello ${user?.username || 'there'}`} icon='👋' subTitle={homeSubTitle(today)} />
@@ -74,11 +74,11 @@ export default function HomeScreen() {
           <TransactionPieChart stats={stats} month={MONTHS[today.getMonth()]} />
         </View>
 
-        <View className='px-4 pt-4 pb-3'>
+        <View className='px-4 pt-4 pb-2'>
           <View className='flex flex-row items-center justify-between'>
             <Text className='text-xl font-psemibold'>Recent Transactions</Text>
-            <Link href={'/transactions'} className='border border-gray-400 rounded-lg px-3 py-1'>
-              <Text className='text-sm font-pregular text-center'>View All</Text>
+            <Link href={'/transactions'} className='border border-gray-400 rounded-lg px-[9px] py-[3px]'>
+              <Text className='text-base font-pregular text-center'>View All</Text>
             </Link>
           </View>
         </View>

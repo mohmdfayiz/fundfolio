@@ -11,7 +11,7 @@ export default function TabLayout() {
 
   return (
     <Tabs
-      screenOptions={{ tabBarShowLabel: false }}
+      screenOptions={{ tabBarShowLabel: false, tabBarLabelPosition: 'beside-icon' }}
     >
       <Tabs.Screen
         name="home"

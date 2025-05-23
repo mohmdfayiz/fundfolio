@@ -66,7 +66,7 @@ export default function TransactionStatistics() {
     }, [isFocused, date])
 
     return (
-        <SafeAreaView>
+        <SafeAreaView className='bg-gray-50'>
             <View className="flex h-full">
                 <View className="p-4">
                     <TabTitle title='Statistics' icon='📈' subTitle='Analyze Your Data!' />
@@ -74,12 +74,12 @@ export default function TransactionStatistics() {
                 <View className="px-4">
                     <TransactionPieChart stats={stats} month={MONTHS[date.month]} />
                 </View>
-                <View className='px-4 pt-4 pb-3'>
+                <View className='px-4 pt-4 pb-2'>
                     <View className='flex flex-row items-center'>
                         <GestureHandlerRootView>
                             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                                 <Pressable onPress={() => setIsYearPickerVisible(true)} className={`border border-gray-400 rounded-xl mr-4 px-4 py-2`}>
-                                    <Text className='text-sm font-pregular text-center'>{date.year}</Text>
+                                    <Text className='text-base font-pregular text-center'>{date.year}</Text>
                                 </Pressable>
                                 <YearPicker
                                     years={YEARS}
@@ -92,9 +92,9 @@ export default function TransactionStatistics() {
                                         <Pressable
                                             key={index}
                                             onPress={() => handleDateChange(index)}
-                                            className={`border border-gray-400 rounded-xl mr-4 px-4 py-2 ${index === date?.month ? 'bg-gray-200' : ''}`}
+                                            className={`border border-gray-400 rounded-xl mr-4 px-4 py-2 ${index === date?.month ? 'bg-gray-200' : undefined}`}
                                         >
-                                            <Text className='text-sm font-pregular text-center'>{month}</Text>
+                                            <Text className='text-base font-pregular text-center'>{month}</Text>
                                         </Pressable>
                                     ))
                                 }

@@ -15,24 +15,24 @@ const TransactionPieChart = ({ stats, month }: { stats: Stats, month: string }) 
             <View>
                 <View >
                     <View className=' flex flex-row items-baseline'>
-                        <View className="w-2 h-4 bg-green rounded-full mr-1"></View>
-                        <Text className='text-lg font-plight'>Income</Text>
+                        <View className="w-2 h-3 bg-green rounded-full mr-1"></View>
+                        <Text className='text-xl font-plight'>Income</Text>
                     </View>
-                    <Text className='text-xl font-psemibold'>₹ {stats.income}</Text>
+                    <Text className='text-2xl font-psemibold'>₹ {stats.income}</Text>
                 </View>
 
                 <View className='mt-4'>
                     <View className='flex flex-row items-baseline'>
-                        <View className="w-2 h-4 bg-red rounded-full mr-1"></View>
-                        <Text className='text-lg font-plight'>Expense</Text>
+                        <View className="w-2 h-3 bg-red rounded-full mr-1"></View>
+                        <Text className='text-xl font-plight'>Expense</Text>
                     </View>
-                    <Text className='text-xl font-psemibold'>₹ {stats.expense * -1}</Text>
+                    <Text className='text-2xl font-psemibold'>₹ {stats.expense * -1}</Text>
                 </View>
             </View>
 
             <View style={styles.chartContainer}>
                 <View style={styles.chartOverlay}>
-                    <Text className='text-lg font-psemibold'>{month}</Text>
+                    <Text className='text-xl font-psemibold'>{month}</Text>
                 </View>
                 <PieChart
                     widthAndHeight={130}

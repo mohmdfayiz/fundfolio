@@ -104,7 +104,7 @@ export default function TransactionScreen() {
     }, [isFocused]);
 
     return (
-        <SafeAreaView>
+        <SafeAreaView className='bg-gray-50'>
             <View className='flex h-full'>
                 <View className='px-4 pt-4 pb-3'>
                     <TabTitle title='Transactions' icon='💵' subTitle='Track your money!' />
@@ -117,8 +117,8 @@ export default function TransactionScreen() {
                                 sections={transactions}
                                 renderSectionHeader={({ section: { _id, totalAmount } }) => (
                                     <View className='flex flex-row justify-between bg-gray-200 px-4 py-1 my-1'>
-                                        <Text className='text-lg font-pregular'>{MONTHS.at(_id.month - 1)} {_id.year}</Text>
-                                        <Text className={`text-lg font-psemibold`}>₹ {totalAmount}</Text>
+                                        <Text className='text-xl font-pregular'>{MONTHS.at(_id.month - 1)} {_id.year}</Text>
+                                        <Text className={`text-xl font-psemibold`}>₹ {totalAmount}</Text>
                                     </View>
                                 )}
                                 ListFooterComponent={() => (<View className='h-16' />)}

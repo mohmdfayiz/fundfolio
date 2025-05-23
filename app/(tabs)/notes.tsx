@@ -91,7 +91,7 @@ const NotesScreen = () => {
     }, [isFocused])
 
     return (
-        <SafeAreaView>
+        <SafeAreaView className='bg-gray-50'>
             <View className='flex h-full'>
                 <View className='p-4'>
                     <TabTitle title='Notes' icon='🗒️' subTitle='Take Notes!' />
