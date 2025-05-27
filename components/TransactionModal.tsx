@@ -60,6 +60,7 @@ const TransactionModal = ({ initialState, isOpen, onClose, onSave }: { initialSt
             value: new Date(transaction.createdAt),
             onChange,
             mode: 'date',
+            minimumDate: new Date(2000, 0, 1),
             maximumDate: new Date(2030, 11, 31),
         });
     };
@@ -95,6 +96,7 @@ const TransactionModal = ({ initialState, isOpen, onClose, onSave }: { initialSt
                                     placeholder='₹ 100'
                                     value={!transaction.amount ? '' : transaction.amount.toString()}
                                     className='border border-slate-400 p-4 rounded-xl font-pregular text-lg'
+                                    placeholderTextColor={'gray'}
                                     onChangeText={(text) => setTransaction({ ...transaction, amount: text })}
                                 />
                             </View>
@@ -143,6 +145,7 @@ const TransactionModal = ({ initialState, isOpen, onClose, onSave }: { initialSt
                                     placeholder={getRandomPlaceholder}
                                     value={transaction?.description}
                                     className='border border-slate-400 p-4 rounded-xl font-pregular text-lg'
+                                    placeholderTextColor={'gray'}
                                     onChangeText={(text) => setTransaction({ ...transaction, description: text })}
                                 />
                             </View>

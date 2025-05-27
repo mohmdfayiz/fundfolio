@@ -54,12 +54,14 @@ export default function SignUp() {
               secureTextEntry
               placeholder='Password'
               className='w-full border border-slate-400 p-4 rounded-xl font-pregular text-base text-black'
+              placeholderTextColor={'gray'}
               onChangeText={(text) => setEntry({ ...entry, password: text })}
             />
             <TextInput
               secureTextEntry
               placeholder='Confirm Password'
               className='w-full border border-slate-400 p-4 rounded-xl font-pregular text-base text-black'
+              placeholderTextColor={'gray'}
               onChangeText={(text) => setEntry({ ...entry, confirmPassword: text })}
             />
             <Pressable onPress={handlePassword} className='w-full border border-green bg-green/50 p-4 rounded-xl'>

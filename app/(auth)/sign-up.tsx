@@ -52,12 +52,14 @@ export default function SignUp() {
               placeholder='Username'
               keyboardType='default'
               className='w-full border border-slate-400 p-4 rounded-xl font-pregular text-base text-black'
+              placeholderTextColor={'gray'}
               onChangeText={(text) => setUserData({ ...userData, username: text })}
             />
             <TextInput
               placeholder='Email'
               keyboardType='email-address'
               className='w-full border border-slate-400 p-4 rounded-xl font-pregular text-base text-black'
+              placeholderTextColor={'gray'}
               onChangeText={(text) => setUserData({ ...userData, email: text })}
             />
             <TouchableOpacity onPress={handleSignUp} className='w-full border border-green bg-green/50 p-4 rounded-xl'>

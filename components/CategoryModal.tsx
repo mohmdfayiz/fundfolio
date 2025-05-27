@@ -59,7 +59,8 @@ const CategoryModal = ({ isOpen, onClose, mode, category, setCategory, handleSav
                             maxLength={25}
                             value={category.name}
                             placeholder={"Category Name"}
-                            className="border border-slate-400 p-4 rounded-xl font-pregular text-lg"
+                            className="border border-slate-400 p-4 rounded-xl font-pregular text-lg text-black"
+                            placeholderTextColor={'gray'}
                             onChangeText={(name) => handleChange('name', name)}
                         />
                     </View>

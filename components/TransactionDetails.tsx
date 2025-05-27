@@ -34,7 +34,7 @@ const TransactionDetail = ({
                     {/* Amount Section */}
                     <View className='items-center py-6 bg-slate-50 rounded-xl'>
                         <Text className='text-base font-pmedium text-slate-500 mb-2'>Amount</Text>
-                        <Text className={`text-3xl font-pbold ${transaction?.transactionType === 'Income'
+                        <Text className={`text-4xl font-pbold ${transaction?.transactionType === 'Income'
                             ? 'text-green'
                             : 'text-red'
                             }`}>

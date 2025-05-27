@@ -52,12 +52,14 @@ export default function SingIn() {
               placeholder='Email'
               keyboardType='email-address'
               className='w-full border border-slate-400 p-4 rounded-xl font-pregular text-base text-black'
+              placeholderTextColor={'gray'}
               onChangeText={(text) => setCredentials({ ...credentials, email: text })}
             />
             <TextInput
               placeholder='Password'
               secureTextEntry
               className='w-full border border-slate-400 p-4 rounded-xl font-pregular text-base text-black'
+              placeholderTextColor={'gray'}
               onChangeText={(text) => setCredentials({ ...credentials, password: text })}
             />
             <TouchableOpacity onPress={handleSignIn} className='w-full border border-green bg-green/50 p-4 rounded-xl'>

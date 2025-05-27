@@ -129,7 +129,7 @@ export default function TransactionScreen() {
                                         onPress={() => handleSelectItem({ ...item, category: item.category.name, amount: item.transactionType === 'Expense' ? item.amount * -1 : item.amount })}
                                         onLongPress={() => enableMultipleSelection(item._id)}
                                     >
-                                        <Transaction {...item} />
+                                        <Transaction transaction={item} />
                                     </TouchableOpacity>
                                 )}
                             /> :

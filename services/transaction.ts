@@ -21,6 +21,9 @@ export const updateTransaction = async (transaction: any) =>
 export const getTransactionsByDate = async (month: number, year: number) =>
     axios.get(`/transaction/date/${month}/${year}`);
 
+export const getTransactionSummary = async (month: number, year: number) =>
+    axios.get(`/transaction/summary/${month}/${year}`);
+
 export const deleteTransactions = async (ids: string[]) =>
     axios.post(`/transaction/delete`, { ids });
 

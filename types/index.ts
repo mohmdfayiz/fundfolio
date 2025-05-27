@@ -50,6 +50,17 @@ type Category = {
     createdAt?: Date;
 }
 
+type ExpenseByCategory = {
+    _id: string;
+    name: string;
+    icon: string;
+    bgColour: string;
+    totalAmount: number;
+    percentageOfIncome: number;
+    percentageOfExpense?: number;
+    count: number;
+}
+
 // ===== Note Types =====
 type Note = {
     _id?: string;
@@ -68,4 +79,14 @@ type TabTitleProps = {
 }
 
 
-export { User, Transaction, TransactionDetails, TransactionGroup, Stats, Category, Note, TabTitleProps }
+export {
+    User,
+    Transaction,
+    TransactionDetails,
+    TransactionGroup,
+    Stats,
+    Category,
+    ExpenseByCategory,
+    Note,
+    TabTitleProps
+}

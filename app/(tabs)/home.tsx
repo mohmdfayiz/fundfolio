@@ -90,7 +90,7 @@ export default function HomeScreen() {
                 <ScrollView showsVerticalScrollIndicator={false}>
                   {transactions.map((transaction: any) => (
                     <TouchableOpacity key={transaction._id} onPress={() => handleClick(transaction)}>
-                      <Transaction {...transaction} />
+                      <Transaction  transaction={transaction} />
                     </TouchableOpacity>
                   ))}
                 </ScrollView>

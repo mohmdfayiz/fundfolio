@@ -28,7 +28,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/fundfolio.png",
+          "image": "./assets/images/fundfolio-splash.png",
           "resizeMode": "contain",
           "imageWidth": 300,
           "backgroundColor": "#ffffff"

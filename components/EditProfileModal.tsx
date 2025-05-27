@@ -49,7 +49,8 @@ const EditProfileModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () =>
                             maxLength={20}
                             placeholder="Username"
                             value={tempUser?.username}
-                            className="border border-slate-400 p-4 rounded-xl font-pregular text-lg"
+                            className="border border-slate-400 p-4 rounded-xl font-pregular text-lg text-black"
+                            placeholderTextColor={'gray'}
                             onChangeText={(username) => tempUser && setTempUser({ ...tempUser, username })}
                         />
                     </View>

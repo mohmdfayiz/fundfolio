@@ -18,13 +18,14 @@ export default function Otp() {
                 <TextInput
                     value='defaultmail@gmail.com'
                     editable={false}
-                    className='w-full border border-slate-400 p-4 rounded-xl font-pregular '
+                    className='w-full border border-slate-400 p-4 rounded-xl font-pregular text-black'
                 />
                 <TextInput
                     placeholder='OTP'
                     keyboardType='number-pad'
                     maxLength={6}
-                    className='w-full border border-slate-400 p-4 rounded-xl font-pregular '
+                    className='w-full border border-slate-400 p-4 rounded-xl font-pregular text-black'
+                    placeholderTextColor={'gray'}
                 />
                 <Pressable onPress={handleOtp} className='w-full border border-green bg-green/50 p-4 rounded-xl'>
                     <Text className='text-center font-psemibold text-base'>Verify OTP</Text>

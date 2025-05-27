@@ -48,6 +48,7 @@ const TextEditor = ({ note, isOpen, mode, onClose }: { note: Note, isOpen: boole
                             cursorColor={'black'}
                             style={{ textAlignVertical: 'top' }}
                             className='font-psemibold text-xl'
+                            placeholderTextColor={'gray'}
                             value={tempNote.title}
                             onChangeText={(text) => handleUpdate('title', text)}
                         />
@@ -59,6 +60,7 @@ const TextEditor = ({ note, isOpen, mode, onClose }: { note: Note, isOpen: boole
                             cursorColor={'black'}
                             style={{ textAlignVertical: 'top' }}
                             className='font-pregular text-lg'
+                            placeholderTextColor={'gray'}
                             value={tempNote.content}
                             onChangeText={(text) => handleUpdate('content', text)}
                         />

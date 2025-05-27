@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { View, Text, Pressable, Image, TouchableOpacity, FlatList } from "react-native";
+import { View, Text, Pressable, Image, TouchableOpacity, FlatList, ToastAndroid } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { ScrollView } from "react-native-gesture-handler";
@@ -9,11 +9,15 @@ import YearPicker from "@/components/YearPicker";
 import TransactionPieChart from "@/components/PieChart";
 import TabTitle from "@/components/TabTitle";
 import Transaction from "@/components/Transaction";
+import TransactionCategory from "@/components/TransactionCategory";
 import TransactionDetail from "@/components/TransactionDetails";
+import SummaryModal from "@/components/SummaryModal";
 import { MONTHS, YEARS } from "@/constants/data";
 import { noData } from "@/constants/images";
-import { getTransactionStats, getTransactionsByDate } from "@/services/transaction";
-import { TransactionDetails, Stats } from "@/types";
+import icons from "@/constants/icons";
+import { addNote } from "@/services/note";
+import { getTransactionsByDate, getTransactionSummary } from "@/services/transaction";
+import { TransactionDetails, Stats, ExpenseByCategory } from "@/types";
 
 export default function TransactionStatistics() {
     const today = new Date();
@@ -22,25 +26,32 @@ export default function TransactionStatistics() {
     const [date, setDate] = useState({ month: today.getMonth(), year: today.getFullYear() });
     const [stats, setStats] = useState<Stats>({ totalAmount: 0, income: 0, expense: 0 });
     const [transactions, setTransactions] = useState<TransactionDetails[]>([]);
+    const [categories, setCategories] = useState<ExpenseByCategory[]>([]);
+    const [selectedTab, setSelectedTab] = useState<'transactions' | 'summary'>('transactions');
     const [isYearPickerVisible, setIsYearPickerVisible] = useState(false);
-    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isModalVisible, setIsModalVisible] = useState<'transaction' | 'summary' | null>(null);
     const [selectedTransaction, setSelectedTransaction] = useState<TransactionDetails | null>(null);
-
-    const fetchStats = async () => {
-        try {
-            const { data } = await getTransactionStats(date.month + 1, date.year);
-            setStats(data?.totalAmount ? data : { totalAmount: 0, income: 0, expense: 0 });
-        } catch (error) {
-            // console.error(error);
-        }
-    }
+    const [summary, setSummary] = useState('');
 
     const fetchTransactions = async (date: { month: number, year: number }) => {
         try {
             const { data } = await getTransactionsByDate(date.month + 1, date.year);
             setTransactions(data?.transactions || []);
+            setStats(data?.stats || { totalAmount: 0, income: 0, expense: 0 });
+            setCategories(data?.categories || []);
         } catch (error) {
             // console.error(error);
+        }
+    }
+
+    const fetchTransactionSummary = async (date: { month: number, year: number }) => {
+        setIsModalVisible('summary');
+        if (summary) return;
+        try {
+            const { data } = await getTransactionSummary(date.month + 1, date.year);
+            setSummary(data?.summary || '');
+        } catch (error) {
+            console.error(error);
         }
     }
 
@@ -49,27 +60,49 @@ export default function TransactionStatistics() {
     }
 
     const handleClick = (transaction: TransactionDetails) => {
-        setIsModalVisible(true);
+        setIsModalVisible('transaction');
         setSelectedTransaction(transaction);
     }
 
     const handleCloseModal = () => {
-        setIsModalVisible(false);
+        setIsModalVisible(null);
         setSelectedTransaction(null);
+    }
+
+    const handleSummaryClose = async (save = false) => {
+        setIsModalVisible(null);
+        if (save) {
+            await addNote({
+                title: `${MONTHS[date.month]} ${date.year} : Transaction Summary`,
+                content: summary,
+                pinned: false,
+                createdAt: new Date(),
+                updatedAt: new Date()
+            });
+            ToastAndroid.show('Summary saved to notes', ToastAndroid.SHORT);
+        }
     }
 
     useEffect(() => {
         if (isFocused) {
-            fetchStats();
             fetchTransactions(date);
+            setSummary('');
         }
     }, [isFocused, date])
 
     return (
         <SafeAreaView className='bg-gray-50'>
             <View className="flex h-full">
-                <View className="p-4">
-                    <TabTitle title='Statistics' icon='📈' subTitle='Analyze Your Data!' />
+                <View className="p-4 flex flex-row items-center justify-between">
+                    <TabTitle title='Statistics' icon='📈' subTitle={selectedTab === 'transactions' ? 'Track every rupee!' : 'Spending insights!'} />
+                    {transactions.length > 0 &&
+                        <Pressable
+                            onPress={() => fetchTransactionSummary(date)}
+                            className='border border-gray-300 rounded-xl py-2 px-3'
+                        >
+                            <Text className='text-lg text-center'>✨</Text>
+                        </Pressable>
+                    }
                 </View>
                 <View className="px-4">
                     <TransactionPieChart stats={stats} month={MONTHS[date.month]} />
@@ -78,7 +111,7 @@ export default function TransactionStatistics() {
                     <View className='flex flex-row items-center'>
                         <GestureHandlerRootView>
                             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                                <Pressable onPress={() => setIsYearPickerVisible(true)} className={`border border-gray-400 rounded-xl mr-4 px-4 py-2`}>
+                                <Pressable onPress={() => setIsYearPickerVisible(true)} className={`border border-gray-300 rounded-xl mr-4 px-4 py-2`}>
                                     <Text className='text-base font-pregular text-center'>{date.year}</Text>
                                 </Pressable>
                                 <YearPicker
@@ -92,7 +125,7 @@ export default function TransactionStatistics() {
                                         <Pressable
                                             key={index}
                                             onPress={() => handleDateChange(index)}
-                                            className={`border border-gray-400 rounded-xl mr-4 px-4 py-2 ${index === date?.month ? 'bg-gray-200' : undefined}`}
+                                            className={`border border-gray-300 rounded-xl mr-4 px-4 py-2 ${index === date?.month ? 'bg-gray-200' : undefined}`}
                                         >
                                             <Text className='text-base font-pregular text-center'>{month}</Text>
                                         </Pressable>
@@ -106,16 +139,30 @@ export default function TransactionStatistics() {
                     <GestureHandlerRootView>
                         {
                             transactions.length ?
-                                <FlatList
-                                    showsVerticalScrollIndicator={false}
-                                    data={transactions}
-                                    renderItem={({ item }) => (
-                                        <TouchableOpacity onPress={() => handleClick(item)}>
-                                            <Transaction {...item} />
-                                        </TouchableOpacity>
-                                    )}
-                                    keyExtractor={(item) => item._id}
-                                />
+                                selectedTab === 'transactions' ?
+                                    <FlatList
+                                        showsVerticalScrollIndicator={false}
+                                        data={transactions}
+                                        renderItem={({ item }) => (
+                                            <TouchableOpacity onPress={() => handleClick(item)}>
+                                                <Transaction transaction={item} />
+                                            </TouchableOpacity>
+                                        )}
+                                        ListFooterComponent={() => (<View className='h-16' />)}
+                                        keyExtractor={(item) => item._id}
+                                    />
+                                    :
+                                    <FlatList
+                                        showsVerticalScrollIndicator={false}
+                                        data={categories}
+                                        renderItem={({ item }) => (
+                                            <TouchableOpacity onPress={() => { }}>
+                                                <TransactionCategory category={item} date={new Date(date.year, date.month, 1)} />
+                                            </TouchableOpacity>
+                                        )}
+                                        ListFooterComponent={() => (<View className='h-16' />)}
+                                        keyExtractor={(item) => item._id}
+                                    />
                                 :
                                 <View className='flex flex-1 items-center justify-center'>
                                     <Image source={noData} className='w-40 h-40' />
@@ -125,8 +172,18 @@ export default function TransactionStatistics() {
                 </View>
             </View>
 
+            <TouchableOpacity
+                onPress={() => setSelectedTab((prev) => prev === 'transactions' ? 'summary' : 'transactions')}
+                className={`absolute bottom-8 right-4 p-4 rounded-xl border border-slate-400 bg-black/30`}
+            >
+                <Image source={icons.toggle} className='w-4 h-4' />
+            </TouchableOpacity>
+
             {/* Transaction Details Modal */}
-            <TransactionDetail transaction={selectedTransaction!} isOpen={isModalVisible} onClose={handleCloseModal} />
+            <TransactionDetail transaction={selectedTransaction!} isOpen={isModalVisible === 'transaction'} onClose={handleCloseModal} />
+
+            {/* Summary Modal */}
+            <SummaryModal summary={summary} isOpen={isModalVisible === 'summary'} onClose={handleSummaryClose} />
 
         </SafeAreaView >
     );
