@@ -153,7 +153,15 @@ export default function TransactionScreen() {
                             <Text>➕</Text>
                         </Pressable>}
             </View>
-            <TransactionModal initialState={transaction} isOpen={showModal} onClose={handleCloseModal} onSave={saveTransaction} />
+
+            {/* Transaction Modal */}
+            <TransactionModal
+                isOpen={showModal}
+                initialState={transaction}
+                hasExistingTransactions={!!transactions.length}
+                onSave={saveTransaction}
+                onClose={handleCloseModal}
+            />
         </SafeAreaView>
     );
 }

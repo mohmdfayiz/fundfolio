@@ -4,13 +4,14 @@ import { Text, View, Modal, Pressable, TextInput, KeyboardAvoidingView, ScrollVi
 import { Dropdown } from 'react-native-element-dropdown';
 import { DateTimePickerAndroid, DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import dateFormat from 'dateformat';
+import * as Haptics from 'expo-haptics';
 
 import RadioButton from './RadioButton';
 import { PAYMENT_METHODS, TRANSACTION_NOTE_EXAMPLES } from '@/constants/data';
 import { getTransactionCategories } from '@/services/transaction';
 import { Category, Transaction } from '@/types';
 
-const TransactionModal = ({ initialState, isOpen, onClose, onSave }: { initialState: Transaction, isOpen: boolean, onClose: () => void, onSave: (transaction: Transaction) => void }) => {
+const TransactionModal = ({ initialState, hasExistingTransactions, isOpen, onClose, onSave }: { initialState: Transaction, hasExistingTransactions: boolean, isOpen: boolean, onClose: () => void, onSave: (transaction: Transaction) => void }) => {
 
     const [transactionCategories, setTransactionCategories] = useState<Category[]>([]);
     const [transaction, setTransaction] = useState({ ...initialState, amount: initialState.amount.toString() });
@@ -24,10 +25,15 @@ const TransactionModal = ({ initialState, isOpen, onClose, onSave }: { initialSt
 
     const handleSave = () => {
         if (!transaction.amount || !transaction.category || !transaction.paymentMethod || !transaction.transactionType) {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
             return ToastAndroid.show('Please fill all the required fields', ToastAndroid.LONG);
         }
+        if (isNaN(Number(transaction.amount))) {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+            return ToastAndroid.show('Please enter a valid amount', ToastAndroid.SHORT);
+        }
         onSave({ ...transaction, amount: Number(transaction.amount), category: findCategoryId(transaction.category)! });
-        setTransaction({ ...transaction, amount: '0', category: '', description: '', paymentMethod: '', transactionType: '' });
+        setTransaction({ ...transaction, amount: '', category: '', description: '', paymentMethod: '', transactionType: '' });
         onClose();
     }
 
@@ -67,7 +73,7 @@ const TransactionModal = ({ initialState, isOpen, onClose, onSave }: { initialSt
 
     useEffect(() => {
         isOpen && fetchTransactionCategories();
-        isOpen && setTransaction({ ...initialState, amount: initialState.amount.toString() });
+        isOpen && setTransaction({ ...initialState, amount: initialState.amount ? initialState.amount.toString() : '' });
     }, [isOpen]);
 
     return (
@@ -94,7 +100,7 @@ const TransactionModal = ({ initialState, isOpen, onClose, onSave }: { initialSt
                                 <TextInput
                                     keyboardType='numeric'
                                     placeholder='₹ 100'
-                                    value={!transaction.amount ? '' : transaction.amount.toString()}
+                                    value={transaction.amount}
                                     className='border border-slate-400 p-4 rounded-xl font-pregular text-lg'
                                     placeholderTextColor={'gray'}
                                     onChangeText={(text) => setTransaction({ ...transaction, amount: text })}
@@ -117,7 +123,7 @@ const TransactionModal = ({ initialState, isOpen, onClose, onSave }: { initialSt
                                     valueField={'name'}
                                 />
                                 {
-                                    transactionCategories.length === 0 && !isEditing && (
+                                    transactionCategories.length === 0 && !isEditing && !hasExistingTransactions && (
                                         <View>
                                             <Link href={'/transactioncategory'} className='p-1 text-sm font-pregular text-orange-400 underline'>Add transaction categories on your account {'>>'}</Link>
                                         </View>

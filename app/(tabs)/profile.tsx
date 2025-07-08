@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { Alert, Image, Pressable, Text, View, Share } from 'react-native';
+import { Alert, Image, Pressable, Text, View, Share, ScrollView } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
@@ -162,7 +162,7 @@ export default function ProfileScreen() {
 
   return (
     <SafeAreaView className='h-full bg-gray-50'>
-      <View className='flex flex-col gap-4 p-4'>
+      <View className='flex flex-1 flex-col gap-4 p-4'>
         <View>
           <TabTitle title='Account' icon='🛡️' subTitle='Manage your account!' />
         </View>
@@ -185,64 +185,74 @@ export default function ProfileScreen() {
           <Text className='text-lg font-psemibold'>₹ {accountBalance}</Text>
         </View>
 
-        <View className='flex flex-col gap-y-3'>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <View className='flex flex-col gap-y-1.5'>
+            <View className='flex flex-row items-center justify-between p-2'>
+              <Link href={'/transactionstatistics'} className='flex-1'>
+                <Text className='text-lg font-psemibold'>Transaction Statistics</Text>
+              </Link>
+              <Text className='text-lg font-psemibold'>{'>'}</Text>
+            </View>
 
-          <View className='flex flex-row items-center justify-between p-2'>
-            <Link href={'/transactionstatistics'} className='flex-1'>
-              <Text className='text-lg font-psemibold'>Transaction Statistics</Text>
-            </Link>
-            <Text className='text-lg font-psemibold'>{'>'}</Text>
-          </View>
+            <View className='flex flex-row items-center justify-between p-2'>
+              <Link href={'/transactioncategory'} className='flex-1'>
+                <Text className='text-lg font-psemibold'>Transaction Category</Text>
+              </Link>
+              <Text className='text-lg font-psemibold'>{'>'}</Text>
+            </View>
 
-          <View className='flex flex-row items-center justify-between p-2'>
-            <Link href={'/transactioncategory'} className='flex-1'>
-              <Text className='text-lg font-psemibold'>Transaction Category</Text>
-            </Link>
-            <Text className='text-lg font-psemibold'>{'>'}</Text>
-          </View>
+            <View className='flex flex-row items-center justify-between p-2'>
+              <Link href={'/password'} className='flex-1'>
+                <Text className='text-lg font-psemibold'>Change Password</Text>
+              </Link>
+              <Text className='text-lg font-psemibold'>{'>'}</Text>
+            </View>
 
-          <View className='flex flex-row items-center justify-between p-2'>
-            <Link href={'/password'} className='flex-1'>
-              <Text className='text-lg font-psemibold'>Change Password</Text>
-            </Link>
-            <Text className='text-lg font-psemibold'>{'>'}</Text>
-          </View>
+            <View className='flex flex-row items-center justify-between p-2'>
+              <Link href={'/privacypolicy'} className='flex-1'>
+                <Text className='text-lg font-psemibold'>Privacy Policy</Text>
+              </Link>
+              <Text className='text-lg font-psemibold'>{'>'}</Text>
+            </View>
 
-          <View className='flex flex-row items-center justify-between p-2'>
-            <Link href={'/privacypolicy'} className='flex-1'>
-              <Text className='text-lg font-psemibold'>Privacy Policy</Text>
-            </Link>
-            <Text className='text-lg font-psemibold'>{'>'}</Text>
-          </View>
+            <View className='flex flex-row items-center justify-between p-2'>
+              <Link href={'https://buymeacoffee.com/mohmdfayis'} className='flex-1'>
+                <Text className='text-lg font-psemibold'>Support Us</Text>
+              </Link>
+              <Text className='text-lg font-psemibold'>{'>'}</Text>
+            </View>
 
-          <View className='flex flex-row items-center justify-between p-2'>
-            <Pressable onPress={handleShareApp} className='flex-1'>
-              <Text className='text-lg font-psemibold'>Share App</Text>
-            </Pressable>
-            <Text className='text-lg font-psemibold'>{'>'}</Text>
-          </View>
+            <View className='flex flex-row items-center justify-between p-2'>
+              <Pressable onPress={handleShareApp} className='flex-1'>
+                <Text className='text-lg font-psemibold'>Share App</Text>
+              </Pressable>
+              <Text className='text-lg font-psemibold'>{'>'}</Text>
+            </View>
 
-          <View className='flex flex-row items-center justify-between p-2'>
-            <Pressable onPress={handleAppLockPreference} className='flex-1'>
-              <Text className='text-lg font-psemibold'>App Lock {useAppLock && '🔐'}</Text>
-            </Pressable>
-            <Text className='text-lg font-psemibold'>{'>'}</Text>
-          </View>
+            <View className='flex flex-row items-center justify-between p-2'>
+              <Pressable onPress={handleAppLockPreference} className='flex-1'>
+                <Text className='text-lg font-psemibold'>App Lock {useAppLock && '🔐'}</Text>
+              </Pressable>
+              <Text className='text-lg font-psemibold'>{'>'}</Text>
+            </View>
 
-          <View className='flex flex-row items-center justify-between p-2'>
-            <Pressable onPress={handleDeleteAccount} className='flex-1'>
-              <Text className='text-lg font-psemibold text-red'>Delete Account</Text>
-            </Pressable>
-            <Text className='text-lg font-psemibold text-red'>{'>'}</Text>
-          </View>
+            <View className='flex flex-row items-center justify-between p-2'>
+              <Pressable onPress={handleDeleteAccount} className='flex-1'>
+                <Text className='text-lg font-psemibold text-red'>Delete Account</Text>
+              </Pressable>
+              <Text className='text-lg font-psemibold text-red'>{'>'}</Text>
+            </View>
 
-          <View className='flex flex-row items-center justify-between p-2'>
-            <Pressable onPress={handleLogout} className='flex-1'>
-              <Text className='text-lg font-psemibold text-red'>Logout</Text>
-            </Pressable>
-            <Text className='text-lg font-psemibold text-red'>{'>'}</Text>
+            <View className='flex flex-row items-center justify-between p-2'>
+              <Pressable onPress={handleLogout} className='flex-1'>
+                <Text className='text-lg font-psemibold text-red'>Logout</Text>
+              </Pressable>
+              <Text className='text-lg font-psemibold text-red'>{'>'}</Text>
+            </View>
           </View>
-        </View>
+        </ScrollView>
+
+
       </View>
 
       <EditProfileModal isOpen={isOpen} onClose={handleEditProfileModal} />

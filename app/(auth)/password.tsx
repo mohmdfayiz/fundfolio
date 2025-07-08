@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { router } from 'expo-router'
-import { View, Text, Pressable, TextInput, KeyboardAvoidingView, ScrollView, Platform, Keyboard } from 'react-native'
+import { View, Text, Pressable, TextInput, KeyboardAvoidingView, ScrollView, Platform, Keyboard, Image } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Toast from 'react-native-toast-message';
 import { useGlobalContext } from '@/context/GlobalContext';
@@ -28,6 +28,10 @@ export default function SignUp() {
         setIsLogged(true);
         router.replace('/home');
       } else {
+        Toast.show({
+          type: 'success',
+          text1: 'Password updated successfully',
+        })
         router.back();
       }
     } catch (error) {

@@ -2,7 +2,6 @@ import { View, Text, TouchableOpacity } from 'react-native'
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Redirect, router } from 'expo-router';
 import { useGlobalContext } from '@/context/GlobalContext';
-import './global.css';
 
 export default function Welcome() {
 
