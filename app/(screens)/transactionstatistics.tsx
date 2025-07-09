@@ -5,6 +5,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { ScrollView } from "react-native-gesture-handler";
 import { useIsFocused } from "@react-navigation/native";
 import YearPicker from "@/components/YearPicker";
+import * as Haptics from "expo-haptics";
 
 import TransactionPieChart from "@/components/PieChart";
 import TabTitle from "@/components/TabTitle";
@@ -47,6 +48,7 @@ export default function TransactionStatistics() {
     const fetchTransactionSummary = async (date: { month: number, year: number }) => {
         setIsModalVisible('summary');
         if (summary) return;
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         try {
             const { data } = await getTransactionSummary(date.month + 1, date.year);
             setSummary(data?.summary || '');
@@ -156,7 +158,7 @@ export default function TransactionStatistics() {
                                         showsVerticalScrollIndicator={false}
                                         data={categories}
                                         renderItem={({ item }) => (
-                                            <TouchableOpacity onPress={() => { }}>
+                                            <TouchableOpacity>
                                                 <TransactionCategory category={item} date={new Date(date.year, date.month, 1)} />
                                             </TouchableOpacity>
                                         )}

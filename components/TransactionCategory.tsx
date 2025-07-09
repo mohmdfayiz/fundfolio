@@ -4,13 +4,13 @@ import { ExpenseByCategory } from '@/types';
 
 const TransactionCategory = ({ category, date }: { category: ExpenseByCategory, date: Date }) => {
     return (
-        <View className='flex flex-row gap-2 items-center justify-between py-2'>
+        <View className='flex flex-row gap-2 items-center justify-between py-1'>
             <View style={{ backgroundColor: category.bgColour }} className={`h-16 w-16 items-center justify-center rounded-xl`}>
                 <Text className='text-3xl'>{category.icon}</Text>
             </View>
             <View className='flex-1'>
                 <Text className='text-lg font-psemibold'>{category.name}</Text>
-                <Text className='text-base font-pregular'>{dateformat(date, "mmmm yyyy")}</Text>
+                <Text className='text-base font-pregular'>{`${category.count} transaction${category.count > 1 ? 's' : ''}`}</Text>
             </View>
             <View className='items-end'>
                 <Text className={`text-lg font-psemibold ${category.totalAmount >= 0 ? 'text-green' : 'text-red'}`}>

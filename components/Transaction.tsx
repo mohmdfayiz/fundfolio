@@ -4,7 +4,7 @@ import { TransactionDetails } from '@/types';
 
 const Transaction = ({ transaction }: { transaction: TransactionDetails }) => {
     return (
-        <View className='flex flex-row gap-2 items-center justify-between py-2'>
+        <View className='flex flex-row gap-2 items-center justify-between py-1'>
             <View style={{ backgroundColor: transaction.category.bgColour }} className={`h-16 w-16 items-center justify-center rounded-xl`}>
                 <Text className='text-3xl'>{transaction.category.icon}</Text>
             </View>

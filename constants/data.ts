@@ -49,7 +49,7 @@ const TRANSACTION_CATEGORY_COLOR_MAP = [
 const SAMPLE_CATEGORIES = [
     {
         name: 'Food',
-        icon: '🍟',
+        icon: '🍽️',
         bgColour: '#bbf7d0',
     },
     {
@@ -61,6 +61,16 @@ const SAMPLE_CATEGORIES = [
         name: 'Shopping',
         icon: '🛍️',
         bgColour: '#c7d2fe',
+    },
+    {
+        name: 'Subscription',
+        icon: '♻️',
+        bgColour: '#fed7aa',
+    },
+    {
+        name: 'Miscellaneous',
+        icon: '🏁',
+        bgColour: '#fecaca',
     },
 ]
 

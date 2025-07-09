@@ -98,7 +98,7 @@ const TransactionModal = ({ initialState, hasExistingTransactions, isOpen, onClo
                             <View className='mb-4'>
                                 <Text className='text-lg font-pmedium mb-1'>Amount</Text>
                                 <TextInput
-                                    keyboardType='numeric'
+                                    keyboardType='decimal-pad'
                                     placeholder='₹ 100'
                                     value={transaction.amount}
                                     className='border border-slate-400 p-4 rounded-xl font-pregular text-lg'
