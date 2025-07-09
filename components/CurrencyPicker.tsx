@@ -10,7 +10,7 @@ const CurrencyPicker = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => v
                 onClose();
             }}
         >
-            <Text className='text-base font-pregular text-center'>{item.symbol} {item.name}</Text>
+            <Text className='text-lg font-pregular text-center'>{item.symbol} {item.name}</Text>
         </TouchableOpacity>
     );
 
@@ -31,7 +31,7 @@ const CurrencyPicker = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => v
                         style={styles.yearList}
                     />
                     <TouchableOpacity className='mt-2 p-2 bg-gray-200 rounded-md' onPress={onClose}>
-                        <Text className='text-base font-pregular text-center'>Close</Text>
+                        <Text className='text-lg font-pregular text-center'>Close</Text>
                     </TouchableOpacity>
                 </View>
             </View>

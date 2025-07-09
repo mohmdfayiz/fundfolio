@@ -1,11 +1,13 @@
 import { View, Text, StyleSheet } from "react-native"
-import PieChart from 'react-native-pie-chart';
+import PieChart, { Slice } from 'react-native-pie-chart';
 import { Stats } from "@/types";
 
 const TransactionPieChart = ({ stats, month }: { stats: Stats, month: string }) => {
 
     const pieChartData = (stats: Stats) => {
-        return stats.income === 0 && stats.expense === 0 ? [0.01, 0.01] : [stats.expense * -1, stats.income]
+        return stats.income === 0 && stats.expense === 0
+            ? [{ value: 0.01, color: '#FA7070' }, { value: 0.01, color: '#A1C398' }]
+            : [{ value: stats.expense * -1, color: '#FA7070' }, { value: stats.income, color: '#A1C398' }]
     }
 
     return (
@@ -13,31 +15,29 @@ const TransactionPieChart = ({ stats, month }: { stats: Stats, month: string }) 
             <View>
                 <View >
                     <View className=' flex flex-row items-baseline'>
-                        <View className="w-2 h-4 bg-green rounded-full mr-1"></View>
-                        <Text className='text-lg font-plight'>Income</Text>
+                        <View className="w-2 h-3 bg-green rounded-full mr-1"></View>
+                        <Text className='text-xl font-plight'>Income</Text>
                     </View>
-                    <Text className='text-xl font-psemibold'>₹ {stats.income}</Text>
+                    <Text className='text-2xl font-psemibold'>₹ {stats.income}</Text>
                 </View>
 
                 <View className='mt-4'>
                     <View className='flex flex-row items-baseline'>
-                        <View className="w-2 h-4 bg-red rounded-full mr-1"></View>
-                        <Text className='text-lg font-plight'>Expense</Text>
+                        <View className="w-2 h-3 bg-red rounded-full mr-1"></View>
+                        <Text className='text-xl font-plight'>Expense</Text>
                     </View>
-                    <Text className='text-xl font-psemibold'>₹ {stats.expense * -1}</Text>
+                    <Text className='text-2xl font-psemibold'>₹ {stats.expense * -1}</Text>
                 </View>
             </View>
 
             <View style={styles.chartContainer}>
                 <View style={styles.chartOverlay}>
-                    <Text className='text-lg font-psemibold'>{month}</Text>
+                    <Text className='text-xl font-psemibold'>{month}</Text>
                 </View>
                 <PieChart
                     widthAndHeight={130}
                     series={pieChartData(stats)}
-                    sliceColor={['#FA7070', '#A1C398']}
-                    coverRadius={0.6}
-                    coverFill={'transparent'}
+                    cover={{ radius: 0.6, color: 'transparent' }}
                 />
             </View>
         </View>

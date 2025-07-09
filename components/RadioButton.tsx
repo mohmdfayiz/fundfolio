@@ -5,7 +5,7 @@ const RadioButton = ({ name, value, setValue }: { name: string, value: string, s
             onPress={() => setValue(name)}
             className={`border p-4 rounded-xl ${value === name ? 'bg-green/50 border-green' : 'bg-transparent  border-slate-400'} `}
         >
-            <Text className='text-base font-pregular'>{name}</Text>
+            <Text className='text-lg font-pregular'>{name}</Text>
         </Pressable>
     )
 }

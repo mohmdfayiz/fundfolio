@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { View, Text, SectionList, Pressable, TouchableOpacity, Image } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Toast from 'react-native-toast-message';
 import * as Haptics from 'expo-haptics';
 
@@ -21,6 +21,7 @@ export default function TransactionScreen() {
     const [selectedItems, setSelectedItems] = useState<string[]>([]);
 
     const isFocused = useIsFocused();
+    const insets = useSafeAreaInsets();
 
     const fetchTransactions = async () => {
         const { data } = await getTransactions();
@@ -104,7 +105,7 @@ export default function TransactionScreen() {
     }, [isFocused]);
 
     return (
-        <SafeAreaView>
+        <View className='bg-gray-50' style={{ paddingTop: insets.top }}>
             <View className='flex h-full'>
                 <View className='px-4 pt-4 pb-3'>
                     <TabTitle title='Transactions' icon='💵' subTitle='Track your money!' />
@@ -117,8 +118,8 @@ export default function TransactionScreen() {
                                 sections={transactions}
                                 renderSectionHeader={({ section: { _id, totalAmount } }) => (
                                     <View className='flex flex-row justify-between bg-gray-200 px-4 py-1 my-1'>
-                                        <Text className='text-lg font-pregular'>{MONTHS.at(_id.month - 1)} {_id.year}</Text>
-                                        <Text className={`text-lg font-psemibold`}>₹ {totalAmount}</Text>
+                                        <Text className='text-xl font-pregular'>{MONTHS.at(_id.month - 1)} {_id.year}</Text>
+                                        <Text className={`text-xl font-psemibold`}>₹ {totalAmount}</Text>
                                     </View>
                                 )}
                                 ListFooterComponent={() => (<View className='h-16' />)}
@@ -129,7 +130,7 @@ export default function TransactionScreen() {
                                         onPress={() => handleSelectItem({ ...item, category: item.category.name, amount: item.transactionType === 'Expense' ? item.amount * -1 : item.amount })}
                                         onLongPress={() => enableMultipleSelection(item._id)}
                                     >
-                                        <Transaction {...item} />
+                                        <Transaction transaction={item} />
                                     </TouchableOpacity>
                                 )}
                             /> :
@@ -153,7 +154,15 @@ export default function TransactionScreen() {
                             <Text>➕</Text>
                         </Pressable>}
             </View>
-            <TransactionModal initialState={transaction} isOpen={showModal} onClose={handleCloseModal} onSave={saveTransaction} />
-        </SafeAreaView>
+
+            {/* Transaction Modal */}
+            <TransactionModal
+                isOpen={showModal}
+                initialState={transaction}
+                hasExistingTransactions={!!transactions.length}
+                onSave={saveTransaction}
+                onClose={handleCloseModal}
+            />
+        </View>
     );
 }

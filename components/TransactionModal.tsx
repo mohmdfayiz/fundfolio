@@ -4,16 +4,17 @@ import { Text, View, Modal, Pressable, TextInput, KeyboardAvoidingView, ScrollVi
 import { Dropdown } from 'react-native-element-dropdown';
 import { DateTimePickerAndroid, DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import dateFormat from 'dateformat';
+import * as Haptics from 'expo-haptics';
 
 import RadioButton from './RadioButton';
 import { PAYMENT_METHODS, TRANSACTION_NOTE_EXAMPLES } from '@/constants/data';
 import { getTransactionCategories } from '@/services/transaction';
 import { Category, Transaction } from '@/types';
 
-const TransactionModal = ({ initialState, isOpen, onClose, onSave }: { initialState: Transaction, isOpen: boolean, onClose: () => void, onSave: (transaction: Transaction) => void }) => {
+const TransactionModal = ({ initialState, hasExistingTransactions, isOpen, onClose, onSave }: { initialState: Transaction, hasExistingTransactions: boolean, isOpen: boolean, onClose: () => void, onSave: (transaction: Transaction) => void }) => {
 
     const [transactionCategories, setTransactionCategories] = useState<Category[]>([]);
-    const [transaction, setTransaction] = useState(initialState)
+    const [transaction, setTransaction] = useState({ ...initialState, amount: initialState.amount.toString() });
 
     const isEditing = initialState._id !== undefined;
 
@@ -24,10 +25,15 @@ const TransactionModal = ({ initialState, isOpen, onClose, onSave }: { initialSt
 
     const handleSave = () => {
         if (!transaction.amount || !transaction.category || !transaction.paymentMethod || !transaction.transactionType) {
-           return ToastAndroid.show('Please fill all the required fields', ToastAndroid.LONG);
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+            return ToastAndroid.show('Please fill all the required fields', ToastAndroid.LONG);
         }
-        onSave({ ...transaction, category: findCategoryId(transaction.category)! });
-        setTransaction({ ...transaction, amount: 0, category: '', description: '', paymentMethod: '', transactionType: '' });
+        if (isNaN(Number(transaction.amount))) {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+            return ToastAndroid.show('Please enter a valid amount', ToastAndroid.SHORT);
+        }
+        onSave({ ...transaction, amount: Number(transaction.amount), category: findCategoryId(transaction.category)! });
+        setTransaction({ ...transaction, amount: '', category: '', description: '', paymentMethod: '', transactionType: '' });
         onClose();
     }
 
@@ -60,13 +66,14 @@ const TransactionModal = ({ initialState, isOpen, onClose, onSave }: { initialSt
             value: new Date(transaction.createdAt),
             onChange,
             mode: 'date',
+            minimumDate: new Date(2000, 0, 1),
             maximumDate: new Date(2030, 11, 31),
         });
     };
 
     useEffect(() => {
         isOpen && fetchTransactionCategories();
-        isOpen && setTransaction(initialState);
+        isOpen && setTransaction({ ...initialState, amount: initialState.amount ? initialState.amount.toString() : '' });
     }, [isOpen]);
 
     return (
@@ -74,9 +81,9 @@ const TransactionModal = ({ initialState, isOpen, onClose, onSave }: { initialSt
             visible={isOpen}
             onRequestClose={onClose}
             animationType="slide"
-            presentationStyle="pageSheet"
+            transparent={true}
         >
-            <View className='flex flex-col flex-1 gap-4 p-4 min-h-fit'>
+            <View className='flex-1 flex-col gap-4 p-4 min-h-fit bg-white'>
                 <View>
                     <Text className='text-2xl font-pbold'>{isEditing ? `Transaction` : `Add Transaction`}</Text>
                 </View>
@@ -84,31 +91,31 @@ const TransactionModal = ({ initialState, isOpen, onClose, onSave }: { initialSt
                 <View className='flex-1'>
                     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
                         <ScrollView
-                            className='flex flex-col gap-4'
+                            className='flex flex-col'
                             keyboardShouldPersistTaps="handled"
                             showsVerticalScrollIndicator={false}
                         >
-                            <View>
-                                <Text className='text-base font-pmedium mb-1'>Amount</Text>
+                            <View className='mb-4'>
+                                <Text className='text-lg font-pmedium mb-1'>Amount</Text>
                                 <TextInput
-                                    keyboardType='numeric'
+                                    keyboardType='decimal-pad'
                                     placeholder='₹ 100'
-                                    value={!transaction.amount ? '' : transaction.amount.toString()}
-                                    className='border border-slate-400 p-4 rounded-xl font-pregular text-base'
-                                    onChangeText={(text) => setTransaction({ ...transaction, amount: parseFloat(text) })}
+                                    value={transaction.amount}
+                                    className='border border-slate-400 p-4 rounded-xl font-pregular text-lg'
+                                    placeholderTextColor={'gray'}
+                                    onChangeText={(text) => setTransaction({ ...transaction, amount: text })}
                                 />
                             </View>
-                            <View>
+                            <View className='mb-4'>
                                 <View className='flex flex-row items-center relative'>
-                                    <Text className='text-base font-pmedium mb-1'>Category</Text>
+                                    <Text className='text-lg font-pmedium mb-1'>Category</Text>
                                 </View>
                                 <Dropdown
                                     data={transactionCategories}
                                     value={transaction.category}
-                                    style={{ borderColor: '#94a3b8', borderWidth: 1, borderRadius: 12, padding: 12 }}
+                                    style={{ borderColor: '#94a3b8', borderWidth: 1, borderRadius: 12, padding: 16 }}
                                     placeholderStyle={{ fontFamily: 'Poppins-Regular', fontSize: 16, color: 'gray' }}
                                     selectedTextStyle={{ fontFamily: 'Poppins-Regular', fontSize: 16, color: 'black' }}
-                                    inputSearchStyle={{ fontFamily: 'Poppins-Regular', fontSize: 16 }}
                                     maxHeight={300}
                                     placeholder={'Select Category'}
                                     onChange={item => { setTransaction({ ...transaction, category: item.name }) }}
@@ -116,22 +123,21 @@ const TransactionModal = ({ initialState, isOpen, onClose, onSave }: { initialSt
                                     valueField={'name'}
                                 />
                                 {
-                                    transactionCategories.length === 0 && !isEditing && (
+                                    transactionCategories.length === 0 && !isEditing && !hasExistingTransactions && (
                                         <View>
-                                            <Link href={'/transaction-category'} className='p-1 text-xs font-pregular text-orange-400 underline'>Add transaction categories on your account {'>>'}</Link>
+                                            <Link href={'/transactioncategory'} className='p-1 text-sm font-pregular text-orange-400 underline'>Add transaction categories on your account {'>>'}</Link>
                                         </View>
                                     )
                                 }
                             </View>
-                            <View>
-                                <Text className='text-base font-pmedium mb-1'>Payment Method</Text>
+                            <View className='mb-4'>
+                                <Text className='text-lg font-pmedium mb-1'>Payment Method</Text>
                                 <Dropdown
                                     data={PAYMENT_METHODS}
                                     value={transaction.paymentMethod}
-                                    style={{ borderColor: '#94a3b8', borderWidth: 1, borderRadius: 12, padding: 12 }}
+                                    style={{ borderColor: '#94a3b8', borderWidth: 1, borderRadius: 12, padding: 16 }}
                                     placeholderStyle={{ fontFamily: 'Poppins-Regular', fontSize: 16, color: 'gray' }}
                                     selectedTextStyle={{ fontFamily: 'Poppins-Regular', fontSize: 16, color: 'black' }}
-                                    inputSearchStyle={{ fontFamily: 'Poppins-Regular', fontSize: 16 }}
                                     maxHeight={300}
                                     placeholder={'Select Payment Method'}
                                     onChange={item => { setTransaction({ ...transaction, paymentMethod: item.name }) }}
@@ -139,18 +145,19 @@ const TransactionModal = ({ initialState, isOpen, onClose, onSave }: { initialSt
                                     valueField={'name'}
                                 />
                             </View>
-                            <View>
-                                <Text className='text-base font-pmedium mb-1'>Description</Text>
+                            <View className='mb-4'>
+                                <Text className='text-lg font-pmedium mb-1'>Description</Text>
                                 <TextInput
                                     placeholder={getRandomPlaceholder}
                                     value={transaction?.description}
-                                    className='border border-slate-400 p-4 rounded-xl font-pregular text-base'
+                                    className='border border-slate-400 p-4 rounded-xl font-pregular text-lg'
+                                    placeholderTextColor={'gray'}
                                     onChangeText={(text) => setTransaction({ ...transaction, description: text })}
                                 />
                             </View>
                             <View className='flex flex-row'>
                                 <View>
-                                    <Text className='text-base font-pmedium mb-1'>Transaction Type</Text>
+                                    <Text className='text-lg font-pmedium mb-1'>Transaction Type</Text>
                                     <View className='flex flex-row place-items-center gap-4'>
                                         <View>
                                             <RadioButton name='Income' value={transaction.transactionType} setValue={setTransactionType} />
@@ -161,9 +168,9 @@ const TransactionModal = ({ initialState, isOpen, onClose, onSave }: { initialSt
                                     </View>
                                 </View>
                                 <View className='ml-4 flex-1'>
-                                    <Text className='text-base font-pmedium mb-1'>Date</Text>
+                                    <Text className='text-lg font-pmedium mb-1'>Date</Text>
                                     <Pressable onPress={handleDatePick} className='border border-slate-400 p-4 rounded-xl'>
-                                        <Text className='font-pregular text-base'>{dateFormat(transaction.createdAt, "dd mmm yyyy")}</Text>
+                                        <Text className='font-pregular text-lg'>{dateFormat(transaction.createdAt, "dd.mm.yyyy")}</Text>
                                     </Pressable>
                                 </View>
                             </View>
@@ -174,10 +181,10 @@ const TransactionModal = ({ initialState, isOpen, onClose, onSave }: { initialSt
                 <View>
                     <View className='flex flex-row justify-between gap-x-4'>
                         <Pressable onPress={onClose} className='border flex-1 border-slate-400 p-4 rounded-xl' >
-                            <Text className='text-center text-base font-psemibold'>Cancel</Text>
+                            <Text className='text-center text-lg font-psemibold'>Cancel</Text>
                         </Pressable>
                         <Pressable onPress={handleSave} className='border border-green flex-1 bg-green/50 p-4 rounded-xl' >
-                            <Text className='text-center text-base font-psemibold'>{isEditing ? 'Save' : 'Add'}</Text>
+                            <Text className='text-center text-lg font-psemibold'>{isEditing ? 'Save' : 'Add'}</Text>
                         </Pressable>
                     </View>
                 </View>

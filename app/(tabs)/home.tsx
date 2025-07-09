@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Text, View, ScrollView, Image, TouchableOpacity } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Link } from 'expo-router';
 
@@ -34,6 +34,7 @@ export default function HomeScreen() {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const isFocused = useIsFocused();
+  const insets = useSafeAreaInsets();
   const today = new Date();
 
   const fetchStats = async () => {
@@ -64,7 +65,7 @@ export default function HomeScreen() {
   }, [isFocused])
 
   return (
-    <SafeAreaView>
+    <View className='bg-gray-50' style={{ paddingTop: insets.top }}>
       <View className='flex h-full' >
         <View className='p-4'>
           <TabTitle title={`Hello ${user?.username || 'there'}`} icon='👋' subTitle={homeSubTitle(today)} />
@@ -74,11 +75,11 @@ export default function HomeScreen() {
           <TransactionPieChart stats={stats} month={MONTHS[today.getMonth()]} />
         </View>
 
-        <View className='px-4 pt-4 pb-3'>
+        <View className='px-4 pt-4 pb-2'>
           <View className='flex flex-row items-center justify-between'>
             <Text className='text-xl font-psemibold'>Recent Transactions</Text>
-            <Link href={'/transactions'} className='border border-gray-400 rounded-lg px-3 py-1'>
-              <Text className='text-sm font-pregular text-center'>View All</Text>
+            <Link href={'/transactions'} className='border border-gray-400 rounded-lg px-[9px] py-[3px]'>
+              <Text className='text-base font-pregular text-center'>View All</Text>
             </Link>
           </View>
         </View>
@@ -90,7 +91,7 @@ export default function HomeScreen() {
                 <ScrollView showsVerticalScrollIndicator={false}>
                   {transactions.map((transaction: any) => (
                     <TouchableOpacity key={transaction._id} onPress={() => handleClick(transaction)}>
-                      <Transaction {...transaction} />
+                      <Transaction transaction={transaction} />
                     </TouchableOpacity>
                   ))}
                 </ScrollView>
@@ -106,6 +107,6 @@ export default function HomeScreen() {
 
       {/* Transaction Details Modal */}
       <TransactionDetail transaction={selectedTransaction!} isOpen={isModalVisible} onClose={handleCloseModal} />
-    </SafeAreaView >
+    </View>
   )
 }

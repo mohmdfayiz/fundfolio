@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
-import { Alert, Image, Pressable, Text, View, Share } from 'react-native';
+import { Alert, Image, Pressable, Text, View, Share, ScrollView } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 import { Link } from 'expo-router';
 
@@ -24,6 +24,7 @@ export default function ProfileScreen() {
   const [isOpen, setIsOpen] = useState(false);
 
   const isFocused = useIsFocused();
+  const insets = useSafeAreaInsets();
 
   const fetchBalance = async () => {
     const { data } = await getAccountBalance();
@@ -47,24 +48,30 @@ export default function ProfileScreen() {
 
   const handleAppLockPreference = async () => {
     if (useAppLock) {
-      Alert.alert('Deactivate App Lock?', '', [
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
-        {
-          text: 'OK', onPress: async () => {
-            await setAppLockPreference(false);
-            setUseAppLock(false);
-            Toast.show({
-              type: 'success',
-              text1: 'App lock deactivated.',
-            })
-          }
-        },
-      ]);
+      Alert.alert(
+        'Deactivate App Lock?',
+        '',
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+          },
+          {
+            text: 'OK', onPress: async () => {
+              await setAppLockPreference(false);
+              setUseAppLock(false);
+              Toast.show({
+                type: 'success',
+                text1: 'App lock deactivated.',
+              })
+            }
+          },
+        ],
+        { userInterfaceStyle: 'light' }
+      );
     } else {
-      Alert.alert('Activate App Lock?',
+      Alert.alert(
+        'Activate App Lock?',
         "You'll need to use your device's security (like fingerprint or face ID) to unlock the app",
         [
           {
@@ -85,7 +92,9 @@ export default function ProfileScreen() {
               }
             }
           },
-        ]);
+        ],
+        { userInterfaceStyle: 'light' }
+      );
     }
   };
 
@@ -101,22 +110,28 @@ export default function ProfileScreen() {
   }
 
   async function handleLogout() {
-    Alert.alert('Are you sure you want to log out?', '', [
-      {
-        text: 'Cancel',
-        style: 'cancel',
-      },
-      {
-        text: 'OK', onPress: async () => {
-          await logoutUser();
+    Alert.alert(
+      'Are you sure you want to log out?',
+      '',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
         },
-      },
-    ]);
+        {
+          text: 'OK', onPress: async () => {
+            await logoutUser();
+          },
+        },
+      ],
+      { userInterfaceStyle: 'light' }
+    );
   }
 
   async function handleDeleteAccount() {
     try {
-      Alert.alert('Are you sure you want to delete your account?',
+      Alert.alert(
+        'Are you sure you want to delete your account?',
         'All data will be permanently deleted and cannot be reversed.',
         [
           {
@@ -130,7 +145,8 @@ export default function ProfileScreen() {
               await logoutUser(true);
             }
           },
-        ]
+        ],
+        { userInterfaceStyle: 'light' }
       );
     } catch (error) {
       // console.error(error);
@@ -146,8 +162,8 @@ export default function ProfileScreen() {
   }, [isFocused]);
 
   return (
-    <SafeAreaView>
-      <View className='flex flex-col gap-4 p-4'>
+    <View className='h-full bg-gray-50' style={{ paddingTop: insets.top }}>
+      <View className='flex flex-1 flex-col gap-4 p-4'>
         <View>
           <TabTitle title='Account' icon='🛡️' subTitle='Manage your account!' />
         </View>
@@ -155,82 +171,92 @@ export default function ProfileScreen() {
         <View className='flex flex-row items-center justify-start'>
           <View className='relative'>
             <Pressable onPress={handleEditProfileModal}>
-              <Image source={user?.profilePic === 'woman' ? woman : man} className='w-16 h-16 rounded-full' />
-              <Text className='absolute bottom-0 right-0 bg-black/50 rounded-full p-1 text-xs'>🖊️</Text>
+              <Image source={user?.profilePic === 'woman' ? woman : man} className='w-[70px] h-[70px] rounded-full' />
+              <Text className='absolute bottom-0 right-0 bg-black/50 rounded-full p-[5px] text-sm'>🖊️</Text>
             </Pressable>
           </View>
           <View className='ml-4'>
-            <Text className='text-base font-psemibold'>{user?.username}</Text>
-            <Text className='font-pregular'>{user?.email}</Text>
+            <Text className='text-lg font-psemibold'>{user?.username}</Text>
+            <Text className='font-pregular text-base'>{user?.email}</Text>
           </View>
         </View>
 
         <View className={`flex flex-row justify-between p-2 rounded-xl border ${accountBalance < 0 ? 'bg-red/20 border-red' : 'bg-green/20 border-green'}`}>
-          <Text className='text-base font-psemibold'>Account Balance</Text>
-          <Text className='text-base font-psemibold'>₹ {accountBalance}</Text>
+          <Text className='text-lg font-psemibold'>Account Balance</Text>
+          <Text className='text-lg font-psemibold'>₹ {accountBalance}</Text>
         </View>
 
-        <View className='flex flex-col gap-y-3'>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <View className='flex flex-col gap-y-1.5'>
+            <View className='flex flex-row items-center justify-between p-2'>
+              <Link href={'/transactionstatistics'} className='flex-1'>
+                <Text className='text-lg font-psemibold'>Transaction Statistics</Text>
+              </Link>
+              <Text className='text-lg font-psemibold'>{'>'}</Text>
+            </View>
 
-          <View className='flex flex-row items-center justify-between p-2'>
-            <Link href={'/transaction-statistics'} className='flex-1'>
-              <Text className='text-base font-psemibold'>Transaction Statistics</Text>
-            </Link>
-            <Text className='text-base font-psemibold'>{'>'}</Text>
-          </View>
+            <View className='flex flex-row items-center justify-between p-2'>
+              <Link href={'/transactioncategory'} className='flex-1'>
+                <Text className='text-lg font-psemibold'>Transaction Category</Text>
+              </Link>
+              <Text className='text-lg font-psemibold'>{'>'}</Text>
+            </View>
 
-          <View className='flex flex-row items-center justify-between p-2'>
-            <Link href={'/transaction-category'} className='flex-1'>
-              <Text className='text-base font-psemibold'>Transaction Category</Text>
-            </Link>
-            <Text className='text-base font-psemibold'>{'>'}</Text>
-          </View>
+            <View className='flex flex-row items-center justify-between p-2'>
+              <Link href={'/password'} className='flex-1'>
+                <Text className='text-lg font-psemibold'>Change Password</Text>
+              </Link>
+              <Text className='text-lg font-psemibold'>{'>'}</Text>
+            </View>
 
-          <View className='flex flex-row items-center justify-between p-2'>
-            <Link href={'/password'} className='flex-1'>
-              <Text className='text-base font-psemibold'>Change Password</Text>
-            </Link>
-            <Text className='text-base font-psemibold'>{'>'}</Text>
-          </View>
+            <View className='flex flex-row items-center justify-between p-2'>
+              <Link href={'/privacypolicy'} className='flex-1'>
+                <Text className='text-lg font-psemibold'>Privacy Policy</Text>
+              </Link>
+              <Text className='text-lg font-psemibold'>{'>'}</Text>
+            </View>
 
-          <View className='flex flex-row items-center justify-between p-2'>
-            <Link href={'/privacypolicy'} className='flex-1'>
-              <Text className='text-base font-psemibold'>Privacy Policy</Text>
-            </Link>
-            <Text className='text-base font-psemibold'>{'>'}</Text>
-          </View>
+            <View className='flex flex-row items-center justify-between p-2'>
+              <Link href={'https://buymeacoffee.com/mohmdfayis'} className='flex-1'>
+                <Text className='text-lg font-psemibold'>Support Us</Text>
+              </Link>
+              <Text className='text-lg font-psemibold'>{'>'}</Text>
+            </View>
 
-          <View className='flex flex-row items-center justify-between p-2'>
-            <Pressable onPress={handleShareApp} className='flex-1'>
-              <Text className='text-base font-psemibold'>Share App</Text>
-            </Pressable>
-            <Text className='text-base font-psemibold'>{'>'}</Text>
-          </View>
+            <View className='flex flex-row items-center justify-between p-2'>
+              <Pressable onPress={handleShareApp} className='flex-1'>
+                <Text className='text-lg font-psemibold'>Share App</Text>
+              </Pressable>
+              <Text className='text-lg font-psemibold'>{'>'}</Text>
+            </View>
 
-          <View className='flex flex-row items-center justify-between p-2'>
-            <Pressable onPress={handleAppLockPreference} className='flex-1'>
-              <Text className='text-base font-psemibold'>App Lock {useAppLock && '🔐'}</Text>
-            </Pressable>
-            <Text className='text-base font-psemibold'>{'>'}</Text>
-          </View>
+            <View className='flex flex-row items-center justify-between p-2'>
+              <Pressable onPress={handleAppLockPreference} className='flex-1'>
+                <Text className='text-lg font-psemibold'>App Lock {useAppLock && '🔐'}</Text>
+              </Pressable>
+              <Text className='text-lg font-psemibold'>{'>'}</Text>
+            </View>
 
-          <View className='flex flex-row items-center justify-between p-2'>
-            <Pressable onPress={handleDeleteAccount} className='flex-1'>
-              <Text className='text-base font-psemibold text-red'>Delete Account</Text>
-            </Pressable>
-            <Text className='text-base font-psemibold text-red'>{'>'}</Text>
-          </View>
+            <View className='flex flex-row items-center justify-between p-2'>
+              <Pressable onPress={handleDeleteAccount} className='flex-1'>
+                <Text className='text-lg font-psemibold text-red'>Delete Account</Text>
+              </Pressable>
+              <Text className='text-lg font-psemibold text-red'>{'>'}</Text>
+            </View>
 
-          <View className='flex flex-row items-center justify-between p-2'>
-            <Pressable onPress={handleLogout} className='flex-1'>
-              <Text className='text-base font-psemibold text-red'>Logout</Text>
-            </Pressable>
-            <Text className='text-base font-psemibold text-red'>{'>'}</Text>
+            <View className='flex flex-row items-center justify-between p-2'>
+              <Pressable onPress={handleLogout} className='flex-1'>
+                <Text className='text-lg font-psemibold text-red'>Logout</Text>
+              </Pressable>
+              <Text className='text-lg font-psemibold text-red'>{'>'}</Text>
+            </View>
           </View>
-        </View>
+        </ScrollView>
+
+
       </View>
 
       <EditProfileModal isOpen={isOpen} onClose={handleEditProfileModal} />
-    </SafeAreaView>
+    </View>
   );
 }

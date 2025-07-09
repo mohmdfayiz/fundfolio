@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { View, Text, Image, Pressable, TouchableOpacity, ScrollView } from "react-native";
+import { View, Text, Image, Pressable, TouchableOpacity, FlatList } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import dateFormat from "dateformat";
 import Toast from "react-native-toast-message";
@@ -100,36 +100,40 @@ export default function TransactionCategory() {
     }, []);
 
     return (
-        <SafeAreaView>
+        <SafeAreaView className='bg-gray-50'>
             <View className="flex h-full">
                 <View className="p-4">
                     <TabTitle title='Category' icon='♻️' subTitle='Manage Categories!' />
                 </View>
-                {
-                    categories?.length ?
-                        <ScrollView className='px-4' showsVerticalScrollIndicator={false}>
-                            {categories.map((category) => (
-                                <CategoryCard
-                                    key={category._id}
-                                    category={category}
-                                    handleModalOpen={handleModalOpen}
-                                    deleteCategory={deleteCategory}
-                                />
-                            ))}
-                        </ScrollView>
-                        :
-                        <View className='flex flex-1 items-center justify-center'>
-                            <Image source={noData} className='w-40 h-40' />
-                        </View>
-                }
-                <View className="p-4">
-                    <Pressable
-                        className="border border-green bg-green/50 p-4 rounded-xl"
-                        onPress={() => handleModalOpen('add')}
-                    >
-                        <Text className="text-base font-psemibold text-center">Add Category</Text>
-                    </Pressable>
+                <View className='flex-1 px-4'>
+                    {
+                        categories?.length ?
+                            <FlatList
+                                data={categories}
+                                renderItem={({ item }) => (
+                                    <CategoryCard
+                                        key={item._id}
+                                        category={item}
+                                        handleModalOpen={handleModalOpen}
+                                        deleteCategory={deleteCategory}
+                                    />
+                                )}
+                                keyExtractor={(item) => item._id!}
+                                showsVerticalScrollIndicator={false}
+                                ListFooterComponent={() => (<View className='h-20' />)}
+                            />
+                            :
+                            <View className='flex flex-1 items-center justify-center'>
+                                <Image source={noData} className='w-40 h-40' />
+                            </View>
+                    }
                 </View>
+                <Pressable
+                    onPress={() => handleModalOpen('add')}
+                    className='absolute bottom-8 right-4 p-4 rounded-xl border border-slate-400 bg-black/30'
+                >
+                    <Text>➕</Text>
+                </Pressable>
             </View>
 
             {
@@ -150,18 +154,18 @@ export default function TransactionCategory() {
 
 function CategoryCard({ category, handleModalOpen, deleteCategory }: { category: Category, handleModalOpen: (mode: 'add' | 'edit', selectedCategory?: Category) => void, deleteCategory: (id: string | undefined) => void }) {
     return (
-        <View key={category._id} className='flex flex-row items-center justify-between py-2'>
+        <View key={category._id} className='flex flex-row items-center justify-between py-1'>
             <TouchableOpacity onPress={() => handleModalOpen('edit', category)} className="flex flex-row flex-1 items-center">
-                <View style={{ backgroundColor: category.bgColour }} className={`h-14 w-14 items-center justify-center rounded-xl`}>
-                    <Text className='text-2xl'>{category.icon}</Text>
+                <View style={{ backgroundColor: category.bgColour }} className={`h-16 w-16 items-center justify-center rounded-xl`}>
+                    <Text className='text-3xl'>{category.icon}</Text>
                 </View>
                 <View className='ml-2'>
-                    <Text className='text-base font-psemibold'>{category.name}</Text>
-                    <Text className='text-sm font-pregular'>{'Added on: ' + dateFormat(category?.createdAt, "mediumDate")}</Text>
+                    <Text className='text-lg font-psemibold'>{category.name}</Text>
+                    <Text className='text-base font-pregular'>{'Added on: ' + dateFormat(category?.createdAt, "mediumDate")}</Text>
                 </View>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => deleteCategory(category?._id)} className='py-2 pl-2'>
-                <Image source={icons.trash} style={{ width: 24, height: 24 }} />
+                <Image source={icons.trash} style={{ width: 22, height: 22 }} />
             </TouchableOpacity>
         </View>
     )

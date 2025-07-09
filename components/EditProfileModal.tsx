@@ -49,17 +49,18 @@ const EditProfileModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () =>
                             maxLength={20}
                             placeholder="Username"
                             value={tempUser?.username}
-                            className="border border-slate-400 p-4 rounded-xl font-pregular text-base"
+                            className="border border-slate-400 p-4 rounded-xl font-pregular text-lg text-black"
+                            placeholderTextColor={'gray'}
                             onChangeText={(username) => tempUser && setTempUser({ ...tempUser, username })}
                         />
                     </View>
                     <View className="bg-white">
                         <View className='flex flex-row justify-between items-center gap-4'>
                             <Pressable onPress={onClose} className='border flex-1 border-slate-400 p-4 rounded-xl' >
-                                <Text className='text-center text-base font-psemibold'>Cancel</Text>
+                                <Text className='text-center text-lg font-psemibold'>Cancel</Text>
                             </Pressable>
                             <Pressable onPress={handleSave} className='border border-green flex-1 bg-green/50 p-4 rounded-xl' >
-                                <Text className='text-center text-base font-psemibold'>Save</Text>
+                                <Text className='text-center text-lg font-psemibold'>Save</Text>
                             </Pressable>
                         </View>
                     </View>

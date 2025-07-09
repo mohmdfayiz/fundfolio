@@ -1,8 +1,17 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ["./app/**/*.{js,jsx,ts,tsx}", "./components/**/*.{js,jsx,ts,tsx}"],
+  presets: [require("nativewind/preset")],
   theme: {
     extend: {
+      spacing: {
+        '1': '6px',
+        '2': '9px',
+        '3': '12px',
+        '4': '16px',
+        '5': '20px',
+        '6': '24px',
+      },
       colors: {
         green: {
           DEFAULT: "#A1C398",

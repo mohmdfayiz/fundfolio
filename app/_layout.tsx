@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useFonts } from 'expo-font';
-import { Stack, SplashScreen } from 'expo-router';
+import { SplashScreen, Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import Toast from 'react-native-toast-message';
 
+import './global.css';
 import AppLock from '@/components/AppLock';
 import { GlobalContext } from '@/context/GlobalContext';
 import { getToken, setToken, removeToken } from '@/utils/token';
@@ -20,7 +21,7 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
 
   const [initialized, setInitialized] = useState(false);
-  const [isLogged, setIsLogged] = useState(false);
+  const [isLogged, setIsLogged] = useState(true);
   const [user, setUser] = useState<User | null>(null);
   const [appLockState, setAppLockState] = useState({
     useAppLock: false,
@@ -47,7 +48,6 @@ export default function RootLayout() {
       if (token) {
         const { data } = await getUser();
         setUser(data);
-        setIsLogged(true);
         return true;
       }
       return false;
@@ -62,15 +62,12 @@ export default function RootLayout() {
     try {
       const appLockPreference = await getAppLockPreference();
       setAppLockState(prev => ({ ...prev, useAppLock: appLockPreference }));
-      
+
       if (appLockPreference) {
         const result = await authenticateAppLock();
-        const isAuthenticated = result === APP_LOCK_ENUM.AUTHENTICATED;
-        setAppLockState(prev => ({ ...prev, isAuthenticated }));
-        return isAuthenticated;
+        return result === APP_LOCK_ENUM.AUTHENTICATED;;
       }
-      
-      setAppLockState(prev => ({ ...prev, isAuthenticated: true }));
+
       return true;
     } catch (error) {
       console.error('App lock check failed:', error);
@@ -86,9 +83,11 @@ export default function RootLayout() {
 
       // Check authentication and fetch user data
       const isAuthenticated = await checkAuth();
-      
+      setIsLogged(isAuthenticated);
+
       // Check app lock
       const isAppLockAuthenticated = await checkAppLock();
+      setAppLockState(prev => ({ ...prev, isAuthenticated: isAppLockAuthenticated }));
 
       // Initialize global auth functions
       initializeGlobalAuthFunctions(
@@ -123,10 +122,10 @@ export default function RootLayout() {
   // Show app lock screen if needed
   if (appLockState.useAppLock && !appLockState.isAuthenticated) {
     return (
-      <AppLock 
-        onAuthenticate={() => 
+      <AppLock
+        onAuthenticate={() =>
           setAppLockState(prev => ({ ...prev, isAuthenticated: true }))
-        } 
+        }
       />
     );
   }
@@ -154,7 +153,7 @@ export default function RootLayout() {
         <Stack.Screen name="(screens)" options={{ headerShown: false }} />
       </Stack>
       <Toast />
-      <StatusBar style="inverted" />
+      <StatusBar style="auto" />
     </GlobalContext.Provider>
   );
 }

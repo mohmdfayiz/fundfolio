@@ -2,11 +2,12 @@
   "expo": {
     "name": "fundfolio",
     "slug": "fundfolio",
-    "scheme": "fundfolio",
-    "version": "1.0.1",
+    "version": "1.2.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "userInterfaceStyle": "automatic",
+    "scheme": "fundfolio",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
     "splash": {
       "image": "./assets/images/fundfolio.png",
       "resizeMode": "contain",
@@ -16,15 +17,26 @@
       "supportsTablet": true
     },
     "android": {
+      "edgeToEdgeEnabled": true,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.fundfolio",
-      "versionCode": 13
+      "versionCode": 19
     },
     "plugins": [
-      "expo-router"
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/fundfolio-splash.png",
+          "resizeMode": "contain",
+          "imageWidth": 280,
+          "backgroundColor": "#ffffff"
+        }
+      ],
+      "expo-router",
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true

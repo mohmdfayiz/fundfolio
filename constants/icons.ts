@@ -7,6 +7,7 @@ const transactionActive = require('../assets/icons/transaction-filled.png');
 const user = require('../assets/icons/user.png');
 const userActive = require('../assets/icons/user-filled.png');
 const trash = require('../assets/icons/trash.png');
+const toggle = require('../assets/icons/rotate.png');
 
 export default {
     home,
@@ -17,5 +18,6 @@ export default {
     transactionActive,
     user,
     userActive,
-    trash
+    trash,
+    toggle
 }
