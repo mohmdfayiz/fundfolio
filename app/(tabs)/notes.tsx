@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { View, Text, FlatList, Pressable, TouchableOpacity, Image } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useIsFocused } from '@react-navigation/native'
 import * as Haptics from 'expo-haptics';
 
@@ -21,7 +21,8 @@ const NotesScreen = () => {
     const [multipleSelection, setMultipleSelection] = useState(false);
     const [selectedItems, setSelectedItems] = useState<string[]>([]);
 
-    const isFocused = useIsFocused()
+    const isFocused = useIsFocused();
+    const insets = useSafeAreaInsets();
 
     const fetchNotes = async () => {
         const { data } = await getNotes()
@@ -91,7 +92,7 @@ const NotesScreen = () => {
     }, [isFocused])
 
     return (
-        <SafeAreaView className='bg-gray-50'>
+        <View className='bg-gray-50' style={{ paddingTop: insets.top }}>
             <View className='flex h-full'>
                 <View className='p-4'>
                     <TabTitle title='Notes' icon='🗒️' subTitle='Take Notes!' />
@@ -135,7 +136,7 @@ const NotesScreen = () => {
                 }
             </View>
             <TextEditor note={note} isOpen={showEditor} mode={mode} onClose={(note: Note, mode: string) => handleEditorClose(mode, note)} />
-        </SafeAreaView>
+        </View>
     )
 }
 

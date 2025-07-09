@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { View, Text, SectionList, Pressable, TouchableOpacity, Image } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Toast from 'react-native-toast-message';
 import * as Haptics from 'expo-haptics';
 
@@ -21,6 +21,7 @@ export default function TransactionScreen() {
     const [selectedItems, setSelectedItems] = useState<string[]>([]);
 
     const isFocused = useIsFocused();
+    const insets = useSafeAreaInsets();
 
     const fetchTransactions = async () => {
         const { data } = await getTransactions();
@@ -104,7 +105,7 @@ export default function TransactionScreen() {
     }, [isFocused]);
 
     return (
-        <SafeAreaView className='bg-gray-50'>
+        <View className='bg-gray-50' style={{ paddingTop: insets.top }}>
             <View className='flex h-full'>
                 <View className='px-4 pt-4 pb-3'>
                     <TabTitle title='Transactions' icon='💵' subTitle='Track your money!' />
@@ -162,6 +163,6 @@ export default function TransactionScreen() {
                 onSave={saveTransaction}
                 onClose={handleCloseModal}
             />
-        </SafeAreaView>
+        </View>
     );
 }

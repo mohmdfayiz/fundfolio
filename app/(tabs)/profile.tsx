@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import { Alert, Image, Pressable, Text, View, Share, ScrollView } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 import { Link } from 'expo-router';
 
@@ -24,6 +24,7 @@ export default function ProfileScreen() {
   const [isOpen, setIsOpen] = useState(false);
 
   const isFocused = useIsFocused();
+  const insets = useSafeAreaInsets();
 
   const fetchBalance = async () => {
     const { data } = await getAccountBalance();
@@ -161,7 +162,7 @@ export default function ProfileScreen() {
   }, [isFocused]);
 
   return (
-    <SafeAreaView className='h-full bg-gray-50'>
+    <View className='h-full bg-gray-50' style={{ paddingTop: insets.top }}>
       <View className='flex flex-1 flex-col gap-4 p-4'>
         <View>
           <TabTitle title='Account' icon='🛡️' subTitle='Manage your account!' />
@@ -256,6 +257,6 @@ export default function ProfileScreen() {
       </View>
 
       <EditProfileModal isOpen={isOpen} onClose={handleEditProfileModal} />
-    </SafeAreaView>
+    </View>
   );
 }

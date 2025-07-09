@@ -150,7 +150,7 @@ export default function TransactionStatistics() {
                                                 <Transaction transaction={item} />
                                             </TouchableOpacity>
                                         )}
-                                        ListFooterComponent={() => (<View className='h-16' />)}
+                                        ListFooterComponent={() => (<View className='h-20' />)}
                                         keyExtractor={(item) => item._id}
                                     />
                                     :
@@ -162,7 +162,7 @@ export default function TransactionStatistics() {
                                                 <TransactionCategory category={item} date={new Date(date.year, date.month, 1)} />
                                             </TouchableOpacity>
                                         )}
-                                        ListFooterComponent={() => (<View className='h-16' />)}
+                                        ListFooterComponent={() => (<View className='h-20' />)}
                                         keyExtractor={(item) => item._id}
                                     />
                                 :
@@ -172,14 +172,13 @@ export default function TransactionStatistics() {
                         }
                     </GestureHandlerRootView>
                 </View>
+                <TouchableOpacity
+                    onPress={() => setSelectedTab((prev) => prev === 'transactions' ? 'summary' : 'transactions')}
+                    className={`absolute bottom-8 right-4 p-4 rounded-xl border border-slate-400 bg-black/30`}
+                >
+                    <Image source={icons.toggle} className='w-4 h-4' />
+                </TouchableOpacity>
             </View>
-
-            <TouchableOpacity
-                onPress={() => setSelectedTab((prev) => prev === 'transactions' ? 'summary' : 'transactions')}
-                className={`absolute bottom-8 right-4 p-4 rounded-xl border border-slate-400 bg-black/30`}
-            >
-                <Image source={icons.toggle} className='w-4 h-4' />
-            </TouchableOpacity>
 
             {/* Transaction Details Modal */}
             <TransactionDetail transaction={selectedTransaction!} isOpen={isModalVisible === 'transaction'} onClose={handleCloseModal} />

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Text, View, ScrollView, Image, TouchableOpacity } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Link } from 'expo-router';
 
@@ -34,6 +34,7 @@ export default function HomeScreen() {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const isFocused = useIsFocused();
+  const insets = useSafeAreaInsets();
   const today = new Date();
 
   const fetchStats = async () => {
@@ -64,7 +65,7 @@ export default function HomeScreen() {
   }, [isFocused])
 
   return (
-    <SafeAreaView className='bg-gray-50'>
+    <View className='bg-gray-50' style={{ paddingTop: insets.top }}>
       <View className='flex h-full' >
         <View className='p-4'>
           <TabTitle title={`Hello ${user?.username || 'there'}`} icon='👋' subTitle={homeSubTitle(today)} />
@@ -90,7 +91,7 @@ export default function HomeScreen() {
                 <ScrollView showsVerticalScrollIndicator={false}>
                   {transactions.map((transaction: any) => (
                     <TouchableOpacity key={transaction._id} onPress={() => handleClick(transaction)}>
-                      <Transaction  transaction={transaction} />
+                      <Transaction transaction={transaction} />
                     </TouchableOpacity>
                   ))}
                 </ScrollView>
@@ -106,6 +107,6 @@ export default function HomeScreen() {
 
       {/* Transaction Details Modal */}
       <TransactionDetail transaction={selectedTransaction!} isOpen={isModalVisible} onClose={handleCloseModal} />
-    </SafeAreaView >
+    </View>
   )
 }
