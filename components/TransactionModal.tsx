@@ -11,7 +11,20 @@ import { PAYMENT_METHODS, TRANSACTION_NOTE_EXAMPLES } from '@/constants/data';
 import { getTransactionCategories } from '@/services/transaction';
 import { Category, Transaction } from '@/types';
 
-const TransactionModal = ({ initialState, hasExistingTransactions, isOpen, onClose, onSave }: { initialState: Transaction, hasExistingTransactions: boolean, isOpen: boolean, onClose: () => void, onSave: (transaction: Transaction) => void }) => {
+const TransactionModal = ({
+    initialState,
+    hasExistingTransactions,
+    currency,
+    isOpen,
+    onClose,
+    onSave
+}: {
+    initialState: Transaction,
+    hasExistingTransactions: boolean,
+    currency: string, isOpen: boolean,
+    onClose: () => void,
+    onSave: (transaction: Transaction) => void
+}) => {
 
     const [transactionCategories, setTransactionCategories] = useState<Category[]>([]);
     const [transaction, setTransaction] = useState({ ...initialState, amount: initialState.amount.toString() });
@@ -99,9 +112,9 @@ const TransactionModal = ({ initialState, hasExistingTransactions, isOpen, onClo
                                 <Text className='text-lg font-pmedium mb-1'>Amount</Text>
                                 <TextInput
                                     keyboardType='decimal-pad'
-                                    placeholder='₹ 100'
+                                    placeholder={`${currency} 100`}
                                     value={transaction.amount}
-                                    className='border border-slate-400 p-4 rounded-xl font-pregular text-lg'
+                                    className='border border-slate-400 p-4 rounded-xl font-pregular text-lg text-left'
                                     placeholderTextColor={'gray'}
                                     onChangeText={(text) => setTransaction({ ...transaction, amount: text })}
                                 />

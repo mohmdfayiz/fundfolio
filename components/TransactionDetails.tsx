@@ -4,10 +4,12 @@ import { TransactionDetails } from "@/types";
 
 const TransactionDetail = ({
     transaction,
+    currency,
     isOpen,
     onClose,
 }: {
     transaction: TransactionDetails,
+    currency: string,
     isOpen: boolean,
     onClose: () => void,
 }) => {
@@ -38,7 +40,7 @@ const TransactionDetail = ({
                             ? 'text-green'
                             : 'text-red'
                             }`}>
-                            ₹ {transaction?.transactionType === 'Income'
+                            {currency} {transaction?.transactionType === 'Income'
                                 ? transaction.amount.toLocaleString()
                                 : (transaction?.amount * -1).toLocaleString()
                             }

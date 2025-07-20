@@ -1,13 +1,11 @@
 import { useState } from "react";
 import { Modal, View, Pressable, Text, StyleSheet, Image, TextInput } from "react-native";
 
-import { useGlobalContext } from "@/context/GlobalContext";
 import { man, woman } from '@/constants/images';
-import { updateUser } from "@/services/user";
+import { User } from "@/types";
 
-const EditProfileModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) => {
+const EditProfileModal = ({ isOpen, user, onClose, onSave }: { isOpen: boolean, user: User | null, onClose: () => void, onSave: (user: User) => void }) => {
 
-    const { user, setUser } = useGlobalContext();
     const [tempUser, setTempUser] = useState(user);
 
     const style = (selected: boolean) => (
@@ -21,9 +19,8 @@ const EditProfileModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () =>
     }
 
     const handleSave = async () => {
-        if (!user) return;
-        setUser({ ...user, ...tempUser });
-        await updateUser({ username: tempUser?.username, profilePic: tempUser?.profilePic });
+        if (!tempUser) return;
+        onSave({ ...tempUser });
         onClose();
     }
 

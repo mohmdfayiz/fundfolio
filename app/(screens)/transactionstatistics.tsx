@@ -7,6 +7,7 @@ import { useIsFocused } from "@react-navigation/native";
 import YearPicker from "@/components/YearPicker";
 import * as Haptics from "expo-haptics";
 
+import { useGlobalContext } from "@/context/GlobalContext";
 import TransactionPieChart from "@/components/PieChart";
 import TabTitle from "@/components/TabTitle";
 import Transaction from "@/components/Transaction";
@@ -23,6 +24,7 @@ import { TransactionDetails, Stats, ExpenseByCategory } from "@/types";
 export default function TransactionStatistics() {
     const today = new Date();
     const isFocused = useIsFocused();
+    const { user } = useGlobalContext();
 
     const [date, setDate] = useState({ month: today.getMonth(), year: today.getFullYear() });
     const [stats, setStats] = useState<Stats>({ totalAmount: 0, income: 0, expense: 0 });
@@ -96,7 +98,7 @@ export default function TransactionStatistics() {
         <SafeAreaView className='bg-gray-50'>
             <View className="flex h-full">
                 <View className="p-4 flex flex-row items-center justify-between">
-                    <TabTitle title='Statistics' icon='📈' subTitle={selectedTab === 'transactions' ? 'Track every rupee!' : 'Spending insights!'} />
+                    <TabTitle title='Statistics' icon='📈' subTitle={'Spending insights!'} />
                     {transactions.length > 0 &&
                         <Pressable
                             onPress={() => fetchTransactionSummary(date)}
@@ -107,7 +109,7 @@ export default function TransactionStatistics() {
                     }
                 </View>
                 <View className="px-4">
-                    <TransactionPieChart stats={stats} month={MONTHS[date.month]} />
+                    <TransactionPieChart stats={stats} month={MONTHS[date.month]} currency={user?.currency || '$'} />
                 </View>
                 <View className='px-4 pt-4 pb-2'>
                     <View className='flex flex-row items-center'>
@@ -147,7 +149,7 @@ export default function TransactionStatistics() {
                                         data={transactions}
                                         renderItem={({ item }) => (
                                             <TouchableOpacity onPress={() => handleClick(item)}>
-                                                <Transaction transaction={item} />
+                                                <Transaction transaction={item} currency={user?.currency || '$'} />
                                             </TouchableOpacity>
                                         )}
                                         ListFooterComponent={() => (<View className='h-20' />)}
@@ -159,7 +161,7 @@ export default function TransactionStatistics() {
                                         data={categories}
                                         renderItem={({ item }) => (
                                             <TouchableOpacity>
-                                                <TransactionCategory category={item} date={new Date(date.year, date.month, 1)} />
+                                                <TransactionCategory category={item} currency={user?.currency || '$'} />
                                             </TouchableOpacity>
                                         )}
                                         ListFooterComponent={() => (<View className='h-20' />)}
@@ -181,7 +183,7 @@ export default function TransactionStatistics() {
             </View>
 
             {/* Transaction Details Modal */}
-            <TransactionDetail transaction={selectedTransaction!} isOpen={isModalVisible === 'transaction'} onClose={handleCloseModal} />
+            <TransactionDetail transaction={selectedTransaction!} currency={user?.currency || '$'} isOpen={isModalVisible === 'transaction'} onClose={handleCloseModal} />
 
             {/* Summary Modal */}
             <SummaryModal summary={summary} isOpen={isModalVisible === 'summary'} onClose={handleSummaryClose} />

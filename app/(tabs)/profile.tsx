@@ -1,27 +1,30 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Alert, Image, Pressable, Text, View, Share, ScrollView } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 import { Link } from 'expo-router';
 
-import { GlobalContext } from '@/context/GlobalContext';
+import { useGlobalContext } from '@/context/GlobalContext';
 import TabTitle from '@/components/TabTitle';
 import EditProfileModal from '@/components/EditProfileModal';
+import CurrencyPicker from '@/components/CurrencyPicker';
 import { man, woman } from '@/constants/images';
 import { APP_LINK, APP_LOCK_ENUM } from '@/constants/data';
 import { getToken } from '@/utils/token';
 import { globalLogout } from '@/utils/authUtils';
 import { authenticateAppLock, setAppLockPreference } from '@/utils/helpers';
 import { getAccountBalance } from '@/services/transaction';
-import { deleteUser } from '@/services/user';
+import { deleteUser, updateUser } from '@/services/user';
 import { logout } from '@/services/auth';
+import { User } from '@/types';
 
 export default function ProfileScreen() {
 
-  const { user, useAppLock, setUseAppLock } = useContext(GlobalContext);
+  const { user, setUser, useAppLock, setUseAppLock } = useGlobalContext();
   const [accountBalance, setAccountBalance] = useState(0.00);
   const [isOpen, setIsOpen] = useState(false);
+  const [isCurrencyPickerOpen, setIsCurrencyPickerOpen] = useState(false);
 
   const isFocused = useIsFocused();
   const insets = useSafeAreaInsets();
@@ -33,6 +36,16 @@ export default function ProfileScreen() {
 
   const handleEditProfileModal = () => {
     setIsOpen((prev) => !prev);
+  }
+
+  const handleCurrencyPicker = () => {
+    setIsCurrencyPickerOpen((prev) => !prev);
+  }
+
+  const handleUpdateUser = async (updatedUser: User) => {
+    if (!updatedUser) return;
+    setUser({ ...user, ...updatedUser });
+    await updateUser(updatedUser);
   }
 
   const handleShareApp = async () => {
@@ -111,7 +124,7 @@ export default function ProfileScreen() {
 
   async function handleLogout() {
     Alert.alert(
-      'Are you sure you want to log out?',
+      'Are you sure you want to logout?',
       '',
       [
         {
@@ -183,7 +196,7 @@ export default function ProfileScreen() {
 
         <View className={`flex flex-row justify-between p-2 rounded-xl border ${accountBalance < 0 ? 'bg-red/20 border-red' : 'bg-green/20 border-green'}`}>
           <Text className='text-lg font-psemibold'>Account Balance</Text>
-          <Text className='text-lg font-psemibold'>₹ {accountBalance}</Text>
+          <Text className='text-lg font-psemibold'>{user?.currency || '$'} {accountBalance}</Text>
         </View>
 
         <ScrollView showsVerticalScrollIndicator={false}>
@@ -199,6 +212,13 @@ export default function ProfileScreen() {
               <Link href={'/transactioncategory'} className='flex-1'>
                 <Text className='text-lg font-psemibold'>Transaction Category</Text>
               </Link>
+              <Text className='text-lg font-psemibold'>{'>'}</Text>
+            </View>
+
+            <View className='flex flex-row items-center justify-between p-2'>
+              <Pressable onPress={handleCurrencyPicker} className='flex-1'>
+                <Text className='text-lg font-psemibold'>Currency Preference</Text>
+              </Pressable>
               <Text className='text-lg font-psemibold'>{'>'}</Text>
             </View>
 
@@ -256,7 +276,8 @@ export default function ProfileScreen() {
 
       </View>
 
-      <EditProfileModal isOpen={isOpen} onClose={handleEditProfileModal} />
+      <EditProfileModal isOpen={isOpen} user={user} onClose={handleEditProfileModal} onSave={handleUpdateUser} />
+      <CurrencyPicker isOpen={isCurrencyPickerOpen} user={user} onClose={handleCurrencyPicker} onSave={handleUpdateUser} />
     </View>
   );
 }

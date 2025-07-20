@@ -94,29 +94,34 @@ const YEARS = [2020, 2021, 2022, 2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030]
 const CURRENCIES = [
     {
         id: 0,
-        name: 'INR',
+        name: 'Rupee',
         symbol: '₹',
     },
     {
         id: 1,
-        name: 'USD',
+        name: 'Dollar',
         symbol: '$',
     },
     {
         id: 2,
-        name: 'EUR',
+        name: 'Euro',
         symbol: '€',
     },
     {
         id: 3,
-        name: 'GBP',
+        name: 'Pound',
         symbol: '£',
     },
     {
         id: 4,
-        name: 'JPY',
-        symbol: '¥',
+        name: 'Dirham',
+        symbol: 'د.إ',
     },
+    {
+        id: 5,
+        name: 'Riyal',
+        symbol: '﷼',
+    }
 ]
 
 const APP_LOCK_ENUM = {

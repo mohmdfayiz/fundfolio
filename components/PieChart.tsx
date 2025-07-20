@@ -1,8 +1,8 @@
 import { View, Text, StyleSheet } from "react-native"
-import PieChart, { Slice } from 'react-native-pie-chart';
+import PieChart from 'react-native-pie-chart';
 import { Stats } from "@/types";
 
-const TransactionPieChart = ({ stats, month }: { stats: Stats, month: string }) => {
+const TransactionPieChart = ({ stats, month, currency }: { stats: Stats, month: string, currency: string }) => {
 
     const pieChartData = (stats: Stats) => {
         return stats.income === 0 && stats.expense === 0
@@ -18,7 +18,7 @@ const TransactionPieChart = ({ stats, month }: { stats: Stats, month: string }) 
                         <View className="w-2 h-3 bg-green rounded-full mr-1"></View>
                         <Text className='text-xl font-plight'>Income</Text>
                     </View>
-                    <Text className='text-2xl font-psemibold'>₹ {stats.income}</Text>
+                    <Text className='text-2xl font-psemibold'>{currency} {stats.income}</Text>
                 </View>
 
                 <View className='mt-4'>
@@ -26,7 +26,7 @@ const TransactionPieChart = ({ stats, month }: { stats: Stats, month: string }) 
                         <View className="w-2 h-3 bg-red rounded-full mr-1"></View>
                         <Text className='text-xl font-plight'>Expense</Text>
                     </View>
-                    <Text className='text-2xl font-psemibold'>₹ {stats.expense * -1}</Text>
+                    <Text className='text-2xl font-psemibold'>{currency} {stats.expense * -1}</Text>
                 </View>
             </View>
 

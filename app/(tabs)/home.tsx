@@ -72,7 +72,7 @@ export default function HomeScreen() {
         </View>
 
         <View className='px-4'>
-          <TransactionPieChart stats={stats} month={MONTHS[today.getMonth()]} />
+          <TransactionPieChart stats={stats} month={MONTHS[today.getMonth()]} currency={user?.currency || '$'} />
         </View>
 
         <View className='px-4 pt-4 pb-2'>
@@ -91,7 +91,7 @@ export default function HomeScreen() {
                 <ScrollView showsVerticalScrollIndicator={false}>
                   {transactions.map((transaction: any) => (
                     <TouchableOpacity key={transaction._id} onPress={() => handleClick(transaction)}>
-                      <Transaction transaction={transaction} />
+                      <Transaction transaction={transaction} currency={user?.currency || '$'} />
                     </TouchableOpacity>
                   ))}
                 </ScrollView>
@@ -106,7 +106,7 @@ export default function HomeScreen() {
       </View>
 
       {/* Transaction Details Modal */}
-      <TransactionDetail transaction={selectedTransaction!} isOpen={isModalVisible} onClose={handleCloseModal} />
+      <TransactionDetail transaction={selectedTransaction!} currency={user?.currency || '$'} isOpen={isModalVisible} onClose={handleCloseModal} />
     </View>
   )
 }

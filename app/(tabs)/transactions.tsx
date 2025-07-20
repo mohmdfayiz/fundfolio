@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Toast from 'react-native-toast-message';
 import * as Haptics from 'expo-haptics';
 
+import { useGlobalContext } from '@/context/GlobalContext';
 import Transaction from '@/components/Transaction';
 import TabTitle from '@/components/TabTitle';
 import TransactionModal from '@/components/TransactionModal';
@@ -20,6 +21,7 @@ export default function TransactionScreen() {
     const [multipleSelection, setMultipleSelection] = useState(false);
     const [selectedItems, setSelectedItems] = useState<string[]>([]);
 
+    const { user } = useGlobalContext();
     const isFocused = useIsFocused();
     const insets = useSafeAreaInsets();
 
@@ -111,33 +113,33 @@ export default function TransactionScreen() {
                     <TabTitle title='Transactions' icon='💵' subTitle='Track your money!' />
                 </View>
                 <View className='flex-1'>
-                    {
-                        transactions.length ?
-                            <SectionList
-                                showsVerticalScrollIndicator={false}
-                                sections={transactions}
-                                renderSectionHeader={({ section: { _id, totalAmount } }) => (
-                                    <View className='flex flex-row justify-between bg-gray-200 px-4 py-1 my-1'>
-                                        <Text className='text-xl font-pregular'>{MONTHS.at(_id.month - 1)} {_id.year}</Text>
-                                        <Text className={`text-xl font-psemibold`}>₹ {totalAmount}</Text>
-                                    </View>
-                                )}
-                                ListFooterComponent={() => (<View className='h-16' />)}
-                                renderItem={({ item }) => (
-                                    <TouchableOpacity
-                                        key={item._id}
-                                        className={`px-4 ${selectedItems.includes(item._id) ? 'bg-green/20' : ''}`}
-                                        onPress={() => handleSelectItem({ ...item, category: item.category.name, amount: item.transactionType === 'Expense' ? item.amount * -1 : item.amount })}
-                                        onLongPress={() => enableMultipleSelection(item._id)}
-                                    >
-                                        <Transaction transaction={item} />
-                                    </TouchableOpacity>
-                                )}
-                            /> :
-                            <View className='flex flex-1 items-center justify-center'>
+                    <SectionList
+                        showsVerticalScrollIndicator={false}
+                        sections={transactions}
+                        renderSectionHeader={({ section: { _id, totalAmount } }) => (
+                            <View className='flex flex-row justify-between bg-gray-200 px-4 py-1 my-1'>
+                                <Text className='text-xl font-pregular'>{MONTHS.at(_id.month - 1)} {_id.year}</Text>
+                                <Text className={`text-xl font-psemibold`}>{user?.currency || '$'} {totalAmount}</Text>
+                            </View>
+                        )}
+                        renderItem={({ item }) => (
+                            <TouchableOpacity
+                                key={item._id}
+                                className={`px-4 ${selectedItems.includes(item._id) ? 'bg-green/20' : ''}`}
+                                onPress={() => handleSelectItem({ ...item, category: item.category.name, amount: item.transactionType === 'Expense' ? item.amount * -1 : item.amount })}
+                                onLongPress={() => enableMultipleSelection(item._id)}
+                            >
+                                <Transaction transaction={item} currency={user?.currency || '$'} />
+                            </TouchableOpacity>
+                        )}
+                        ListFooterComponent={() => (transactions.length > 0 && <View className='h-16' />)}
+                        contentContainerStyle={{ flexGrow: 1 }}
+                        ListEmptyComponent={
+                            <View className='flex-1 items-center justify-center'>
                                 <Image source={noData} className='w-40 h-40' />
                             </View>
-                    }
+                        }
+                    />
                 </View>
                 {
                     multipleSelection ?
@@ -160,6 +162,7 @@ export default function TransactionScreen() {
                 isOpen={showModal}
                 initialState={transaction}
                 hasExistingTransactions={!!transactions.length}
+                currency={user?.currency || '$'}
                 onSave={saveTransaction}
                 onClose={handleCloseModal}
             />

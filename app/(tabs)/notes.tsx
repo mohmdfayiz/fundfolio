@@ -99,25 +99,25 @@ const NotesScreen = () => {
                 </View>
 
                 <View className='flex-1 px-4'>
-                    {
-                        notes.length ?
-                            <FlatList
-                                data={notes}
-                                showsVerticalScrollIndicator={false}
-                                ListFooterComponent={() => (<View className='h-16' />)}
-                                renderItem={({ item }) => (
-                                    <TouchableOpacity
-                                        onPress={() => handleClick('edit', item)}
-                                        onLongPress={() => enableMultipleSelection(item?._id!)}
-                                    >
-                                        <NoteTile note={item} selected={selectedItems.includes(item?._id!)} />
-                                    </TouchableOpacity>
-                                )}
-                            /> :
-                            <View className='flex flex-1 items-center justify-center'>
+                    <FlatList
+                        data={notes}
+                        showsVerticalScrollIndicator={false}
+                        renderItem={({ item }) => (
+                            <TouchableOpacity
+                                onPress={() => handleClick('edit', item)}
+                                onLongPress={() => enableMultipleSelection(item?._id!)}
+                            >
+                                <NoteTile note={item} selected={selectedItems.includes(item?._id!)} />
+                            </TouchableOpacity>
+                        )}
+                        ListFooterComponent={() => (notes.length > 0 && <View className='h-16' />)}
+                        contentContainerStyle={{ flexGrow: 1 }}
+                        ListEmptyComponent={
+                            <View className='flex-1 items-center justify-center'>
                                 <Image source={noData} className='w-40 h-40' />
                             </View>
-                    }
+                        }
+                    />
                 </View>
                 {
                     multipleSelection ?

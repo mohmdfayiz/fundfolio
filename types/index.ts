@@ -3,6 +3,7 @@ type User = {
     username: string;
     email: string;
     profilePic: string;
+    currency: string;
 }
 
 // ===== Transaction Types =====

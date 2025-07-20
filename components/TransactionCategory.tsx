@@ -1,8 +1,7 @@
 import { View, Text } from "react-native";
-import dateformat from 'dateformat';
 import { ExpenseByCategory } from '@/types';
 
-const TransactionCategory = ({ category, date }: { category: ExpenseByCategory, date: Date }) => {
+const TransactionCategory = ({ category, currency }: { category: ExpenseByCategory, currency: string }) => {
     return (
         <View className='flex flex-row gap-2 items-center justify-between py-1'>
             <View style={{ backgroundColor: category.bgColour }} className={`h-16 w-16 items-center justify-center rounded-xl`}>
@@ -14,7 +13,7 @@ const TransactionCategory = ({ category, date }: { category: ExpenseByCategory, 
             </View>
             <View className='items-end'>
                 <Text className={`text-lg font-psemibold ${category.totalAmount >= 0 ? 'text-green' : 'text-red'}`}>
-                    ₹ {category.totalAmount >= 0 ? category.totalAmount : category.totalAmount * -1}
+                    {currency} {category.totalAmount >= 0 ? category.totalAmount : category.totalAmount * -1}
                 </Text>
                 <Text className='text-base font-pregular'>
                     {`${category?.percentageOfIncome === 0
