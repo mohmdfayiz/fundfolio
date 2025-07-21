@@ -5,6 +5,7 @@ import { router } from 'expo-router'
 import Toast from 'react-native-toast-message';
 import { useGlobalContext } from '@/context/GlobalContext';
 import { signin } from '@/services/auth';
+import { setLoggedInUserId, setUserAccounts } from '@/utils/authUtils';
 
 export default function SingIn() {
 
@@ -23,8 +24,10 @@ export default function SingIn() {
 
     try {
       const { data } = await signin(credentials.email, credentials.password)
-      await setToken('accessToken', data.accessToken)
-      await setToken('refreshToken', data.refreshToken)
+      await setLoggedInUserId(data.user._id)
+      await setToken(`accessToken:${data.user._id}`, data.accessToken)
+      await setToken(`refreshToken:${data.user._id}`, data.refreshToken)
+      await setUserAccounts(data.user)
       setUser(data.user);
       setIsLogged(true);
       router.replace('/home');

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Modal, View, Text, TouchableOpacity, FlatList, StyleSheet, Pressable } from 'react-native';
 
 import { CURRENCIES } from '@/constants/data';
@@ -23,6 +23,13 @@ const CurrencyPicker = ({ isOpen, user, onSave, onClose }: { isOpen: boolean, us
             <Text className='text-lg font-pregular'>{item.symbol}</Text>
         </TouchableOpacity>
     );
+
+    // Reset currency selection whenever modal opens
+    useEffect(() => {
+        if (isOpen) {
+            setCurrency(user?.currency || '$');
+        }
+    }, [isOpen, user?.currency]);
 
     return (
         <Modal

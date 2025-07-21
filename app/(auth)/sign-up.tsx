@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import Toast from 'react-native-toast-message';
 import { useGlobalContext } from '@/context/GlobalContext';
 import { signup } from '@/services/auth'
+import { setLoggedInUserId } from '@/utils/authUtils';
 
 export default function SignUp() {
 
@@ -23,8 +24,9 @@ export default function SignUp() {
 
     try {
       const { data } = await signup(userData.username, userData.email)
-      await setToken('accessToken', data.accessToken)
-      await setToken('refreshToken', data.refreshToken)
+      await setLoggedInUserId(data.user._id)
+      await setToken(`accessToken:${data.user._id}`, data.accessToken)
+      await setToken(`refreshToken:${data.user._id}`, data.refreshToken)
       setUser(data.user)
       router.push('/password')
     } catch (error: any) {

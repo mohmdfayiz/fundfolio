@@ -9,7 +9,7 @@ import AppLock from '@/components/AppLock';
 import { GlobalContext } from '@/context/GlobalContext';
 import { getToken, setToken, removeToken } from '@/utils/token';
 import { authenticateAppLock, getAppLockPreference } from '@/utils/helpers';
-import { initializeGlobalAuthFunctions } from '@/utils/authUtils';
+import { initializeGlobalAuthFunctions, getLoggedInUserId } from '@/utils/authUtils';
 import { APP_LOCK_ENUM } from '@/constants/data';
 import { getUser } from '@/services/user';
 import { User } from '@/types';
@@ -44,7 +44,8 @@ export default function RootLayout() {
   // Check authentication status and fetch user data
   const checkAuth = useCallback(async () => {
     try {
-      const token = await getToken('refreshToken');
+      const userId = await getLoggedInUserId();
+      const token = await getToken(`refreshToken:${userId}`);
       if (token) {
         const { data } = await getUser();
         setUser(data);

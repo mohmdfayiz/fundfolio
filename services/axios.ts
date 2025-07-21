@@ -1,6 +1,6 @@
 import axios from "axios";
 import { getToken, setToken } from "@/utils/token";
-import { globalLogout } from "@/utils/authUtils";
+import { getLoggedInUserId, globalLogout } from "@/utils/authUtils";
 
 const env = process.env.EXPO_PUBLIC_NODE_ENV
 const development = process.env.EXPO_PUBLIC_DEV_URL
@@ -14,7 +14,8 @@ const axiosInstance = axios.create({
 })
 
 axiosInstance.interceptors.request.use(async (config) => {
-  const accessToken = await getToken('accessToken');
+  const userId = await getLoggedInUserId();
+  const accessToken = await getToken(`accessToken:${userId}`);
   config.headers.Authorization = `Bearer ${accessToken}`;
   return config;
 });
@@ -23,6 +24,7 @@ axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
 
+    const userId = await getLoggedInUserId();
     const originalRequest = error.config;
 
     // If the error is not a 401 or it's a request to sign in or logout, reject immediately
@@ -35,7 +37,7 @@ axiosInstance.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        const refreshToken = await getToken('refreshToken');
+        const refreshToken = await getToken(`refreshToken:${userId}`);
         if (!refreshToken) {
           throw new Error('No refresh token available');
         }
@@ -43,9 +45,9 @@ axiosInstance.interceptors.response.use(
         const { data } = await axios.post(`${env === "development" ? development : production}/auth/refresh-token`, { refreshToken });
         const newAccessToken = data.accessToken;
 
-        await setToken('accessToken', newAccessToken);
+        await setToken(`accessToken:${userId}`, newAccessToken);
         if (data.refreshToken) {
-          await setToken('refreshToken', data.refreshToken);
+          await setToken(`refreshToken:${userId}`, data.refreshToken);
         }
 
         originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
@@ -54,7 +56,7 @@ axiosInstance.interceptors.response.use(
         // console.error('Token refresh failed:', refreshError);
         // Perform logout if refresh fails
         try {
-          const refreshToken = await getToken('refreshToken');
+          const refreshToken = await getToken(`refreshToken:${userId}`);
           if (refreshToken) {
             await axios.post(`${env === 'development' ? development : production}/auth/logout`, { refreshToken });
           }

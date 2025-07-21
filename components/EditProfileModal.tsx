@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Modal, View, Pressable, Text, StyleSheet, Image, TextInput } from "react-native";
 
 import { man, woman } from '@/constants/images';
@@ -20,9 +20,16 @@ const EditProfileModal = ({ isOpen, user, onClose, onSave }: { isOpen: boolean, 
 
     const handleSave = async () => {
         if (!tempUser) return;
-        onSave({ ...tempUser });
+        onSave(tempUser);
         onClose();
     }
+
+    // Reset form data whenever modal opens
+    useEffect(() => {
+        if (isOpen) {
+            setTempUser(user);
+        }
+    }, [isOpen, user]);
 
     return (
         <Modal

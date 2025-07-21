@@ -4,15 +4,17 @@ import { useIsFocused } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 import { Link } from 'expo-router';
+import * as Haptics from 'expo-haptics';
 
 import { useGlobalContext } from '@/context/GlobalContext';
 import TabTitle from '@/components/TabTitle';
 import EditProfileModal from '@/components/EditProfileModal';
+import SwitchAccount from '@/components/SwitchAccount';
 import CurrencyPicker from '@/components/CurrencyPicker';
 import { man, woman } from '@/constants/images';
 import { APP_LINK, APP_LOCK_ENUM } from '@/constants/data';
 import { getToken } from '@/utils/token';
-import { globalLogout } from '@/utils/authUtils';
+import { globalLogout, getUserAccounts, setUserAccounts, setLoggedInUserId } from '@/utils/authUtils';
 import { authenticateAppLock, setAppLockPreference } from '@/utils/helpers';
 import { getAccountBalance } from '@/services/transaction';
 import { deleteUser, updateUser } from '@/services/user';
@@ -25,6 +27,8 @@ export default function ProfileScreen() {
   const [accountBalance, setAccountBalance] = useState(0.00);
   const [isOpen, setIsOpen] = useState(false);
   const [isCurrencyPickerOpen, setIsCurrencyPickerOpen] = useState(false);
+  const [isSwitchAccountOpen, setIsSwitchAccountOpen] = useState(false);
+  const [accounts, setAccounts] = useState<User[]>([]);
 
   const isFocused = useIsFocused();
   const insets = useSafeAreaInsets();
@@ -32,6 +36,25 @@ export default function ProfileScreen() {
   const fetchBalance = async () => {
     const { data } = await getAccountBalance();
     setAccountBalance(data.balance || 0.00);
+  }
+
+  const fetchLoggedInAccounts = async () => {
+    const accounts = await getUserAccounts();
+    setAccounts(accounts);
+  }
+
+  const handleLongPress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+    setIsSwitchAccountOpen((prev) => !prev);
+  }
+
+  const handleSwitchAccountAction = (user: User) => {
+    setLoggedInUserId(user._id);
+    setUser(user);
+    setIsSwitchAccountOpen(false);
+    // Refresh data after switching accounts
+    fetchBalance();
+    fetchLoggedInAccounts();
   }
 
   const handleEditProfileModal = () => {
@@ -46,6 +69,9 @@ export default function ProfileScreen() {
     if (!updatedUser) return;
     setUser({ ...user, ...updatedUser });
     await updateUser(updatedUser);
+    // Refresh accounts list to ensure consistency
+    await setUserAccounts({ ...user, ...updatedUser });
+    fetchLoggedInAccounts();
   }
 
   const handleShareApp = async () => {
@@ -113,7 +139,7 @@ export default function ProfileScreen() {
 
   async function logoutUser(allDevices = false) {
     try {
-      const refreshToken = await getToken('refreshToken');
+      const refreshToken = await getToken(`refreshToken:${user!._id}`);
       await logout({ refreshToken, allDevices });
     } catch (error) {
       console.error(error);
@@ -171,7 +197,10 @@ export default function ProfileScreen() {
   }
 
   useEffect(() => {
-    isFocused && fetchBalance();
+    isFocused && (
+      fetchBalance(),
+      fetchLoggedInAccounts()
+    )
   }, [isFocused]);
 
   return (
@@ -183,7 +212,7 @@ export default function ProfileScreen() {
 
         <View className='flex flex-row items-center justify-start'>
           <View className='relative'>
-            <Pressable onPress={handleEditProfileModal}>
+            <Pressable onPress={handleEditProfileModal} onLongPress={handleLongPress}>
               <Image source={user?.profilePic === 'woman' ? woman : man} className='w-[70px] h-[70px] rounded-full' />
               <Text className='absolute bottom-0 right-0 bg-black/50 rounded-full p-[5px] text-sm'>🖊️</Text>
             </Pressable>
@@ -272,12 +301,11 @@ export default function ProfileScreen() {
             </View>
           </View>
         </ScrollView>
-
-
       </View>
 
       <EditProfileModal isOpen={isOpen} user={user} onClose={handleEditProfileModal} onSave={handleUpdateUser} />
       <CurrencyPicker isOpen={isCurrencyPickerOpen} user={user} onClose={handleCurrencyPicker} onSave={handleUpdateUser} />
+      <SwitchAccount isOpen={isSwitchAccountOpen} userId={user!._id} accounts={accounts} onClose={() => setIsSwitchAccountOpen(false)} handleSwitchAccount={handleSwitchAccountAction} />
     </View>
   );
 }
