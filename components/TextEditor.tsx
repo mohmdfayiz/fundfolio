@@ -34,11 +34,13 @@ const TextEditor = ({ note, isOpen, mode, onClose }: { note: Note, isOpen: boole
                 <KeyboardAvoidingView
                     behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                     className='flex-1'
+                    keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
                 >
                     <ScrollView
                         className='flex-1 p-4'
                         keyboardShouldPersistTaps="handled"
                         showsVerticalScrollIndicator={false}
+                        contentContainerStyle={{ flexGrow: 1 }}
                     >
                         <TextInput
                             placeholder='Title'
@@ -51,18 +53,23 @@ const TextEditor = ({ note, isOpen, mode, onClose }: { note: Note, isOpen: boole
                             placeholderTextColor={'gray'}
                             value={tempNote.title}
                             onChangeText={(text) => handleUpdate('title', text)}
+                            accessibilityLabel="Note title"
+                            accessibilityHint="Enter the title for your note"
+                            returnKeyType="next"
                         />
                         <TextInput
-                            placeholder='Note'
+                            placeholder='Write your note here...'
                             multiline
                             maxLength={1000}
                             numberOfLines={30}
                             cursorColor={'black'}
                             style={{ textAlignVertical: 'top' }}
-                            className='font-pregular text-lg'
+                            className='font-pregular text-lg flex-1 pb-6'
                             placeholderTextColor={'gray'}
                             value={tempNote.content}
                             onChangeText={(text) => handleUpdate('content', text)}
+                            accessibilityLabel="Note content"
+                            accessibilityHint="Enter the content for your note"
                         />
                     </ScrollView>
                 </KeyboardAvoidingView>

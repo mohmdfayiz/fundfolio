@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.fundfolio",
+      "sha256_cert_fingerprints": [
+        "AE:09:17:E6:D7:79:77:3C:0F:18:7A:9C:97:EB:7A:8A:57:87:A2:5C:C6:68:42:67:33:0A:25:3E:E8:C8:F1:13"
+      ]
+    }
+  }
+]

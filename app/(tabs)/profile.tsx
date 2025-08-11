@@ -217,9 +217,9 @@ export default function ProfileScreen() {
               <Text className='absolute bottom-0 right-0 bg-black/50 rounded-full p-[5px] text-sm'>🖊️</Text>
             </Pressable>
           </View>
-          <View className='ml-4'>
-            <Text className='text-lg font-psemibold'>{user?.username}</Text>
-            <Text className='font-pregular text-base'>{user?.email}</Text>
+          <View className='ml-4 flex-1'>
+            <Text className='text-lg font-psemibold' numberOfLines={1} ellipsizeMode='tail'>{user?.username}</Text>
+            <Text className='font-pregular text-base' numberOfLines={1} ellipsizeMode='tail'>{user?.email}</Text>
           </View>
         </View>
 

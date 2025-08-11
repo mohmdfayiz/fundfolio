@@ -41,16 +41,16 @@ const SwitchAccount = ({
                                 onPress={() => handleSwitchAccount(user)}
                                 className="flex flex-row gap-x-4 justify-between items-center"
                             >
-                                <View className='flex flex-row items-center justify-start'>
+                                <View className='flex flex-1 flex-row items-center justify-start'>
                                     <Image source={user?.profilePic === 'woman' ? woman : man} className='w-[60px] h-[60px] rounded-full' />
-                                    <View className='ml-4'>
-                                        <Text className='text-lg font-psemibold'>{user?.username}</Text>
-                                        <Text className='font-pregular text-base truncate'>{user?.email}</Text>
+                                    <View className='ml-4 flex-1'>
+                                        <Text className='text-lg font-psemibold' numberOfLines={1} ellipsizeMode='tail'>{user?.username}</Text>
+                                        <Text className='font-pregular text-base' numberOfLines={1} ellipsizeMode='tail'>{user?.email}</Text>
                                     </View>
                                 </View>
                                 {
                                     userId == user._id && (
-                                        <View >
+                                        <View>
                                             <Text>✅</Text>
                                         </View>
                                     )

@@ -2,7 +2,7 @@
   "expo": {
     "name": "fundfolio",
     "slug": "fundfolio",
-    "version": "1.2.1",
+    "version": "1.2.2",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "fundfolio",
@@ -23,7 +23,20 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.fundfolio",
-      "versionCode": 22
+      "versionCode": 22,
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "fundfolio.app"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
     },
     "plugins": [
       [
