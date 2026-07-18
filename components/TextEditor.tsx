@@ -29,7 +29,7 @@ const TextEditor = ({ note, isOpen, mode, onClose }: { note: Note, isOpen: boole
             animationType="slide"
             transparent
         >
-            <View className='flex-1 bg-white' style={{ paddingTop: insets.top / 3 }}>
+            <View className='flex-1 bg-white' style={{ paddingTop: insets.top }}>
                 <View className='p-4'>
                     <Text className='text-2xl font-pbold'>{mode === 'edit' ? 'Note' : 'Add Note'}</Text>
                 </View>

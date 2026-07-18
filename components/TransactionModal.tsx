@@ -138,7 +138,7 @@ const TransactionModal = ({
         >
             <KeyboardAvoidingView
                 className='flex-1 bg-white'
-                style={{ paddingTop: insets.top / 3 }}
+                style={{ paddingTop: insets.top }}
                 behavior={Platform.OS === 'ios' ? 'padding' : undefined}
                 keyboardVerticalOffset={Platform.OS === 'ios' ? 8 : 0}
             >

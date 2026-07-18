@@ -21,7 +21,7 @@ const SummaryModal = ({
             animationType="slide"
             transparent
         >
-            <View className='flex-1 bg-white' style={{ paddingTop: insets.top / 3 }}>
+            <View className='flex-1 bg-white' style={{ paddingTop: insets.top }}>
                 <View className='p-4 flex flex-row items-center justify-between'>
                     <Text className='text-2xl font-pbold'>{'Summary ✨'}</Text>
                 </View>
