@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react'
 import { View, Text, Modal, TextInput, Pressable, ScrollView, KeyboardAvoidingView, Platform } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import dateFormat from 'dateformat'
 import { Note } from '@/types'
 
 const TextEditor = ({ note, isOpen, mode, onClose }: { note: Note, isOpen: boolean, mode: string, onClose: (newNote: Note, mode: string) => void }) => {
 
     const [tempNote, setTempNote] = useState(note)
+    const insets = useSafeAreaInsets()
 
     const handleUpdate = (item: string, value: string | boolean) => {
         setTempNote(prevNote => ({ ...prevNote, [item]: value, updatedAt: new Date() }))
@@ -27,7 +29,7 @@ const TextEditor = ({ note, isOpen, mode, onClose }: { note: Note, isOpen: boole
             animationType="slide"
             transparent
         >
-            <View className='flex-1 bg-white'>
+            <View className='flex-1 bg-white' style={{ paddingTop: insets.top / 3 }}>
                 <View className='p-4'>
                     <Text className='text-2xl font-pbold'>{mode === 'edit' ? 'Note' : 'Add Note'}</Text>
                 </View>

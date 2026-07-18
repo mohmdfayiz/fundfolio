@@ -2,9 +2,9 @@ import axios from "axios";
 import { getToken, setToken } from "@/utils/token";
 import { getLoggedInUserId, globalLogout } from "@/utils/authUtils";
 
-const env = process.env.EXPO_PUBLIC_NODE_ENV || "production";
+const env = process.env.EXPO_PUBLIC_NODE_ENV
 const development = process.env.EXPO_PUBLIC_DEV_URL
-const production = process.env.EXPO_PUBLIC_PROD_URL || "https://api.fundfolio.app"
+const production = process.env.EXPO_PUBLIC_PROD_URL
 
 const axiosInstance = axios.create({
   baseURL: env === "development" ? development : production,

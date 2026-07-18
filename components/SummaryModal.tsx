@@ -1,4 +1,5 @@
 import { View, Text, Modal, Pressable, ScrollView } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { TransactionSummary } from '@/types'
 
 const SummaryModal = ({
@@ -11,6 +12,7 @@ const SummaryModal = ({
     onClose: (save?: boolean) => void
 }) => {
     const hasContent = Boolean(summary?.overview)
+    const insets = useSafeAreaInsets()
 
     return (
         <Modal
@@ -19,7 +21,7 @@ const SummaryModal = ({
             animationType="slide"
             transparent
         >
-            <View className='flex-1 bg-white'>
+            <View className='flex-1 bg-white' style={{ paddingTop: insets.top / 3 }}>
                 <View className='p-4 flex flex-row items-center justify-between'>
                     <Text className='text-2xl font-pbold'>{'Summary ✨'}</Text>
                 </View>

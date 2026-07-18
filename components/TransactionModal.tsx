@@ -18,6 +18,8 @@ import { DateTimePickerAndroid, DateTimePickerEvent } from '@react-native-commun
 import dateFormat from 'dateformat';
 import * as Haptics from 'expo-haptics';
 
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 import RadioButton from './RadioButton';
 import { PAYMENT_METHODS, TRANSACTION_NOTE_EXAMPLES } from '@/constants/data';
 import { getTransactionCategories } from '@/services/transaction';
@@ -42,6 +44,7 @@ const TransactionModal = ({
     const [transaction, setTransaction] = useState({ ...initialState, amount: initialState.amount.toString() });
     const scrollRef = useRef<ScrollView>(null);
     const descriptionRef = useRef<View>(null);
+    const insets = useSafeAreaInsets();
 
     const isEditing = initialState._id !== undefined;
 
@@ -135,6 +138,7 @@ const TransactionModal = ({
         >
             <KeyboardAvoidingView
                 className='flex-1 bg-white'
+                style={{ paddingTop: insets.top / 3 }}
                 behavior={Platform.OS === 'ios' ? 'padding' : undefined}
                 keyboardVerticalOffset={Platform.OS === 'ios' ? 8 : 0}
             >
