@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Text, View, ScrollView, Image, TouchableOpacity } from 'react-native';
-import { useIsFocused } from '@react-navigation/native';
+import { Text, View, ScrollView, Image, TouchableOpacity, Pressable } from 'react-native';
+import { Link, useIsFocused } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { Link } from 'expo-router';
 
 import { useGlobalContext } from '@/context/GlobalContext';
 import Transaction from '@/components/Transaction';
@@ -78,8 +77,10 @@ export default function HomeScreen() {
         <View className='px-4 pt-4 pb-2'>
           <View className='flex flex-row items-center justify-between'>
             <Text className='text-xl font-psemibold'>Recent Transactions</Text>
-            <Link href={'/transactions'} className='border border-gray-400 rounded-lg px-[9px] py-[3px]'>
-              <Text className='text-base font-pregular text-center'>View All</Text>
+            <Link href={'/transactions'} asChild>
+              <Pressable className='border border-gray-400 rounded-lg px-[9px] py-[3px]'>
+                <Text className='text-base font-pregular text-center'>View All</Text>
+              </Pressable>
             </Link>
           </View>
         </View>

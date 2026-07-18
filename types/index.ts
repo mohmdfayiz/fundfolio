@@ -43,6 +43,13 @@ type Stats = {
     expense: number;
 }
 
+type TransactionSummary = {
+    overview: string;
+    highlights: string[];
+    watchouts: string[];
+    comparison?: string;
+}
+
 type Category = {
     _id?: string;
     name: string;
@@ -86,6 +93,7 @@ export {
     TransactionDetails,
     TransactionGroup,
     Stats,
+    TransactionSummary,
     Category,
     ExpenseByCategory,
     Note,

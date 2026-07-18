@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Alert, Image, Pressable, Text, View, Share, ScrollView } from 'react-native';
-import { useIsFocused } from '@react-navigation/native';
+import { Link, useIsFocused } from "expo-router";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
-import { Link } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 
 import { useGlobalContext } from '@/context/GlobalContext';
@@ -230,75 +229,65 @@ export default function ProfileScreen() {
 
         <ScrollView showsVerticalScrollIndicator={false}>
           <View className='flex flex-col gap-y-1.5'>
-            <View className='flex flex-row items-center justify-between p-2'>
-              <Link href={'/transactionstatistics'} className='flex-1'>
-                <Text className='text-lg font-psemibold'>Transaction Statistics</Text>
-              </Link>
-              <Text className='text-lg font-psemibold'>{'>'}</Text>
-            </View>
-
-            <View className='flex flex-row items-center justify-between p-2'>
-              <Link href={'/transactioncategory'} className='flex-1'>
-                <Text className='text-lg font-psemibold'>Transaction Category</Text>
-              </Link>
-              <Text className='text-lg font-psemibold'>{'>'}</Text>
-            </View>
-
-            <View className='flex flex-row items-center justify-between p-2'>
-              <Pressable onPress={handleCurrencyPicker} className='flex-1'>
-                <Text className='text-lg font-psemibold'>Currency Preference</Text>
+            <Link href={'/transactionstatistics'} asChild>
+              <Pressable className='flex flex-row items-center justify-between p-2'>
+                <Text className='flex-1 text-lg font-psemibold'>Transaction Statistics</Text>
+                <Text className='text-lg font-psemibold'>{'>'}</Text>
               </Pressable>
-              <Text className='text-lg font-psemibold'>{'>'}</Text>
-            </View>
+            </Link>
 
-            <View className='flex flex-row items-center justify-between p-2'>
-              <Link href={'/password'} className='flex-1'>
-                <Text className='text-lg font-psemibold'>Change Password</Text>
-              </Link>
-              <Text className='text-lg font-psemibold'>{'>'}</Text>
-            </View>
-
-            <View className='flex flex-row items-center justify-between p-2'>
-              <Link href={'/privacypolicy'} className='flex-1'>
-                <Text className='text-lg font-psemibold'>Privacy Policy</Text>
-              </Link>
-              <Text className='text-lg font-psemibold'>{'>'}</Text>
-            </View>
-
-            <View className='flex flex-row items-center justify-between p-2'>
-              <Link href={'https://buymeacoffee.com/mohmdfayis'} className='flex-1'>
-                <Text className='text-lg font-psemibold'>Support Us</Text>
-              </Link>
-              <Text className='text-lg font-psemibold'>{'>'}</Text>
-            </View>
-
-            <View className='flex flex-row items-center justify-between p-2'>
-              <Pressable onPress={handleShareApp} className='flex-1'>
-                <Text className='text-lg font-psemibold'>Share App</Text>
+            <Link href={'/transactioncategory'} asChild>
+              <Pressable className='flex flex-row items-center justify-between p-2'>
+                <Text className='flex-1 text-lg font-psemibold'>Transaction Category</Text>
+                <Text className='text-lg font-psemibold'>{'>'}</Text>
               </Pressable>
-              <Text className='text-lg font-psemibold'>{'>'}</Text>
-            </View>
+            </Link>
 
-            <View className='flex flex-row items-center justify-between p-2'>
-              <Pressable onPress={handleAppLockPreference} className='flex-1'>
-                <Text className='text-lg font-psemibold'>App Lock {useAppLock && '🔐'}</Text>
-              </Pressable>
+            <Pressable onPress={handleCurrencyPicker} className='flex flex-row items-center justify-between p-2'>
+              <Text className='flex-1 text-lg font-psemibold'>Currency Preference</Text>
               <Text className='text-lg font-psemibold'>{'>'}</Text>
-            </View>
+            </Pressable>
 
-            <View className='flex flex-row items-center justify-between p-2'>
-              <Pressable onPress={handleDeleteAccount} className='flex-1'>
-                <Text className='text-lg font-psemibold text-red'>Delete Account</Text>
+            <Link href={'/password'} asChild>
+              <Pressable className='flex flex-row items-center justify-between p-2'>
+                <Text className='flex-1 text-lg font-psemibold'>Change Password</Text>
+                <Text className='text-lg font-psemibold'>{'>'}</Text>
               </Pressable>
+            </Link>
+
+            <Link href={'/privacypolicy'} asChild>
+              <Pressable className='flex flex-row items-center justify-between p-2'>
+                <Text className='flex-1 text-lg font-psemibold'>Privacy Policy</Text>
+                <Text className='text-lg font-psemibold'>{'>'}</Text>
+              </Pressable>
+            </Link>
+
+            <Link href={'https://buymeacoffee.com/mohmdfayis'} asChild>
+              <Pressable className='flex flex-row items-center justify-between p-2'>
+                <Text className='flex-1 text-lg font-psemibold'>Support Us</Text>
+                <Text className='text-lg font-psemibold'>{'>'}</Text>
+              </Pressable>
+            </Link>
+
+            <Pressable onPress={handleShareApp} className='flex flex-row items-center justify-between p-2'>
+              <Text className='flex-1 text-lg font-psemibold'>Share App</Text>
+              <Text className='text-lg font-psemibold'>{'>'}</Text>
+            </Pressable>
+
+            <Pressable onPress={handleAppLockPreference} className='flex flex-row items-center justify-between p-2'>
+              <Text className='flex-1 text-lg font-psemibold'>App Lock {useAppLock && '🔐'}</Text>
+              <Text className='text-lg font-psemibold'>{'>'}</Text>
+            </Pressable>
+
+            <Pressable onPress={handleDeleteAccount} className='flex flex-row items-center justify-between p-2'>
+              <Text className='flex-1 text-lg font-psemibold text-red'>Delete Account</Text>
               <Text className='text-lg font-psemibold text-red'>{'>'}</Text>
-            </View>
+            </Pressable>
 
-            <View className='flex flex-row items-center justify-between p-2'>
-              <Pressable onPress={handleLogout} className='flex-1'>
-                <Text className='text-lg font-psemibold text-red'>Logout</Text>
-              </Pressable>
+            <Pressable onPress={handleLogout} className='flex flex-row items-center justify-between p-2'>
+              <Text className='flex-1 text-lg font-psemibold text-red'>Logout</Text>
               <Text className='text-lg font-psemibold text-red'>{'>'}</Text>
-            </View>
+            </Pressable>
           </View>
         </ScrollView>
       </View>

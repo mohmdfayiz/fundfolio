@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { View, Text, FlatList, Pressable, TouchableOpacity, Image } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { useIsFocused } from '@react-navigation/native'
+import { useIsFocused } from "expo-router";
 import * as Haptics from 'expo-haptics';
 
 import NoteTile from '@/components/Note'

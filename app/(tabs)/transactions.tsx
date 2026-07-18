@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { View, Text, SectionList, Pressable, TouchableOpacity, Image } from 'react-native';
-import { useIsFocused } from '@react-navigation/native';
+import { useIsFocused } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Toast from 'react-native-toast-message';
 import * as Haptics from 'expo-haptics';
@@ -9,9 +9,10 @@ import { useGlobalContext } from '@/context/GlobalContext';
 import Transaction from '@/components/Transaction';
 import TabTitle from '@/components/TabTitle';
 import TransactionModal from '@/components/TransactionModal';
+import CategorySetupSheet from '@/components/CategorySetupSheet';
 import { MONTHS } from '@/constants/data';
 import { noData } from '@/constants/images';
-import { getTransactions, addTransaction, deleteTransactions, updateTransaction } from '@/services/transaction';
+import { getTransactions, addTransaction, deleteTransactions, updateTransaction, getTransactionCategories } from '@/services/transaction';
 import { Transaction as TransactioProps, TransactionGroup } from '@/types';
 
 export default function TransactionScreen() {
@@ -20,6 +21,8 @@ export default function TransactionScreen() {
     const [transaction, setTransaction] = useState({ amount: 0, category: '', paymentMethod: '', description: '', transactionType: '', createdAt: new Date() });
     const [multipleSelection, setMultipleSelection] = useState(false);
     const [selectedItems, setSelectedItems] = useState<string[]>([]);
+    const [hasCategories, setHasCategories] = useState(true);
+    const [dismissedCategorySetup, setDismissedCategorySetup] = useState(false);
 
     const { user } = useGlobalContext();
     const isFocused = useIsFocused();
@@ -28,6 +31,15 @@ export default function TransactionScreen() {
     const fetchTransactions = async () => {
         const { data } = await getTransactions();
         setTransactions(data);
+    };
+
+    const fetchCategories = async () => {
+        try {
+            const { data } = await getTransactionCategories();
+            setHasCategories(Array.isArray(data) && data.length > 0);
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     const enableMultipleSelection = (id: string) => {
@@ -100,7 +112,12 @@ export default function TransactionScreen() {
     };
 
     useEffect(() => {
-        isFocused && fetchTransactions();
+        if (isFocused) {
+            fetchTransactions();
+            fetchCategories();
+        } else {
+            setDismissedCategorySetup(false);
+        }
         showModal && setShowModal(false);
         setMultipleSelection(false);
         setSelectedItems([]);
@@ -165,6 +182,11 @@ export default function TransactionScreen() {
                 currency={user?.currency || '$'}
                 onSave={saveTransaction}
                 onClose={handleCloseModal}
+            />
+
+            <CategorySetupSheet
+                isOpen={!hasCategories && !dismissedCategorySetup && isFocused}
+                onDismiss={() => setDismissedCategorySetup(true)}
             />
         </View>
     );

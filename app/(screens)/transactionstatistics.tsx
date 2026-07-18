@@ -3,7 +3,7 @@ import { View, Text, Pressable, Image, TouchableOpacity, FlatList, ToastAndroid 
 import { SafeAreaView } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { ScrollView } from "react-native-gesture-handler";
-import { useIsFocused } from "@react-navigation/native";
+import { useIsFocused } from "expo-router";
 import YearPicker from "@/components/YearPicker";
 import * as Haptics from "expo-haptics";
 
@@ -13,13 +13,13 @@ import TabTitle from "@/components/TabTitle";
 import Transaction from "@/components/Transaction";
 import TransactionCategory from "@/components/TransactionCategory";
 import TransactionDetail from "@/components/TransactionDetails";
-import SummaryModal from "@/components/SummaryModal";
+import SummaryModal, { flattenSummaryForNotes } from "@/components/SummaryModal";
 import { MONTHS, YEARS } from "@/constants/data";
 import { noData } from "@/constants/images";
 import icons from "@/constants/icons";
 import { addNote } from "@/services/note";
 import { getTransactionsByDate, getTransactionSummary } from "@/services/transaction";
-import { TransactionDetails, Stats, ExpenseByCategory } from "@/types";
+import { TransactionDetails, Stats, ExpenseByCategory, TransactionSummary } from "@/types";
 
 export default function TransactionStatistics() {
     const today = new Date();
@@ -34,7 +34,7 @@ export default function TransactionStatistics() {
     const [isYearPickerVisible, setIsYearPickerVisible] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState<'transaction' | 'summary' | null>(null);
     const [selectedTransaction, setSelectedTransaction] = useState<TransactionDetails | null>(null);
-    const [summary, setSummary] = useState('');
+    const [summary, setSummary] = useState<TransactionSummary | null>(null);
 
     const fetchTransactions = async (date: { month: number, year: number }) => {
         try {
@@ -53,7 +53,7 @@ export default function TransactionStatistics() {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         try {
             const { data } = await getTransactionSummary(date.month + 1, date.year);
-            setSummary(data?.summary || '');
+            setSummary(data?.summary || null);
         } catch (error) {
             console.error(error);
         }
@@ -75,10 +75,10 @@ export default function TransactionStatistics() {
 
     const handleSummaryClose = async (save = false) => {
         setIsModalVisible(null);
-        if (save) {
+        if (save && summary) {
             await addNote({
                 title: `${MONTHS[date.month]} ${date.year} : Transaction Summary`,
-                content: summary,
+                content: flattenSummaryForNotes(summary),
                 pinned: false,
                 createdAt: new Date(),
                 updatedAt: new Date()
@@ -90,7 +90,7 @@ export default function TransactionStatistics() {
     useEffect(() => {
         if (isFocused) {
             fetchTransactions(date);
-            setSummary('');
+            setSummary(null);
         }
     }, [isFocused, date])
 

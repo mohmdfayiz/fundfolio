@@ -1,6 +1,18 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'expo-router';
-import { Text, View, Modal, Pressable, TextInput, KeyboardAvoidingView, ScrollView, Platform, ToastAndroid } from "react-native";
+import {
+    Text,
+    View,
+    Modal,
+    Pressable,
+    TextInput,
+    KeyboardAvoidingView,
+    ScrollView,
+    Platform,
+    ToastAndroid,
+    findNodeHandle,
+    UIManager,
+} from "react-native";
 import { Dropdown } from 'react-native-element-dropdown';
 import { DateTimePickerAndroid, DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import dateFormat from 'dateformat';
@@ -28,6 +40,8 @@ const TransactionModal = ({
 
     const [transactionCategories, setTransactionCategories] = useState<Category[]>([]);
     const [transaction, setTransaction] = useState({ ...initialState, amount: initialState.amount.toString() });
+    const scrollRef = useRef<ScrollView>(null);
+    const descriptionRef = useRef<View>(null);
 
     const isEditing = initialState._id !== undefined;
 
@@ -84,6 +98,29 @@ const TransactionModal = ({
         });
     };
 
+    const scrollDescriptionIntoView = () => {
+        // Keep the focused field above the sticky action buttons.
+        requestAnimationFrame(() => {
+            const scrollNode = findNodeHandle(scrollRef.current);
+            const fieldNode = findNodeHandle(descriptionRef.current);
+            if (!scrollNode || !fieldNode) {
+                scrollRef.current?.scrollToEnd({ animated: true });
+                return;
+            }
+
+            UIManager.measureLayout(
+                fieldNode,
+                scrollNode,
+                () => {
+                    scrollRef.current?.scrollToEnd({ animated: true });
+                },
+                (_left, top) => {
+                    scrollRef.current?.scrollTo({ y: Math.max(top - 24, 0), animated: true });
+                }
+            );
+        });
+    };
+
     useEffect(() => {
         isOpen && fetchTransactionCategories();
         isOpen && setTransaction({ ...initialState, amount: initialState.amount ? initialState.amount.toString() : '' });
@@ -96,112 +133,117 @@ const TransactionModal = ({
             animationType="slide"
             transparent={true}
         >
-            <View className='flex-1 flex-col gap-4 p-4 min-h-fit bg-white'>
-                <View>
-                    <Text className='text-2xl font-pbold'>{isEditing ? `Transaction` : `Add Transaction`}</Text>
-                </View>
+            <KeyboardAvoidingView
+                className='flex-1 bg-white'
+                behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+                keyboardVerticalOffset={Platform.OS === 'ios' ? 8 : 0}
+            >
+                <View className='flex-1 p-4'>
+                    <View className='mb-4'>
+                        <Text className='text-2xl font-pbold'>{isEditing ? `Transaction` : `Add Transaction`}</Text>
+                    </View>
 
-                <View className='flex-1'>
-                    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-                        <ScrollView
-                            className='flex flex-col'
-                            keyboardShouldPersistTaps="handled"
-                            showsVerticalScrollIndicator={false}
-                        >
-                            <View className='mb-4'>
-                                <Text className='text-lg font-pmedium mb-1'>Amount</Text>
-                                <TextInput
-                                    keyboardType='decimal-pad'
-                                    placeholder={`${currency} 100`}
-                                    value={transaction.amount}
-                                    className='border border-slate-400 p-4 rounded-xl font-pregular text-lg text-left'
-                                    placeholderTextColor={'gray'}
-                                    onChangeText={(text) => setTransaction({ ...transaction, amount: text })}
-                                />
+                    <ScrollView
+                        ref={scrollRef}
+                        className='flex-1'
+                        keyboardShouldPersistTaps="handled"
+                        showsVerticalScrollIndicator={false}
+                        contentContainerStyle={{ paddingBottom: 16 }}
+                    >
+                        <View className='mb-4'>
+                            <Text className='text-lg font-pmedium mb-1'>Amount</Text>
+                            <TextInput
+                                keyboardType='decimal-pad'
+                                placeholder={`${currency} 100`}
+                                value={transaction.amount}
+                                className='border border-slate-400 p-4 rounded-xl font-pregular text-lg text-left'
+                                placeholderTextColor={'gray'}
+                                onChangeText={(text) => setTransaction({ ...transaction, amount: text })}
+                            />
+                        </View>
+                        <View className='mb-4'>
+                            <View className='flex flex-row items-center relative'>
+                                <Text className='text-lg font-pmedium mb-1'>Category</Text>
                             </View>
-                            <View className='mb-4'>
-                                <View className='flex flex-row items-center relative'>
-                                    <Text className='text-lg font-pmedium mb-1'>Category</Text>
-                                </View>
-                                <Dropdown
-                                    data={transactionCategories}
-                                    value={transaction.category}
-                                    style={{ borderColor: '#94a3b8', borderWidth: 1, borderRadius: 12, padding: 16 }}
-                                    placeholderStyle={{ fontFamily: 'Poppins-Regular', fontSize: 16, color: 'gray' }}
-                                    selectedTextStyle={{ fontFamily: 'Poppins-Regular', fontSize: 16, color: 'black' }}
-                                    maxHeight={300}
-                                    placeholder={'Select Category'}
-                                    onChange={item => { setTransaction({ ...transaction, category: item.name }) }}
-                                    labelField={'name'}
-                                    valueField={'name'}
-                                />
-                                {
-                                    transactionCategories.length === 0 && !isEditing && !hasExistingTransactions && (
-                                        <View>
-                                            <Link href={'/transactioncategory'} className='p-1 text-sm font-pregular text-orange-400 underline'>Add transaction categories on your account {'>>'}</Link>
-                                        </View>
-                                    )
-                                }
-                            </View>
-                            <View className='mb-4'>
-                                <Text className='text-lg font-pmedium mb-1'>Payment Method</Text>
-                                <Dropdown
-                                    data={PAYMENT_METHODS}
-                                    value={transaction.paymentMethod}
-                                    style={{ borderColor: '#94a3b8', borderWidth: 1, borderRadius: 12, padding: 16 }}
-                                    placeholderStyle={{ fontFamily: 'Poppins-Regular', fontSize: 16, color: 'gray' }}
-                                    selectedTextStyle={{ fontFamily: 'Poppins-Regular', fontSize: 16, color: 'black' }}
-                                    maxHeight={300}
-                                    placeholder={'Select Payment Method'}
-                                    onChange={item => { setTransaction({ ...transaction, paymentMethod: item.name }) }}
-                                    labelField={'name'}
-                                    valueField={'name'}
-                                />
-                            </View>
-                            <View className='mb-4'>
-                                <Text className='text-lg font-pmedium mb-1'>Description</Text>
-                                <TextInput
-                                    placeholder={getRandomPlaceholder}
-                                    value={transaction?.description}
-                                    className='border border-slate-400 p-4 rounded-xl font-pregular text-lg'
-                                    placeholderTextColor={'gray'}
-                                    onChangeText={(text) => setTransaction({ ...transaction, description: text })}
-                                />
-                            </View>
-                            <View className='flex flex-row'>
-                                <View>
-                                    <Text className='text-lg font-pmedium mb-1'>Transaction Type</Text>
-                                    <View className='flex flex-row place-items-center gap-4'>
-                                        <View>
-                                            <RadioButton name='Income' value={transaction.transactionType} setValue={setTransactionType} />
-                                        </View>
-                                        <View>
-                                            <RadioButton name='Expense' value={transaction.transactionType} setValue={setTransactionType} />
-                                        </View>
+                            <Dropdown
+                                data={transactionCategories}
+                                value={transaction.category}
+                                style={{ borderColor: '#94a3b8', borderWidth: 1, borderRadius: 12, padding: 16 }}
+                                placeholderStyle={{ fontFamily: 'Poppins-Regular', fontSize: 16, color: 'gray' }}
+                                selectedTextStyle={{ fontFamily: 'Poppins-Regular', fontSize: 16, color: 'black' }}
+                                maxHeight={300}
+                                placeholder={'Select Category'}
+                                onChange={item => { setTransaction({ ...transaction, category: item.name }) }}
+                                labelField={'name'}
+                                valueField={'name'}
+                            />
+                            {
+                                transactionCategories.length === 0 && !isEditing && !hasExistingTransactions && (
+                                    <View>
+                                        <Link href={'/transactioncategory'} className='p-1 text-sm font-pregular text-orange-400 underline'>Add transaction categories on your account {'>>'}</Link>
+                                    </View>
+                                )
+                            }
+                        </View>
+                        <View className='mb-4'>
+                            <Text className='text-lg font-pmedium mb-1'>Payment Method</Text>
+                            <Dropdown
+                                data={PAYMENT_METHODS}
+                                value={transaction.paymentMethod}
+                                style={{ borderColor: '#94a3b8', borderWidth: 1, borderRadius: 12, padding: 16 }}
+                                placeholderStyle={{ fontFamily: 'Poppins-Regular', fontSize: 16, color: 'gray' }}
+                                selectedTextStyle={{ fontFamily: 'Poppins-Regular', fontSize: 16, color: 'black' }}
+                                maxHeight={300}
+                                placeholder={'Select Payment Method'}
+                                onChange={item => { setTransaction({ ...transaction, paymentMethod: item.name }) }}
+                                labelField={'name'}
+                                valueField={'name'}
+                            />
+                        </View>
+                        <View className='mb-4' ref={descriptionRef} collapsable={false}>
+                            <Text className='text-lg font-pmedium mb-1'>Description</Text>
+                            <TextInput
+                                placeholder={getRandomPlaceholder}
+                                value={transaction?.description}
+                                className='border border-slate-400 p-4 rounded-xl font-pregular text-lg'
+                                placeholderTextColor={'gray'}
+                                onFocus={scrollDescriptionIntoView}
+                                onChangeText={(text) => setTransaction({ ...transaction, description: text })}
+                            />
+                        </View>
+                        <View className='mb-2 flex flex-row'>
+                            <View>
+                                <Text className='text-lg font-pmedium mb-1'>Transaction Type</Text>
+                                <View className='flex flex-row place-items-center gap-4'>
+                                    <View>
+                                        <RadioButton name='Income' value={transaction.transactionType} setValue={setTransactionType} />
+                                    </View>
+                                    <View>
+                                        <RadioButton name='Expense' value={transaction.transactionType} setValue={setTransactionType} />
                                     </View>
                                 </View>
-                                <View className='ml-4 flex-1'>
-                                    <Text className='text-lg font-pmedium mb-1'>Date</Text>
-                                    <Pressable onPress={handleDatePick} className='border border-slate-400 p-4 rounded-xl'>
-                                        <Text className='font-pregular text-lg'>{dateFormat(transaction.createdAt, "dd.mm.yyyy")}</Text>
-                                    </Pressable>
-                                </View>
                             </View>
-                        </ScrollView>
-                    </KeyboardAvoidingView>
-                </View>
+                            <View className='ml-4 flex-1'>
+                                <Text className='text-lg font-pmedium mb-1'>Date</Text>
+                                <Pressable onPress={handleDatePick} className='border border-slate-400 p-4 rounded-xl'>
+                                    <Text className='font-pregular text-lg'>{dateFormat(transaction.createdAt, "dd.mm.yyyy")}</Text>
+                                </Pressable>
+                            </View>
+                        </View>
+                    </ScrollView>
 
-                <View>
-                    <View className='flex flex-row justify-between gap-x-4'>
-                        <Pressable onPress={onClose} className='border flex-1 border-slate-400 p-4 rounded-xl' >
-                            <Text className='text-center text-lg font-psemibold'>Cancel</Text>
-                        </Pressable>
-                        <Pressable onPress={handleSave} className='border border-green flex-1 bg-green/50 p-4 rounded-xl' >
-                            <Text className='text-center text-lg font-psemibold'>{isEditing ? 'Save' : 'Add'}</Text>
-                        </Pressable>
+                    <View className='pt-3 border-t border-slate-200 bg-white'>
+                        <View className='flex flex-row justify-between gap-x-4'>
+                            <Pressable onPress={onClose} className='border flex-1 border-slate-400 p-4 rounded-xl' >
+                                <Text className='text-center text-lg font-psemibold'>Cancel</Text>
+                            </Pressable>
+                            <Pressable onPress={handleSave} className='border border-green flex-1 bg-green/50 p-4 rounded-xl' >
+                                <Text className='text-center text-lg font-psemibold'>{isEditing ? 'Save' : 'Add'}</Text>
+                            </Pressable>
+                        </View>
                     </View>
                 </View>
-            </View>
+            </KeyboardAvoidingView>
         </Modal>
     )
 }

@@ -2,9 +2,9 @@ import axios from "axios";
 import { getToken, setToken } from "@/utils/token";
 import { getLoggedInUserId, globalLogout } from "@/utils/authUtils";
 
-const env = process.env.EXPO_PUBLIC_NODE_ENV
+const env = process.env.EXPO_PUBLIC_NODE_ENV || "production";
 const development = process.env.EXPO_PUBLIC_DEV_URL
-const production = process.env.EXPO_PUBLIC_PROD_URL
+const production = process.env.EXPO_PUBLIC_PROD_URL || "https://api.fundfolio.app"
 
 const axiosInstance = axios.create({
   baseURL: env === "development" ? development : production,
@@ -27,8 +27,20 @@ axiosInstance.interceptors.response.use(
     const userId = await getLoggedInUserId();
     const originalRequest = error.config;
 
-    // If the error is not a 401 or it's a request to sign in or logout, reject immediately
-    if (error.response.status !== 401 || originalRequest.url === '/auth/signin' || originalRequest.url === '/auth/logout') {
+    const publicAuthPaths = [
+      '/auth/signin',
+      '/auth/signup',
+      '/auth/logout',
+      '/auth/verify-otp',
+      '/auth/resend-otp',
+      '/auth/forgot-password',
+      '/auth/refresh-token',
+    ];
+    const requestUrl = originalRequest.url || '';
+    const isPublicAuth = publicAuthPaths.some((path) => requestUrl.includes(path));
+
+    // If the error is not a 401 or it's a public auth request, reject immediately
+    if (error.response?.status !== 401 || isPublicAuth) {
       return Promise.reject(error);
     }
 
