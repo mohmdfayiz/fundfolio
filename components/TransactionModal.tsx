@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'expo-router';
 import {
     Text,
@@ -6,24 +6,22 @@ import {
     Modal,
     Pressable,
     TextInput,
-    KeyboardAvoidingView,
-    ScrollView,
     Platform,
     ToastAndroid,
-    findNodeHandle,
-    UIManager,
 } from "react-native";
 import { Dropdown } from 'react-native-element-dropdown';
 import { DateTimePickerAndroid, DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import dateFormat from 'dateformat';
 import * as Haptics from 'expo-haptics';
-
+import { KeyboardAwareScrollView, KeyboardStickyView } from 'react-native-keyboard-controller';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import RadioButton from './RadioButton';
 import { PAYMENT_METHODS, TRANSACTION_NOTE_EXAMPLES } from '@/constants/data';
 import { getTransactionCategories } from '@/services/transaction';
 import { Category, Transaction } from '@/types';
+
+const ACTION_BAR_OFFSET = 88;
 
 const TransactionModal = ({
     initialState,
@@ -42,8 +40,6 @@ const TransactionModal = ({
 
     const [transactionCategories, setTransactionCategories] = useState<Category[]>([]);
     const [transaction, setTransaction] = useState({ ...initialState, amount: initialState.amount.toString() });
-    const scrollRef = useRef<ScrollView>(null);
-    const descriptionRef = useRef<View>(null);
     const insets = useSafeAreaInsets();
 
     const isEditing = initialState._id !== undefined;
@@ -101,29 +97,6 @@ const TransactionModal = ({
         });
     };
 
-    const scrollDescriptionIntoView = () => {
-        // Keep the focused field above the sticky action buttons.
-        requestAnimationFrame(() => {
-            const scrollNode = findNodeHandle(scrollRef.current);
-            const fieldNode = findNodeHandle(descriptionRef.current);
-            if (!scrollNode || !fieldNode) {
-                scrollRef.current?.scrollToEnd({ animated: true });
-                return;
-            }
-
-            UIManager.measureLayout(
-                fieldNode,
-                scrollNode,
-                () => {
-                    scrollRef.current?.scrollToEnd({ animated: true });
-                },
-                (_left, top) => {
-                    scrollRef.current?.scrollTo({ y: Math.max(top - 24, 0), animated: true });
-                }
-            );
-        });
-    };
-
     useEffect(() => {
         isOpen && fetchTransactionCategories();
         isOpen && setTransaction({ ...initialState, amount: initialState.amount ? initialState.amount.toString() : '' });
@@ -136,20 +109,15 @@ const TransactionModal = ({
             animationType="slide"
             transparent={true}
         >
-            <KeyboardAvoidingView
-                className='flex-1 bg-white'
-                style={{ paddingTop: insets.top }}
-                behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-                keyboardVerticalOffset={Platform.OS === 'ios' ? 8 : 0}
-            >
-                <View className='flex-1 p-4'>
+            <View className='flex-1 bg-white' style={{ paddingTop: insets.top }}>
+                <View className='flex-1 px-4 pt-4'>
                     <View className='mb-4'>
                         <Text className='text-2xl font-pbold'>{isEditing ? `Transaction` : `Add Transaction`}</Text>
                     </View>
 
-                    <ScrollView
-                        ref={scrollRef}
+                    <KeyboardAwareScrollView
                         className='flex-1'
+                        bottomOffset={ACTION_BAR_OFFSET}
                         keyboardShouldPersistTaps="handled"
                         showsVerticalScrollIndicator={false}
                         contentContainerStyle={{ paddingBottom: 16 }}
@@ -204,14 +172,13 @@ const TransactionModal = ({
                                 valueField={'name'}
                             />
                         </View>
-                        <View className='mb-4' ref={descriptionRef} collapsable={false}>
+                        <View className='mb-4'>
                             <Text className='text-lg font-pmedium mb-1'>Description</Text>
                             <TextInput
                                 placeholder={getRandomPlaceholder}
                                 value={transaction?.description}
                                 className='border border-slate-400 p-4 rounded-xl font-pregular text-lg'
                                 placeholderTextColor={'gray'}
-                                onFocus={scrollDescriptionIntoView}
                                 onChangeText={(text) => setTransaction({ ...transaction, description: text })}
                             />
                         </View>
@@ -234,9 +201,12 @@ const TransactionModal = ({
                                 </Pressable>
                             </View>
                         </View>
-                    </ScrollView>
+                    </KeyboardAwareScrollView>
+                </View>
 
-                    <View className='pt-3 border-t border-slate-200 bg-white'>
+                {/* Sticky translate is iOS-only: Android already resizes via softwareKeyboardLayoutMode. */}
+                <KeyboardStickyView enabled={Platform.OS === 'ios'}>
+                    <View className='px-4 pt-3 pb-4 border-t border-slate-200 bg-white'>
                         <View className='flex flex-row justify-between gap-x-4'>
                             <Pressable onPress={onClose} className='border flex-1 border-slate-400 p-4 rounded-xl' >
                                 <Text className='text-center text-lg font-psemibold'>Cancel</Text>
@@ -246,8 +216,8 @@ const TransactionModal = ({
                             </Pressable>
                         </View>
                     </View>
-                </View>
-            </KeyboardAvoidingView>
+                </KeyboardStickyView>
+            </View>
         </Modal>
     )
 }

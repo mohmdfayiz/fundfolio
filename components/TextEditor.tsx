@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react'
-import { View, Text, Modal, TextInput, Pressable, ScrollView, KeyboardAvoidingView, Platform } from 'react-native'
+import { View, Text, Modal, TextInput, Pressable, Platform } from 'react-native'
+import { KeyboardAwareScrollView, KeyboardStickyView } from 'react-native-keyboard-controller'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import dateFormat from 'dateformat'
 import { Note } from '@/types'
+
+const FOOTER_OFFSET = 64;
 
 const TextEditor = ({ note, isOpen, mode, onClose }: { note: Note, isOpen: boolean, mode: string, onClose: (newNote: Note, mode: string) => void }) => {
 
@@ -33,57 +36,55 @@ const TextEditor = ({ note, isOpen, mode, onClose }: { note: Note, isOpen: boole
                 <View className='p-4'>
                     <Text className='text-2xl font-pbold'>{mode === 'edit' ? 'Note' : 'Add Note'}</Text>
                 </View>
-                <KeyboardAvoidingView
-                    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                    className='flex-1'
-                    keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+                <KeyboardAwareScrollView
+                    className='flex-1 px-4'
+                    bottomOffset={FOOTER_OFFSET}
+                    keyboardShouldPersistTaps="handled"
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={{ paddingBottom: 24 }}
                 >
-                    <ScrollView
-                        className='flex-1 p-4'
-                        keyboardShouldPersistTaps="handled"
-                        showsVerticalScrollIndicator={false}
-                        contentContainerStyle={{ flexGrow: 1 }}
-                    >
-                        <TextInput
-                            placeholder='Title'
-                            multiline
-                            maxLength={60}
-                            numberOfLines={2}
-                            cursorColor={'black'}
-                            style={{ textAlignVertical: 'top' }}
-                            className='font-psemibold text-xl'
-                            placeholderTextColor={'gray'}
-                            value={tempNote.title}
-                            onChangeText={(text) => handleUpdate('title', text)}
-                            accessibilityLabel="Note title"
-                            accessibilityHint="Enter the title for your note"
-                            returnKeyType="next"
-                        />
-                        <TextInput
-                            placeholder='Write your note here...'
-                            multiline
-                            maxLength={1000}
-                            numberOfLines={30}
-                            cursorColor={'black'}
-                            style={{ textAlignVertical: 'top' }}
-                            className='font-pregular text-lg flex-1 pb-6'
-                            placeholderTextColor={'gray'}
-                            value={tempNote.content}
-                            onChangeText={(text) => handleUpdate('content', text)}
-                            accessibilityLabel="Note content"
-                            accessibilityHint="Enter the content for your note"
-                        />
-                    </ScrollView>
-                </KeyboardAvoidingView>
-                <View className='flex flex-row items-center border-t bg-white border-slate-200 px-4'>
-                    <Text className='text-base font-pregular'>Edited {dateFormat(tempNote.updatedAt, "h:MM tt, mmm dd")}</Text>
-                    <Pressable className={`ml-auto p-3 ${tempNote.pinned && 'opacity-50'}`} onPress={() => handleUpdate('pinned', !tempNote.pinned)}>
-                        <Text className='text-center font-psemibold text-lg'>📌</Text>
-                    </Pressable>
-                    <Pressable className='ml-1 p-3' onPress={() => handleDelete(tempNote?._id)}>
-                        <Text className='text-center font-psemibold text-lg'>🗑️</Text>
-                    </Pressable>
-                </View>
+                    <TextInput
+                        placeholder='Title'
+                        multiline
+                        maxLength={60}
+                        numberOfLines={2}
+                        cursorColor={'black'}
+                        style={{ textAlignVertical: 'top' }}
+                        className='font-psemibold text-xl'
+                        placeholderTextColor={'gray'}
+                        value={tempNote.title}
+                        onChangeText={(text) => handleUpdate('title', text)}
+                        accessibilityLabel="Note title"
+                        accessibilityHint="Enter the title for your note"
+                        returnKeyType="next"
+                    />
+                    <TextInput
+                        placeholder='Write your note here...'
+                        multiline
+                        maxLength={1000}
+                        scrollEnabled={false}
+                        cursorColor={'black'}
+                        style={{ textAlignVertical: 'top', minHeight: 280 }}
+                        className='font-pregular text-lg pb-6'
+                        placeholderTextColor={'gray'}
+                        value={tempNote.content}
+                        onChangeText={(text) => handleUpdate('content', text)}
+                        accessibilityLabel="Note content"
+                        accessibilityHint="Enter the content for your note"
+                    />
+                </KeyboardAwareScrollView>
+                {/* Sticky translate is iOS-only: Android already resizes via softwareKeyboardLayoutMode. */}
+                <KeyboardStickyView enabled={Platform.OS === 'ios'}>
+                    <View className='flex flex-row items-center border-t bg-white border-slate-200 px-4'>
+                        <Text className='text-base font-pregular'>Edited {dateFormat(tempNote.updatedAt, "h:MM tt, mmm dd")}</Text>
+                        <Pressable className={`ml-auto p-3 ${tempNote.pinned && 'opacity-50'}`} onPress={() => handleUpdate('pinned', !tempNote.pinned)}>
+                            <Text className='text-center font-psemibold text-lg'>📌</Text>
+                        </Pressable>
+                        <Pressable className='ml-1 p-3' onPress={() => handleDelete(tempNote?._id)}>
+                            <Text className='text-center font-psemibold text-lg'>🗑️</Text>
+                        </Pressable>
+                    </View>
+                </KeyboardStickyView>
             </View>
         </Modal>
     )

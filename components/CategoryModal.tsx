@@ -1,4 +1,5 @@
 import { Modal, View, Text, Pressable, TextInput, StyleSheet } from "react-native";
+import { KeyboardStickyView } from "react-native-keyboard-controller";
 import { TRANSACTION_CATEGORY_COLOR_MAP } from "@/constants/data";
 import { Category } from "@/types";
 
@@ -28,63 +29,66 @@ const CategoryModal = ({ isOpen, onClose, mode, category, setCategory, handleSav
             transparent={true}
         >
             <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.2)' }}>
-                <View style={styles.container}>
-                    <View className="flex items-center">
-                        <TextInput
-                            autoFocus
-                            maxLength={2}
-                            value={category.icon}
-                            onChangeText={(icon) => handleChange('icon', icon)}
-                            style={[styles.common, styles.textInput, { backgroundColor: category.bgColour }]}
-                        />
-                    </View>
-                    <View className="flex flex-row justify-center gap-x-4">
-                        {
-                            TRANSACTION_CATEGORY_COLOR_MAP.map((bgColour, index) => (
-                                <Pressable
-                                    key={index}
-                                    onPress={() => handleChange('bgColour', bgColour)}
-                                    style={[
-                                        styles.colorPicker,
-                                        styles.common,
-                                        { backgroundColor: bgColour },
-                                        category.bgColour === bgColour && { borderColor: '#94a3b8', borderWidth: 2 }
-                                    ]}
-                                />
-                            ))
-                        }
-                    </View>
-                    <View>
-                        <TextInput
-                            maxLength={25}
-                            value={category.name}
-                            placeholder={"Category Name"}
-                            className="border border-slate-400 p-4 rounded-xl font-pregular text-lg text-black"
-                            placeholderTextColor={'gray'}
-                            onChangeText={(name) => handleChange('name', name)}
-                        />
-                    </View>
-                    <View>
-                        <View className='flex flex-row justify-between items-center gap-4'>
-                            <Pressable onPress={onClose} className='border flex-1 border-slate-400 p-4 rounded-xl' >
-                                <Text className='text-center text-lg font-psemibold'>Cancel</Text>
-                            </Pressable>
-                            <Pressable onPress={handleSave} className='border border-green flex-1 bg-green/50 p-4 rounded-xl' >
-                                <Text className='text-center text-lg font-psemibold'>{mode === 'edit' ? 'Save' : 'Add'}</Text>
-                            </Pressable>
+                <KeyboardStickyView style={styles.sticky}>
+                    <View style={styles.container}>
+                        <View className="flex items-center">
+                            <TextInput
+                                autoFocus
+                                maxLength={2}
+                                value={category.icon}
+                                onChangeText={(icon) => handleChange('icon', icon)}
+                                style={[styles.common, styles.textInput, { backgroundColor: category.bgColour }]}
+                            />
+                        </View>
+                        <View className="flex flex-row justify-center gap-x-4">
+                            {
+                                TRANSACTION_CATEGORY_COLOR_MAP.map((bgColour, index) => (
+                                    <Pressable
+                                        key={index}
+                                        onPress={() => handleChange('bgColour', bgColour)}
+                                        style={[
+                                            styles.colorPicker,
+                                            styles.common,
+                                            { backgroundColor: bgColour },
+                                            category.bgColour === bgColour && { borderColor: '#94a3b8', borderWidth: 2 }
+                                        ]}
+                                    />
+                                ))
+                            }
+                        </View>
+                        <View>
+                            <TextInput
+                                maxLength={25}
+                                value={category.name}
+                                placeholder={"Category Name"}
+                                className="border border-slate-400 p-4 rounded-xl font-pregular text-lg text-black"
+                                placeholderTextColor={'gray'}
+                                onChangeText={(name) => handleChange('name', name)}
+                            />
+                        </View>
+                        <View>
+                            <View className='flex flex-row justify-between items-center gap-4'>
+                                <Pressable onPress={onClose} className='border flex-1 border-slate-400 p-4 rounded-xl' >
+                                    <Text className='text-center text-lg font-psemibold'>Cancel</Text>
+                                </Pressable>
+                                <Pressable onPress={handleSave} className='border border-green flex-1 bg-green/50 p-4 rounded-xl' >
+                                    <Text className='text-center text-lg font-psemibold'>{mode === 'edit' ? 'Save' : 'Add'}</Text>
+                                </Pressable>
+                            </View>
                         </View>
                     </View>
-                </View>
+                </KeyboardStickyView>
             </View>
-
         </Modal>
     );
 }
 
 const styles = StyleSheet.create({
+    sticky: {
+        marginTop: 'auto',
+    },
     container: {
         height: 'auto',
-        marginTop: 'auto',
         backgroundColor: 'white',
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,

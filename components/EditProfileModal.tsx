@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Modal, View, Pressable, Text, StyleSheet, Image, TextInput } from "react-native";
+import { KeyboardStickyView } from "react-native-keyboard-controller";
 
 import { man, woman } from '@/constants/images';
 import { User } from "@/types";
@@ -39,36 +40,38 @@ const EditProfileModal = ({ isOpen, user, onClose, onSave }: { isOpen: boolean, 
             transparent={true}
         >
             <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.2)' }}>
-                <View style={styles.container}>
-                    <View className="flex flex-row gap-x-4 justify-center items-center">
-                        <Pressable onPress={() => handleProfilePic('man')}>
-                            <Image source={man} style={style(tempUser?.profilePic === 'man')} />
-                        </Pressable>
-                        <Pressable onPress={() => handleProfilePic('woman')}>
-                            <Image source={woman} style={style(tempUser?.profilePic === 'woman')} />
-                        </Pressable>
-                    </View>
-                    <View>
-                        <TextInput
-                            maxLength={20}
-                            placeholder="Username"
-                            value={tempUser?.username}
-                            className="border border-slate-400 p-4 rounded-xl font-pregular text-lg text-black"
-                            placeholderTextColor={'gray'}
-                            onChangeText={(username) => tempUser && setTempUser({ ...tempUser, username })}
-                        />
-                    </View>
-                    <View className="bg-white">
-                        <View className='flex flex-row justify-between items-center gap-4'>
-                            <Pressable onPress={onClose} className='border flex-1 border-slate-400 p-4 rounded-xl' >
-                                <Text className='text-center text-lg font-psemibold'>Cancel</Text>
+                <KeyboardStickyView style={styles.sticky}>
+                    <View style={styles.container}>
+                        <View className="flex flex-row gap-x-4 justify-center items-center">
+                            <Pressable onPress={() => handleProfilePic('man')}>
+                                <Image source={man} style={style(tempUser?.profilePic === 'man')} />
                             </Pressable>
-                            <Pressable onPress={handleSave} className='border border-green flex-1 bg-green/50 p-4 rounded-xl' >
-                                <Text className='text-center text-lg font-psemibold'>Save</Text>
+                            <Pressable onPress={() => handleProfilePic('woman')}>
+                                <Image source={woman} style={style(tempUser?.profilePic === 'woman')} />
                             </Pressable>
                         </View>
+                        <View>
+                            <TextInput
+                                maxLength={20}
+                                placeholder="Username"
+                                value={tempUser?.username}
+                                className="border border-slate-400 p-4 rounded-xl font-pregular text-lg text-black"
+                                placeholderTextColor={'gray'}
+                                onChangeText={(username) => tempUser && setTempUser({ ...tempUser, username })}
+                            />
+                        </View>
+                        <View className="bg-white">
+                            <View className='flex flex-row justify-between items-center gap-4'>
+                                <Pressable onPress={onClose} className='border flex-1 border-slate-400 p-4 rounded-xl' >
+                                    <Text className='text-center text-lg font-psemibold'>Cancel</Text>
+                                </Pressable>
+                                <Pressable onPress={handleSave} className='border border-green flex-1 bg-green/50 p-4 rounded-xl' >
+                                    <Text className='text-center text-lg font-psemibold'>Save</Text>
+                                </Pressable>
+                            </View>
+                        </View>
                     </View>
-                </View>
+                </KeyboardStickyView>
             </View>
         </Modal>
     )
@@ -77,9 +80,11 @@ const EditProfileModal = ({ isOpen, user, onClose, onSave }: { isOpen: boolean, 
 export default EditProfileModal;
 
 const styles = StyleSheet.create({
+    sticky: {
+        marginTop: 'auto',
+    },
     container: {
         height: 'auto',
-        marginTop: 'auto',
         backgroundColor: 'white',
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,

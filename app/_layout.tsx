@@ -3,6 +3,7 @@ import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
+import { KeyboardProvider } from 'react-native-keyboard-controller';
 import Toast from 'react-native-toast-message';
 
 import './global.css';
@@ -148,14 +149,16 @@ export default function RootLayout() {
 
   return (
     <GlobalContext.Provider value={globalContextValue}>
-      <Stack>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="(screens)" options={{ headerShown: false }} />
-      </Stack>
-      <Toast />
-      <StatusBar style="auto" />
+      <KeyboardProvider>
+        <Stack>
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="(screens)" options={{ headerShown: false }} />
+        </Stack>
+        <Toast />
+        <StatusBar style="auto" />
+      </KeyboardProvider>
     </GlobalContext.Provider>
   );
 }

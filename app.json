@@ -17,7 +17,7 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.fundfolio",
-      "versionCode": 26,
+      "versionCode": 27,
       "intentFilters": [
         {
           "action": "VIEW",
@@ -45,8 +45,7 @@
           "backgroundColor": "#ffffff"
         }
       ],
-      "expo-router",
-      "expo-web-browser"
+      "expo-router"
     ],
     "experiments": {
       "typedRoutes": true
